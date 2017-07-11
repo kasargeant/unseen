@@ -76,6 +76,9 @@ class Unseen {
             for(let i = 0; i < records.length; i++) {
                 this.models.push(new ModelClass(records[i], this));
             }
+            Object.defineProperty(this, "length", {
+                get: function() { return this.models.length; }
+            });
         }
 
         Collection.prototype.add = function(record) {
