@@ -8,7 +8,7 @@ function makeModel(definition) {
 
     let _keys = Object.keys(definition);
 
-    let MyIdealModel = function(record, parent) {
+    let Model = function(record, parent) {
         this._parent = parent;
         this._defaults = definition;
         this._record = {};
@@ -24,19 +24,19 @@ function makeModel(definition) {
         }
     };
 
-    MyIdealModel.prototype._dump = function() {
+    Model.prototype._dump = function() {
         return JSON.stringify(this._record);
     };
 
-    return MyIdealModel;
+    return Model;
 }
 
-const MyIdealModel = makeModel(exampleDefinition);
+const MyModel = makeModel(exampleDefinition);
 
-let myModel = new MyIdealModel({a: "something", b: "other"});
+let myModel = new MyModel({a: "something", b: "other"});
 console.log(myModel.b);
 
-let myModel2 = new MyIdealModel({a: "hoobie", b: "homie", c: 3});
+let myModel2 = new MyModel({a: "hoobie", b: "homie", c: 3});
 console.log(myModel2.b);
 
 console.log(myModel.b);
