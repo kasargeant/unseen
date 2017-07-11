@@ -6,8 +6,11 @@
  * @license See LICENSE file included in this distribution.
  */
 
+"use strict";
+
 // Imports
 
+// Component
 class Unseen {
 
     /**
