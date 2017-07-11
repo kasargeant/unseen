@@ -1,0 +1,37 @@
+{
+    "preset": "google",
+    "validateQuoteMarks": {
+        "mark": "\"",
+        "escape": true
+    },
+    "validateIndentation": 4,
+    "jsDoc": {
+        "checkAnnotations": "jsdoc3",
+        "checkParamNames": true,
+        "requireParamTypes": true,
+        "checkRedundantParams": true,
+        "checkReturnTypes": true,
+        "checkRedundantReturns": true,
+        "requireReturnTypes": true,
+        "checkTypes": "strictNativeCase",
+        "enforceExistence": false,
+        "checkRedundantAccess": true
+    },
+    "requireSemicolons": true,
+    "requireSpaceAfterKeywords": false,
+    "disallowMultipleVarDecl": false,
+    "disallowSpaceAfterKeywords": [
+        "if",
+        "for",
+        "while",
+        "do",
+        "switch",
+        "catch"
+    ],
+    "disallowSpacesInsideParentheses": true,
+    "disallowMultipleLineBreaks": false,
+    "disallowTrailingWhitespace": false,
+    "requireDotNotation": false,
+    "maximumLineLength": 240,
+    "maxErrors": 200
+}

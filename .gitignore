@@ -1,0 +1,21 @@
+# DEFAULT GIT IGNORE FILE
+
+# OS CHAFF
+.DS_Store
+
+# DEVELOPMENT TOOLCHAIN
+.idea/
+
+# TYPICAL MODULE HANDLERS
+node_modules/
+
+# TEMPORARY FOLDERS AND FILES
+scratch/
+temp/
+
+# REPO FOLDERS NOT FOR GIT VERSIONING
+/dist/
+/docs/api/
+/docs/coverage/
+/docs/tests/
+/docs/index.html

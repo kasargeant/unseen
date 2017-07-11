@@ -1,0 +1,15 @@
+# DEFAULT NPM IGNORE FILE (WHERE src/ is distribution)
+
+# DEVELOPMENT TOOLCHAIN
+.idea/
+_warhorse.js
+
+# TEMPORARY FOLDERS AND FILES
+scratch/
+temp/
+
+# REPO FOLDERS NOT FOR NPM PUBLISHING
+/conf/
+/dist/
+/docs/
+/test/

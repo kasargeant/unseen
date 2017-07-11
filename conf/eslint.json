@@ -1,0 +1,68 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "quotes": [
+      2,
+      "double",
+      {
+        "avoidEscape": true,
+        "allowTemplateLiterals": true
+      }
+    ],
+    "indent": [
+      2,
+      4,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "valid-jsdoc": 2,
+    "semi": [
+      2,
+      "always"
+    ],
+    "keyword-spacing": [
+      2,
+      {
+        "overrides": {
+          "if": {
+            "after": false
+          },
+          "for": {
+            "after": false
+          },
+          "while": {
+            "after": false
+          },
+          "do": {
+            "after": false
+          },
+          "switch": {
+            "after": false
+          },
+          "catch": {
+            "after": false
+          }
+        }
+      }
+    ],
+    "one-var": 0,
+    "space-in-parens": [
+      2,
+      "never"
+    ],
+    "no-multiple-empty-lines": 0,
+    "no-trailing-spaces": 0,
+    "dot-notation": 0,
+    "max-len": [
+      2,
+      240
+    ]
+  }
+}

@@ -1,0 +1,3 @@
+module.exports = {
+    language: "es51" // Options: "es51", "es2015", "es2016"
+};
