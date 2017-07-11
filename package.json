@@ -28,7 +28,6 @@
   "scripts": {
     "build": "warhorse build",
     "distribute": "warhorse distribute",
-    "publish": "warhorse publish",
     "test": "warhorse test",
     "watch": "warhorse watch build"
   },
