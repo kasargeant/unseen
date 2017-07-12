@@ -1,32 +1,37 @@
 // Imports
-const Unseen = require("./UnseenFactory");
+const Unseen = require("./../../index");
 
-
-let MyModel = Unseen.makeModel({
-    a: "hi",
-    b: "ho",
-    c: 3
-});
+class MyModel extends Unseen.Model {
+    constructor(record, parent) {
+        let definition = {a: "hi", b: "ho", c: 3};
+        super(definition, record, parent);
+    }
+}
 
 let myModel = new MyModel({
     a: "ha",
     b: "he"
 });
+
 let myModelB = new MyModel({
     a: "hing",
     b: "hong",
     c: 2
 });
+
 console.log(myModel.c);
 console.log(myModelB.c);
 console.log(myModel.a);
 console.log(myModelB.a);
 
 
-// let myCollection = new Collection(MyModel);
 
-const Collection = Unseen.makeCollection(MyModel);
-let myCollection = new Collection();
+class MyCollection extends Unseen.Collection {
+    constructor(data) {
+        super(MyModel, data);
+    }
+}
+let myCollection = new MyCollection();
 
 myCollection.add({a: "hoobie", b: "homie", c: 3});
 myCollection.add({a: "froobie", b: "stubie", c: 2});
@@ -36,10 +41,18 @@ console.log(model.a);
 myCollection._dump();
 
 // alt collection
-const AnotherCollection = Unseen.makeCollection(Unseen.makeModel({
-    x: "hi",
-    y: "ho"
-}));
+class AnotherModel extends Unseen.Model {
+    constructor(record, parent) {
+        let definition = {x: 0, y: 0};
+        super(definition, record, parent);
+    }
+}
+class AnotherCollection extends Unseen.Collection {
+    constructor(data) {
+        super(AnotherModel, data);
+    }
+}
+
 let anotherCollection = new AnotherCollection([
     {x: 10, y: 20},
     {x: 11, y: 20},
@@ -50,7 +63,7 @@ console.log(modelAnother.x);
 anotherCollection._dump();
 
 
-let myCollection2 = new Collection();
+let myCollection2 = new MyCollection();
 myCollection2.add({a: "hoobie2", b: "homie2", c: 31});
 myCollection2.add({a: "froobie2", b: "stubie2", c: 21});
 myCollection2.add({a: "moobie2", b: "mobie2", c: 41});

@@ -9,7 +9,7 @@ const Model = require("./Model");
 const Collection = require("./Collection");
 const View = require("./View");
 const jQuery = require("jquery");
-let rawData = require("../../data/processed_half.json")
+let rawData = require("../../data/processed_half.json");
 
 
 

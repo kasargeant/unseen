@@ -5,7 +5,13 @@
  */
 
 // Imports
-const Unseen = require("./js/unseen");
+const Model = require("./js/unseen/Model");
+const Collection = require("./js/unseen/Collection");
+const View = require("./js/unseen/View");
 
 // Exports
-module.exports = Unseen;
+module.exports = {
+    Collection: Collection,
+    Model: Model,
+    View: View
+};
