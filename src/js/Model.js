@@ -23,6 +23,11 @@ const Model = function(definition, record, parent) {
 
         this._record[key] = record[key] || this._defaults[key];
     }
+    this.length = 1; // Always 1... included only for compatibility with Collection interface.
+};
+
+Model.prototype.get = function() {
+    return this; // For compatibility with Collection interface
 };
 
 Model.prototype._dump = function() {
