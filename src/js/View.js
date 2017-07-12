@@ -9,16 +9,31 @@
 "use strict";
 
 class View {
-    constructor(model, template, parent) {
-        this.model = model;
-        this.template = template;
+    constructor(model, parent=null) {
+
         this.parent = parent;
+
+        this.target = "main";
+        this.tag = "section";
+
+        this.model = model;
         this.el = "";
+
+        this.subViews = null;
         this.fragment = null;
     }
 
+    template(model, params) {return JSON.stringify(model);}
+
     render() {
-        this.el = this.template(this.model);
+        if(this.subViews === null) {
+            this.el = this.template(this.model);
+        } else {
+            for(let i = 0; i < this.subViews.length; i++) {
+                this.el += this.subViews.render();
+            }
+        }
+        return this.el;
     }
 
 }

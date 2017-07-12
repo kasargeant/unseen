@@ -5,9 +5,9 @@
  */
 
 // Imports
-const Model = require("./js/Model");
-const Collection = require("./js/Collection");
-const View = require("./js/View");
+const Model = require("./Model");
+const Collection = require("./Collection");
+const View = require("./View");
 const jQuery = require("jquery");
 
 
@@ -30,12 +30,17 @@ let myModelB = new MyModel({
     c: 2
 });
 
-let template = function(model) {
-    return `<div id="${model.a}">${model.b} - ${model.c}</div>`;
-};
-let myView = new View(myModel, template);
+class MyView extends View {
+
+    template(model) {
+        return `<div id="${model.a}">${model.b} - ${model.c}</div>`;
+    }
+}
+
+let myView = new MyView(myModel);
 myView.render();
-jQuery("main").append(myView.el);
+console.log(myView.el);
+// jQuery("main").append(myView.el);
 
 // Exports
 // module.exports = Unseen;
