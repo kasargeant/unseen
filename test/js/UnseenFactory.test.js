@@ -1,6 +1,6 @@
 /**
  * @file Unseen.test.js
- * @description Unit tests for the Unseen ES2015 class library.
+ * @description Unit tests for the Unseen library.
  * @author Kyle Alexis Sargeant <kasargeant@gmail.com> {@link https://github.com/kasargeant https://github.com/kasargeant}.
  * @copyright Kyle Alexis Sargeant 2017
  * @license See LICENSE file included in this distribution.
@@ -18,7 +18,7 @@ const path = require("path");
 // const sinon = require("sinon");
 
 // Unit
-const Unseen = require("../../src/index");
+const Unseen = require("../../src/js/unseen/UnseenFactory");
 
 // Constants
 let workingDirectory = process.cwd();
@@ -38,12 +38,8 @@ describe("Class: Unseen", function() {
 
     describe("Models", function() {
 
-        class TestModel extends Unseen.Model {
-            constructor(record, parent, id) {
-                let definition = {a: "hi", b: "ho", c: 3};
-                super(definition, record, parent, id);
-            }
-        }
+        const definition = {a: "hi", b: "ho", c: 3};
+        const TestModel = Unseen.makeModel(definition);
         let testModelInstance1 = new TestModel({b: "o"});
         let testModelInstance2 = new TestModel({a: "hiya", b: "hoho", c: 1});  // We create second instance for binding contamination checks
         let testModelInstance3 = new TestModel({a: "riii", b: "biii", c: 20});
@@ -73,17 +69,9 @@ describe("Class: Unseen", function() {
 
     describe("Collections", function() {
 
-        class TestModel extends Unseen.Model {
-            constructor(record, parent, id) {
-                let definition = {a: "hi", b: "ho", c: 3};
-                super(definition, record, parent, id);
-            }
-        }
-        class TestCollection extends Unseen.Collection {
-            constructor(data) {
-                super(TestModel, data);
-            }
-        }
+        const definition = {a: "hi", b: "ho", c: 3};
+        const TestModel = Unseen.makeModel(definition);
+        const TestCollection = Unseen.makeCollection(TestModel);
         let testCollectionInstance1 = new TestCollection();
         let testCollectionInstance2 = new TestCollection([
             {b: "o"},

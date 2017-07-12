@@ -8,19 +8,36 @@
 
 "use strict";
 
-class View {
-    constructor(model, parent=null) {
+// Imports
+const EventEmitter = require("event-emitter");
 
-        this.parent = parent;
+class View {
+    constructor(model, parent=null, id=0) {
+
+        this._parent = parent;
+        this._id = id;
 
         this.target = "main";
         this.tag = "section";
 
         this.model = model;
+        this.model.parent = this;
+
         this.el = "";
 
         this.subViews = null;
         this.fragment = null;
+
+        this.on("change", function(args) {
+            console.log(`View #${this._id}: Model/Collection #${args} changed.`);
+            this._emit("change"); // Relay the event forward
+        });
+    }
+
+    _emit(eventType) {
+        if(this._parent !== null) {
+            this._parent.emit(eventType, this._id);
+        }
     }
 
     template(model, params) {return JSON.stringify(model);}
@@ -91,6 +108,8 @@ class View {
     //     return this.fragment;
     // }
 }
+
+EventEmitter(View.prototype);
 
 // Exports
 module.exports = View;

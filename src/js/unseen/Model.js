@@ -8,8 +8,9 @@
 
 "use strict";
 
-const Model = function(definition, record, parent) {
-    this._parent = parent;
+const Model = function(definition={}, record={}, parent=null, collectionId=0) {
+    this._id = collectionId; // An internal ID only.
+    this._parent = parent; // Note: Parent can EITHER be a collection OR a view. NOT BOTH.
     this._defaults = definition;
     this._keys = Object.keys(definition);
     this._record = {};
@@ -17,13 +18,25 @@ const Model = function(definition, record, parent) {
     for(let key of this._keys) {
 
         Object.defineProperty(this, key, {
-            get: function() { return this._record[key]; },
-            set: function(value) { this._record[key] = value; }
+            get: function() {
+                return this._record[key];
+            },
+            set: function(value) {
+                this._record[key] = value;
+                this._emit("change");
+            }
         });
 
         this._record[key] = record[key] || this._defaults[key];
     }
     this.length = 1; // Always 1... included only for compatibility with Collection interface.
+};
+
+Model.prototype._emit = function(eventType) {
+    if(this._parent !== null) {
+        // this._parent.dispatchEvent(eventType);
+        this._parent.emit(eventType, this._id);
+    }
 };
 
 Model.prototype.get = function() {
@@ -36,29 +49,3 @@ Model.prototype._dump = function() {
 
 // Exports
 module.exports = Model;
-
-//
-// class MyModel extends Model {
-//     constructor(record, parent) {
-//         let definition = {
-//             a: "hi",
-//             b: "ho",
-//             c: 3
-//         };
-//         super(definition, record, parent);
-//     }
-// }
-//
-// let myModel = new MyModel({
-//     a: "ha",
-//     b: "he"
-// });
-// let myModelB = new MyModel({
-//     a: "hing",
-//     b: "hong",
-//     c: 2
-// });
-// console.log(myModel.c);
-// console.log(myModelB.c);
-// console.log(myModel.a);
-// console.log(myModelB.a);

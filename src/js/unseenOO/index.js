@@ -2,9 +2,9 @@
 const Unseen = require("./../../index");
 
 class MyModel extends Unseen.Model {
-    constructor(record, parent) {
+    constructor(record, parent, id) {
         let definition = {a: "hi", b: "ho", c: 3};
-        super(definition, record, parent);
+        super(definition, record, parent, id);
     }
 }
 
@@ -68,6 +68,7 @@ myCollection2.add({a: "hoobie2", b: "homie2", c: 31});
 myCollection2.add({a: "froobie2", b: "stubie2", c: 21});
 myCollection2.add({a: "moobie2", b: "mobie2", c: 41});
 let model2 = myCollection2.get(1);
+model2.b = "zoobie!";
 console.log(model2.a);
 myCollection2._dump();
 

@@ -12,7 +12,6 @@ const jQuery = require("jquery");
 let rawData = require("../../data/processed_half.json");
 
 
-
 class MyModel extends Model {
     constructor(record, parent) {
         let definition = {"id":0,"idn":"unnamed","class":"unknown","type":"unknown","name":"Unnamed"};
