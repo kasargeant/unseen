@@ -1,6 +1,6 @@
 {
   "name": "unseen",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "An idea for models...",
   "keywords": [
     "javascript",
@@ -31,7 +31,7 @@
     "test": "warhorse test",
     "watch": "warhorse watch build"
   },
-   "browser": {
+  "browser": {
     "vue": "vue/dist/vue.common.js"
   },
   "devDependencies": {
