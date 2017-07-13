@@ -30,6 +30,6 @@ const app = new Vue({
     }
 });
 jQuery(document).ready(function () {
-    // Action after append is completly done
+    // Action after append is completely done
     console.timeEnd("insert");
 });

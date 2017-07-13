@@ -30,7 +30,7 @@ $(document).ready(function() {
     console.time("insert");
     Backbone.$("main").append(this.postCollectionView.el);
     Backbone.$(document).ready(function () {
-        // Action after append is completly done
+        // Action after append is completely done
         console.timeEnd("insert");
     });
 });

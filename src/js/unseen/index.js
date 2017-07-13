@@ -9,7 +9,8 @@ const Model = require("./Model");
 const Collection = require("./Collection");
 const View = require("./View");
 const jQuery = require("jquery");
-let rawData = require("../../data/processed_half.json");
+let rawData = require("../../data/processed_half.json")
+
 
 
 class MyModel extends Model {
@@ -34,8 +35,8 @@ class MyView extends View {
     // template(model, idx) {
     //     let el = document.createElement("div");
     //     el.id = `idx-${idx}`;
-    //     let content = document.createTextNode(`${model.id}: ${model.type} - ${model.name}`); 
-    //     el.appendChild(content); //add the text node to the newly created div. 
+    //     let content = document.createTextNode(`${model.id}: ${model.type} - ${model.name}`);
+    //     el.appendChild(content); //add the text node to the newly created div.
     //     return el;
     // }
 }
@@ -69,7 +70,7 @@ console.timeEnd("render");
 console.time("insert");
 jQuery("main").append(result);
 jQuery(document).ready(function () {
-    // Action after append is completly done
+    // Action after append is completely done
     console.timeEnd("insert");
 });
 
