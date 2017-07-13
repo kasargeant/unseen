@@ -6,7 +6,7 @@
 
 // Imports
 const Model = require("./Model");
-const Collection = require("./Collection");
+const Collection = require("./ModelCollection");
 const View = require("./View");
 const jQuery = require("jquery");
 let rawData = require("../../data/processed_half.json")

@@ -6,7 +6,7 @@
 
 // Imports
 const Model = require("./js/unseen/Model");
-const Collection = require("./js/unseen/Collection");
+const Collection = require("./js/unseen/ModelCollection");
 const View = require("./js/unseen/View");
 
 // Exports
