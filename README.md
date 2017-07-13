@@ -1,8 +1,10 @@
 # Unseen
 
+![Unseen](/docs/shared/img/unseen.png)
+
 ## ABOUT
 
-Models for multiple views.
+An experiment...
 
 ## INSTALLATION
 
@@ -10,7 +12,11 @@ Models for multiple views.
 
 ## USAGE
 
+I'm still working it out...
+
 ## DOCUMENTATION
+
+None at present.
 
 ## LICENSE INFORMATION
  
