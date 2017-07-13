@@ -11,6 +11,7 @@
 // Imports
 const EventEmitter = require("event-emitter");
 const jQuery = require("jquery");
+const walk = require("./walk");
 
 class View {
     constructor(model, parent=null, id=0) {
@@ -33,25 +34,62 @@ class View {
             console.log(`View #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
         });
+
+        this.initialize(); // User initialization.
     }
 
-    _addEvents() {
+    // LIFECYCLE METHODS
+    initialize() {
+        // Lifecycle method.
+    }
+    destroy() {}
+
+    _addEvents(element) {
         console.log("_addEvents()");
-        let events = this.events();
-        if(events !== null) {
-            console.log("BINDING EVENTS");
-            for(let event of events) {
-                console.log("BINDING EVENT FOR: " + event[0]);
-                jQuery(event[0]).on(event[1], function(evt) {
-                    console.log(`${event[0]}: ${event[1]}`);
-                    this[event[2]](evt);
-                }.bind(this));
+
+        // First we make any element ids in this View - unique.
+        walk(element, function(node) {
+            console.log("node", node);
+            if(node.id !== null) {
+                node.id = node.id + "-" + this._id;
             }
+        }.bind(this));
+
+
+        // let events = this.events(); // Gets an array of user-defined events.
+        // if(events !== null) {
+        //     for(let event of events) {
+        //         let element = fragment.querySelector(event[0]);
+        //         if(element) {
+        //             console.log(`Listening to ${event[0]} for a '${event[1]}' event to trigger method this.${event[2]}()`);
+        //             element.addEventListener(event[1], function(evt) {
+        //                 console.log(`${event[0]}: ${event[1]}`);
+        //                 this[event[2]](evt);
+        //             }.bind(this), false);
+        //         } else {
+        //             console.error(`Error: Unable to bind event for selector '${event[0]}'.`);
+        //         }
+        //
+        //     }
+        // }
+
+        // // Add blanket debug listener
+        // let element = fragment.firstElementChild;
+        // if(element !== null) {
+        //     console.log("got element")
+        //     element.addEventListener("click", function(evt) {
+        //         console.log(`${evt.type}: ${evt.target.name}`);
+        //     }.bind(this), false);
+        // }
+
+        // Add blanket debug listener
+        if(element !== null) {
+            element.addEventListener("click", function(evt) {
+                console.log(`View Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+            }.bind(this), false);
         }
     }
-    // myEl.addEventListener('click', function() {
-    //     alert('Hello world');
-    // }, false);
+
 
     // return [
     //    ["button-delete", "click", "deleteAction"]
@@ -92,19 +130,24 @@ class View {
         }
     }
 
-    renderFragment(doInsert=false) {
-        // Render view for single model
-        this.fragment = document.createDocumentFragment();
-        for(let i = 0; i < this.model.length; i++) {
-            let model = this.model.get(i); // Note if the 'model' IS a single model... it returns itself
-            let element = document.createElement(this.tag);
-            element.innerHTML = this.template(model, i);
-            this.fragment.appendChild(element);
+    renderFragment(doInsert=false, fragment=null) {
+        // Are we a top-level view?
+        if(fragment === null && this._parent === null) {
+            // YES - without passed fragment or parent
+            fragment = document.createDocumentFragment();
         }
+        let element = document.createElement(this.tag);
+        element.id = `view-${this._id}`;
+        element.innerHTML = this.template(this.model, 0);
+        this._addEvents(element);
+
+        fragment.appendChild(element);
+
+
         if(doInsert === true) {
-            jQuery(this.target).append(this.fragment);
+            jQuery(this.target).append(fragment);
         } else {
-            return this.fragment;
+            return fragment;
         }
     }
 

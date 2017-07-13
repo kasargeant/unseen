@@ -51,6 +51,55 @@ class ViewCollection {
         });
     }
 
+    // LIFECYCLE METHODS
+    initialize() {
+        // Lifecycle method.
+    }
+    destroy() {}
+
+    _addEvents(element) {
+        console.log("_addEvents()");
+        // let events = this.events(); // Gets an array of user-defined events.
+        // if(events !== null) {
+        //     for(let event of events) {
+        //         let element = fragment.querySelector(event[0]);
+        //         if(element) {
+        //             console.log(`Listening to ${event[0]} for a '${event[1]}' event to trigger method this.${event[2]}()`);
+        //             element.addEventListener(event[1], function(evt) {
+        //                 console.log(`${event[0]}: ${event[1]}`);
+        //                 this[event[2]](evt);
+        //             }.bind(this), false);
+        //         } else {
+        //             console.error(`Error: Unable to bind event for selector '${event[0]}'.`);
+        //         }
+        //
+        //     }
+        // }
+
+        // // Add blanket debug listener
+        // let element = fragment.firstElementChild;
+        // if(element !== null) {
+        //     console.log("got element")
+        //     element.addEventListener("click", function(evt) {
+        //         console.log(`${evt.type}: ${evt.target.name}`);
+        //     }.bind(this), false);
+        // }
+
+        // Add blanket debug listener
+        if(element !== null) {
+            element.addEventListener("click", function(evt) {
+                console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+
+                let eventTargetId = evt.target.id;
+                let splitPoint = eventTargetId.lastIndexOf("-");
+                let elementId = eventTargetId.slice(0, splitPoint);
+                let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
+                console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
+
+            }.bind(this), false);
+        }
+    }
+
     _emit(eventType) {
         if(this._parent !== null) {
             this._parent.emit(eventType, this._id);
@@ -86,19 +135,25 @@ class ViewCollection {
         }
     }
 
-    renderFragment(doInsert=false) {
-        // Render view for single model
-        this.fragment = document.createDocumentFragment();
-        for(let i = 0; i < this.model.length; i++) {
-            let model = this.model.get(i); // Note if the 'model' IS a single model... it returns itself
-            let element = document.createElement(this.tag);
-            element.innerHTML = this.template(model, i);
-            this.fragment.appendChild(element);
+    renderFragment(doInsert=false, fragment=null) {
+        // Are we a top-level view?
+        if(fragment === null && this._parent === null) {
+            // YES - without passed fragment or parent
+            fragment = document.createDocumentFragment();
         }
+        let element = document.createElement(this.tag);
+        element.id = `view-collection-${this._id}`;
+        for(let i = 0; i < this.views.length; i++) {
+            this.views[i].renderFragment(false, element);
+        }
+        this._addEvents(element);
+
+        fragment.appendChild(element);
+
         if(doInsert === true) {
-            jQuery(this.target).append(this.fragment);
+            jQuery(this.target).append(fragment);
         } else {
-            return this.fragment;
+            return fragment;
         }
     }
 }

@@ -33,17 +33,24 @@ class MyModelCollection extends ModelCollection {
 let myModelCollection = new MyModelCollection(rawData);
 
 class MyView extends View {
-    template(model, idx) {
-        return `<div id="idx-${idx}">${model.id}: ${model.type} - ${model.name}</div><button id="button-delete"></button>`;
+
+    initialize() {
+        this.tag = "article";
     }
+
+    template(model, idx) {
+        return `<div id="somediv">${model.id}: ${model.type} - ${model.name}</div>
+                <button id="button-delete"></button>`;
+    }
+
     events() {
         return [
-            ["button#button-delete", "click", "deleteAction"]
+            ["#button-delete", "click", "deleteAction"]
         ];
     }
 
     deleteAction(evt) {
-        console.log(`deleteAction for ${evt.data.name} called.`);
+        console.log(`deleteAction for ${this._id} called by ${evt.data.name}.`);
     }
 }
 
@@ -66,7 +73,7 @@ console.time("render");
 // With 99161 records.
 // render: 255.842041015625ms
 // insert: 21221.27880859375ms
-myViewCollection.render(true);
+myViewCollection.renderFragment(true);
 
 // With 99161 records.
 // render: 1147.885009765625ms
