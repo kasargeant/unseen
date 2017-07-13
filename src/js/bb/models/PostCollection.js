@@ -15,7 +15,7 @@ const PostCollection = Backbone.Collection.extend({
     initialize: function() {
         console.log("PostCollection: initialize()");
         this.on("add", function(model) {console.log("PostCollection: Adding model " + model.get("id"));});
-        this.on("reset", function(model) {console.log("PostCollection: Reset collection.");});
+        this.on("reset", function() {console.log("PostCollection: Reset collection.");});
 
     }
 });

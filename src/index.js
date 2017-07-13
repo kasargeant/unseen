@@ -6,12 +6,14 @@
 
 // Imports
 const Model = require("./js/unseen/Model");
-const Collection = require("./js/unseen/ModelCollection");
+const ModelCollection = require("./js/unseen/ModelCollection");
 const View = require("./js/unseen/View");
+const ViewCollection = require("./js/unseen/ViewCollection");
 
 // Exports
 module.exports = {
-    Collection: Collection,
     Model: Model,
-    View: View
+    ModelCollection: ModelCollection,
+    View: View,
+    ViewCollection: ViewCollection
 };

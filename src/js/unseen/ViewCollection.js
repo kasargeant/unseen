@@ -13,7 +13,7 @@ const EventEmitter = require("event-emitter");
 const jQuery = require("jquery");
 
 class ViewCollection {
-    constructor(model, parent=null, id=0) {
+    constructor(ViewClass, modelCollection, parent=null, id=0) {
 
         this._parent = parent;
         this._id = id;
@@ -21,16 +21,32 @@ class ViewCollection {
         this.target = "main";
         this.tag = "section";
 
-        this.model = model;
+        this.ViewClass = ViewClass;
+        this.model = modelCollection;
         this.model._parent = this;
+        this.views = [];
+
+        // let i;
+        // for(i = 0; i < this.model.length; i++) {
+        //     let model = this.model.get(i); // Note if the 'model' IS a single model... it returns itself
+        //     let view = new this.ViewClass(model, this, i);
+        //     this.views.push(view);
+        // }
+        for(let id in this.model.models) {
+            let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
+            let view = new this.ViewClass(model, this, id);
+            this.views.push(view);
+        }
+
+        this.length = this.views.length;
+        this._viewCounter = this.views.length; // This provides a unique ID for every view.
 
         this.el = "";
 
-        this.subViews = null;
         this.fragment = null;
 
         this.on("change", function(args) {
-            console.log(`View #${this._id}: Model/Collection #${args} changed.`);
+            console.log(`ViewCollection #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
         });
     }
@@ -41,18 +57,16 @@ class ViewCollection {
         }
     }
 
-    template(model, params) {return JSON.stringify(model);}
+    // template(model, params) {return JSON.stringify(model);}
 
     render(doInsert=false) {
-        // Render view for single model
-        this.el = `<${this.tag} id="view-${this._id}">`;
-        for(let i = 0; i < this.model.length; i++) {
-            let model = this.model.get(i); // Note if the 'model' IS a single model... it returns itself
-            this.el += this.template(model, i);
+        this.el = `<${this.tag} id="view-collection-${this._id}">`;
+        for(let i = 0; i < this.views.length; i++) {
+            this.el += this.views[i].render(false);
         }
         this.el += "</" + this.tag + ">";
         if(doInsert === true) {
-            jQuery("main").append(this.el);
+            jQuery(this.target).append(this.el);
         } else {
             return this.el;
         }
@@ -61,12 +75,12 @@ class ViewCollection {
     renderTree(doInsert=false) {
         // Render view for single model
         this.el = document.createElement(this.tag);
-        for(let i = 0; i < this.model.length; i++) {
-            let model = this.model.get(i); // Note if the 'model' IS a single model... it returns itself
-            this.el.appendChild(this.template(model, i));
+        this.el.id = `view-collection-${this._id}`;
+        for(let i = 0; i < this.views.length; i++) {
+            this.el.appendChild(this.views[i].render(false));
         }
         if(doInsert === true) {
-            jQuery("main").append(this.el);
+            jQuery(this.target).append(this.el);
         } else {
             return this.el;
         }
@@ -82,44 +96,11 @@ class ViewCollection {
             this.fragment.appendChild(element);
         }
         if(doInsert === true) {
-            jQuery("main").append(this.fragment);
+            jQuery(this.target).append(this.fragment);
         } else {
             return this.fragment;
         }
     }
-
-    // render() {
-    //
-    //     // Render view for single model
-    //     if(this.subViews === null) {
-    //         this.el = this.template(this.model);
-    //     } else {
-    //         for(let i = 0; i < this.subViews.length; i++) {
-    //             this.el += this.subViews.render();
-    //         }
-    //     }
-    //     return this.el;
-    // }
-    //
-    // renderFragment() {
-    //
-    //     this.fragment = document.createDocumentFragment();
-    //     let element = null;
-    //
-    //     // Render view for single model
-    //     if(this.subViews === null) {
-    //         element = document.createElement(this.tag);
-    //         element.innerHTML = this.template(this.model);
-    //         this.fragment.appendChild(element);
-    //     } else {
-    //         for(let i = 0; i < this.subViews.length; i++) {
-    //             element = document.createElement(this.tag);
-    //             element.innerHTML = this.subViews.render();
-    //             this.fragment.appendChild(element);
-    //         }
-    //     }
-    //     return this.fragment;
-    // }
 }
 
 EventEmitter(ViewCollection.prototype);

@@ -8,7 +8,7 @@
 // Imports
 const Vue = require("vue");
 const jQuery = require("jquery");
-let rawData = require("../../data/processed_half.json")
+let rawData = require("../../data/processed_half.json");
 
 Vue.component("article-post", {
     props: ["post"],
@@ -16,7 +16,7 @@ Vue.component("article-post", {
 });
 
 console.time("render");
-const app = new Vue({
+new Vue({
     // Remember: Vue converts all properties to getters/setters
     el: "#app",
     created: function() {
@@ -29,7 +29,7 @@ const app = new Vue({
         postList: rawData
     }
 });
-jQuery(document).ready(function () {
+jQuery(document).ready(function() {
     // Action after append is completely done
     console.timeEnd("insert");
 });

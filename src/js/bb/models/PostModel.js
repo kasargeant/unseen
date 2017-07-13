@@ -8,7 +8,7 @@ Backbone._ = require("lodash");
 // Component
 const PostModel = Backbone.Model.extend({
     // urlRoot: "/article",
-    defaults: {"id":0,"idn":"unnamed","class":"unknown","type":"unknown","name":"Unnamed"}
+    defaults: {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"}
 });
 
 // Exports

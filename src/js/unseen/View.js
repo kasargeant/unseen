@@ -22,7 +22,7 @@ class View {
         this.tag = "section";
 
         this.model = model;
-        this.model._parent = this;
+        //this.model._parent = this;
 
         this.el = "";
 
@@ -43,16 +43,13 @@ class View {
 
     template(model, params) {return JSON.stringify(model);}
 
-    render(doInsert=false) {
+    render(doInsert=false, id="") {
         // Render view for single model
         this.el = `<${this.tag} id="view-${this._id}">`;
-        for(let i = 0; i < this.model.length; i++) {
-            let model = this.model.get(i); // Note if the 'model' IS a single model... it returns itself
-            this.el += this.template(model, i);
-        }
+        this.el += this.template(this.model, id);
         this.el += "</" + this.tag + ">";
         if(doInsert === true) {
-            jQuery("main").append(this.el);
+            jQuery(this.target).append(this.el);
         } else {
             return this.el;
         }
@@ -66,7 +63,7 @@ class View {
             this.el.appendChild(this.template(model, i));
         }
         if(doInsert === true) {
-            jQuery("main").append(this.el);
+            jQuery(this.target).append(this.el);
         } else {
             return this.el;
         }
@@ -82,7 +79,7 @@ class View {
             this.fragment.appendChild(element);
         }
         if(doInsert === true) {
-            jQuery("main").append(this.fragment);
+            jQuery(this.target).append(this.fragment);
         } else {
             return this.fragment;
         }

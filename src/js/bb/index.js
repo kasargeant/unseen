@@ -14,7 +14,7 @@ const $ = require("jquery");
 
 const PostCollection = require("./models/PostCollection");
 const PostCollectionView = require("./views/PostCollectionView");
-let rawData = require("../../data/processed_half.json")
+let rawData = require("../../data/processed_half.json");
 
 $(document).ready(function() {
 
@@ -29,7 +29,7 @@ $(document).ready(function() {
 
     console.time("insert");
     Backbone.$("main").append(this.postCollectionView.el);
-    Backbone.$(document).ready(function () {
+    Backbone.$(document).ready(function() {
         // Action after append is completely done
         console.timeEnd("insert");
     });

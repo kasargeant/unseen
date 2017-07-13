@@ -8,12 +8,9 @@
 
 // Imports
 const Model = require("./Model");
-const ModelCollection = require("./ModelCollection");
+const Collection = require("./ModelCollection");
 const View = require("./View");
-const ViewCollection = require("./ViewCollection");
-
 const jQuery = require("jquery");
-
 let rawData = require("../../data/processed_half.json");
 
 
@@ -25,31 +22,31 @@ class MyModel extends Model {
     }
 }
 
-class MyModelCollection extends ModelCollection {
+class MyCollection extends Collection {
     constructor(data) {
         super(MyModel, data);
     }
 }
 
-let myModelCollection = new MyModelCollection(rawData);
+let myCollection = new MyCollection(rawData);
 
 class MyView extends View {
     template(model, idx) {
         return `<div id="idx-${idx}">${model.id}: ${model.type} - ${model.name}</div>`;
     }
+    // template(model, idx) {
+    //     let el = document.createElement("div");
+    //     el.id = `idx-${idx}`;
+    //     let content = document.createTextNode(`${model.id}: ${model.type} - ${model.name}`);
+    //     el.appendChild(content); //add the text node to the newly created div.
+    //     return el;
+    // }
 }
 
-class MyViewCollection extends ViewCollection {
-    constructor(modelCollection, parent, id) {
-        super(MyView, modelCollection, parent, id);
-    }
-}
-
-
-let myViewCollection = new MyViewCollection(myModelCollection);
+let myView = new MyView(myCollection);
 
 // console.log("CLASS: " + MyView.name);
-console.log(`With ${myModelCollection.length} records.`);
+console.log(`With ${myCollection.length} records.`);
 
 // myView.renderFragment();
 // console.log(myView.render());
@@ -58,7 +55,7 @@ console.time("render");
 // With 99161 records.
 // render: 255.842041015625ms
 // insert: 21221.27880859375ms
-myViewCollection.render(true);
+myView.render(true);
 
 // With 99161 records.
 // render: 1147.885009765625ms

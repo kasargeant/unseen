@@ -26,7 +26,7 @@ console.log(myModelB.a);
 
 
 
-class MyCollection extends Unseen.Collection {
+class MyCollection extends Unseen.ModelCollection {
     constructor(data) {
         super(MyModel, data);
     }
@@ -47,7 +47,7 @@ class AnotherModel extends Unseen.Model {
         super(definition, record, parent);
     }
 }
-class AnotherCollection extends Unseen.Collection {
+class AnotherCollection extends Unseen.ModelCollection {
     constructor(data) {
         super(AnotherModel, data);
     }
@@ -73,13 +73,23 @@ console.log(model2.a);
 myCollection2._dump();
 
 
-
-
 class MyView extends Unseen.View {
     template(model, idx) {
         return `<div id="idx-${idx}">${model.a}: ${model.b} - ${model.c}</div>`;
     }
 }
 
-let myView = new MyView(myCollection2);
+let myView = new MyView(model2);
 console.log(myView.render(false));
+
+
+class MyViewCollection extends Unseen.ViewCollection {
+    constructor(modelCollection, parent, id) {
+        super(MyView, modelCollection, parent, id);
+    }
+}
+
+let myViewCollection = new MyViewCollection(myCollection2);
+console.log(myViewCollection.length);
+
+console.log(myViewCollection.render(false));

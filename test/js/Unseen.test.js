@@ -79,7 +79,7 @@ describe("Class: Unseen", function() {
                 super(definition, record, parent, id);
             }
         }
-        class TestCollection extends Unseen.Collection {
+        class TestCollection extends Unseen.ModelCollection {
             constructor(data) {
                 super(TestModel, data);
             }

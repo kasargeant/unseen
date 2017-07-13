@@ -7,12 +7,12 @@ Backbone._ = require("lodash");
 
 const PostCollection = require("../models/PostCollection");
 const PostCollectionView = require("../views/PostCollectionView");
-let rawData = require("../../data/processed_sample.json")
+let rawData = require("../../data/processed_sample.json");
 
-this.postCollection = new PostCollection();
-this.postCollection.reset(rawData, {reset: true});
-this.postCollectionView = new PostCollectionView({collection: this.postCollection});
-Backbone.$("main").append(this.postCollectionView.el);
+let postCollection = new PostCollection();
+postCollection.reset(rawData, {reset: true});
+let postCollectionView = new PostCollectionView({collection: postCollection});
+Backbone.$("main").append(postCollectionView.el);
 
 
 // Component
