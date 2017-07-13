@@ -136,6 +136,9 @@ class ViewCollection {
     }
 
     renderFragment(doInsert=false, fragment=null) {
+
+        let viewEvents = {};
+
         // Are we a top-level view?
         if(fragment === null && this._parent === null) {
             // YES - without passed fragment or parent
@@ -144,16 +147,27 @@ class ViewCollection {
         let element = document.createElement(this.tag);
         element.id = `view-collection-${this._id}`;
         for(let i = 0; i < this.views.length; i++) {
-            this.views[i].renderFragment(false, element);
+            let view = this.views[i];
+            viewEvents[view._id] = view.renderFragment(false, element);
         }
-        this._addEvents(element);
 
         fragment.appendChild(element);
 
         if(doInsert === true) {
             jQuery(this.target).append(fragment);
-        } else {
-            return fragment;
+        }
+        if(this._parent === null) {
+            element.addEventListener("click", function(evt) {
+                console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+
+                let eventTargetId = evt.target.id;
+                let splitPoint = eventTargetId.lastIndexOf("-");
+                let elementId = eventTargetId.slice(0, splitPoint);
+                let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
+                console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
+                console.log(`Have found ${viewEvents[viewId]} events for View component ${viewId}`);
+                
+            }.bind(this), false);
         }
     }
 }

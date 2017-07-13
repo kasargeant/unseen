@@ -139,16 +139,25 @@ class View {
         let element = document.createElement(this.tag);
         element.id = `view-${this._id}`;
         element.innerHTML = this.template(this.model, 0);
-        this._addEvents(element);
+        //this._addEvents(element);
+
+
+        // First we make any element ids in this View - unique.
+        walk(element, function(node) {
+            console.log("node", node);
+            if(node.id !== null) {
+                node.id = node.id + "-" + this._id;
+            }
+        }.bind(this));
+
 
         fragment.appendChild(element);
 
 
         if(doInsert === true) {
             jQuery(this.target).append(fragment);
-        } else {
-            return fragment;
         }
+        return this.events();
     }
 
     // render() {
