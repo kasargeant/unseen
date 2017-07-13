@@ -35,6 +35,29 @@ class View {
         });
     }
 
+    _addEvents() {
+        console.log("_addEvents()");
+        let events = this.events();
+        if(events !== null) {
+            console.log("BINDING EVENTS");
+            for(let event of events) {
+                console.log("BINDING EVENT FOR: " + event[0]);
+                jQuery(event[0]).on(event[1], function(evt) {
+                    console.log(`${event[0]}: ${event[1]}`);
+                    this[event[2]](evt);
+                }.bind(this));
+            }
+        }
+    }
+    // myEl.addEventListener('click', function() {
+    //     alert('Hello world');
+    // }, false);
+
+    // return [
+    //    ["button-delete", "click", "deleteAction"]
+    // ];
+    events() {return null;}
+
     _emit(eventType) {
         if(this._parent !== null) {
             this._parent.emit(eventType, this._id);

@@ -14,8 +14,7 @@ const ViewCollection = require("./ViewCollection");
 
 const jQuery = require("jquery");
 
-let rawData = require("../../data/processed_half.json");
-
+let rawData = require("../../data/processed_sample.json");
 
 
 class MyModel extends Model {
@@ -35,7 +34,16 @@ let myModelCollection = new MyModelCollection(rawData);
 
 class MyView extends View {
     template(model, idx) {
-        return `<div id="idx-${idx}">${model.id}: ${model.type} - ${model.name}</div>`;
+        return `<div id="idx-${idx}">${model.id}: ${model.type} - ${model.name}</div><button id="button-delete"></button>`;
+    }
+    events() {
+        return [
+            ["button#button-delete", "click", "deleteAction"]
+        ];
+    }
+
+    deleteAction(evt) {
+        console.log(`deleteAction for ${evt.data.name} called.`);
     }
 }
 
