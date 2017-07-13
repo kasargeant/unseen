@@ -1,5 +1,10 @@
 "use strict";
 
+// Source: https://github.com/npm-dom/dom-walk
+// License: npm-dom/dom-walk is licensed under the MIT License
+
+// TODO - replace with more performant option.
+
 // Imports
 const slice = Array.prototype.slice;
 

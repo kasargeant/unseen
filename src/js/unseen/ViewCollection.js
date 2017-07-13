@@ -24,26 +24,24 @@ class ViewCollection {
         this.ViewClass = ViewClass;
         this.model = modelCollection;
         this.model._parent = this;
-        this.views = [];
+        this.views = {};
 
-        // let i;
-        // for(i = 0; i < this.model.length; i++) {
-        //     let model = this.model.get(i); // Note if the 'model' IS a single model... it returns itself
-        //     let view = new this.ViewClass(model, this, i);
+        // for(let id in this.model.models) {
+        //     let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
+        //     let view = new this.ViewClass(model, this, id);
         //     this.views.push(view);
         // }
+        this.length = 0;
         for(let id in this.model.models) {
             let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
             let view = new this.ViewClass(model, this, id);
-            this.views.push(view);
+            this.views[id] = view;
+            this.length++;
         }
 
-        this.length = this.views.length;
-        this._viewCounter = this.views.length; // This provides a unique ID for every view.
+        this._viewCounter = this.length; // This provides a unique ID for every view.
 
         this.el = "";
-
-        this.fragment = null;
 
         this.on("change", function(args) {
             console.log(`ViewCollection #${this._id}: Model/Collection #${args} changed.`);
@@ -110,8 +108,8 @@ class ViewCollection {
 
     render(doInsert=false) {
         this.el = `<${this.tag} id="view-collection-${this._id}">`;
-        for(let i = 0; i < this.views.length; i++) {
-            this.el += this.views[i].render(false);
+        for(let id in this.views) {
+            this.el += this.views[id].render(false);
         }
         this.el += "</" + this.tag + ">";
         if(doInsert === true) {
@@ -125,8 +123,8 @@ class ViewCollection {
         // Render view for single model
         this.el = document.createElement(this.tag);
         this.el.id = `view-collection-${this._id}`;
-        for(let i = 0; i < this.views.length; i++) {
-            this.el.appendChild(this.views[i].render(false));
+        for(let id in this.views) {
+            this.el.appendChild(this.views[id].render(false));
         }
         if(doInsert === true) {
             jQuery(this.target).append(this.el);
@@ -146,8 +144,8 @@ class ViewCollection {
         }
         let element = document.createElement(this.tag);
         element.id = `view-collection-${this._id}`;
-        for(let i = 0; i < this.views.length; i++) {
-            let view = this.views[i];
+        for(let id in this.views) {
+            let view = this.views[id];
             viewEvents[view._id] = view.renderFragment(false, element);
         }
 
@@ -166,7 +164,7 @@ class ViewCollection {
                 let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
                 console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
                 console.log(`Have found ${viewEvents[viewId]} events for View component ${viewId}`);
-                
+                //this.model.emit("remove", viewId);
             }.bind(this), false);
         }
     }
