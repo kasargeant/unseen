@@ -12,7 +12,7 @@
 const EventEmitter = require("event-emitter");
 const jQuery = require("jquery");
 
-class View {
+class ViewCollection {
     constructor(model, parent=null, id=0) {
 
         this._parent = parent;
@@ -122,10 +122,10 @@ class View {
     // }
 }
 
-EventEmitter(View.prototype);
+EventEmitter(ViewCollection.prototype);
 
 // Exports
-module.exports = View;
+module.exports = ViewCollection;
 
 
 

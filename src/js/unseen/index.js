@@ -53,22 +53,21 @@ console.time("render");
 // With 99161 records.
 // render: 255.842041015625ms
 // insert: 21221.27880859375ms
-let result = myView.render();
+myView.render(true);
 
 // With 99161 records.
 // render: 1147.885009765625ms
 // insert: 21828.57470703125ms
-// let result = myView.renderFragment();
+// myView.renderFragment(true);
 
 // With 99161 records.
 // render: 427.306884765625ms
 // insert: 20403.213134765625ms
-// let result = myView.renderTree();
+// myView.renderTree(true);
 
 console.timeEnd("render");
-
 console.time("insert");
-jQuery("main").append(result);
+// jQuery("main").append(result);
 jQuery(document).ready(function () {
     // Action after append is completely done
     console.timeEnd("insert");

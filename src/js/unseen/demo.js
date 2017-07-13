@@ -72,3 +72,14 @@ model2.b = "zoobie!";
 console.log(model2.a);
 myCollection2._dump();
 
+
+
+
+class MyView extends Unseen.View {
+    template(model, idx) {
+        return `<div id="idx-${idx}">${model.a}: ${model.b} - ${model.c}</div>`;
+    }
+}
+
+let myView = new MyView(myCollection2);
+console.log(myView.render(false));
