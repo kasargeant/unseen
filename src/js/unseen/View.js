@@ -17,19 +17,20 @@ class View {
     constructor(model, parent=null, id=0) {
 
         this._parent = parent;
-        this._id = id;
+        this._id = id;          // View ID
 
+        this.id = "view";       // HTML Element ID
         this.target = "main";
-        this.tag = "section";
+        this.tag = "div";
+        this.classList = [];
 
         this.model = model;
         //this.model._parent = this;
+        this.views = null;
 
         this.el = "";
 
-        this.subViews = null;
-        this.fragment = null;
-
+        // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
         this.on("change", function(args) {
             console.log(`View #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
@@ -39,13 +40,30 @@ class View {
     }
 
     // LIFECYCLE METHODS
+
+    /**
+     * @override
+     */
     initialize() {
         // Lifecycle method.
     }
-    destroy() {}
+
+    /**
+     * @override
+     */
+    finalize() {
+
+    }
+
+    destroy() {
+        let selector = `#${this.id}-${this._id}`;
+        console.log("SELECTOR" + selector);
+        console.log(`View ${this._id} is being destroyed!!!`);
+        jQuery(selector).remove();
+    }
 
     // return [
-    //    ["button-delete", "click", "deleteAction"]
+    //    ["#button-delete", "click", "deleteAction"]
     // ];
     events() {return null;}
 
@@ -57,42 +75,17 @@ class View {
 
     template(model, params) {return JSON.stringify(model);}
 
-    render(doInsert=false, id="") {
-        // Render view for single model
-        this.el = `<${this.tag} id="view-${this._id}">`;
-        this.el += this.template(this.model, id);
-        this.el += "</" + this.tag + ">";
-        if(doInsert === true) {
-            jQuery(this.target).append(this.el);
-        } else {
-            return this.el;
-        }
+    style() {
+        return "";
     }
 
-    renderTree(doInsert=false) {
-        // Render view for single model
-        this.el = document.createElement(this.tag);
-        for(let i = 0; i < this.model.length; i++) {
-            let model = this.model.get(i); // Note if the 'model' IS a single model... it returns itself
-            this.el.appendChild(this.template(model, i));
-        }
-        if(doInsert === true) {
-            jQuery(this.target).append(this.el);
-        } else {
-            return this.el;
-        }
-    }
+    _render(doInsert=false, fragment=null) {
 
-    renderFragment(doInsert=false, fragment=null) {
-        // Are we a top-level view?
-        if(fragment === null && this._parent === null) {
-            // YES - without passed fragment or parent
-            fragment = document.createDocumentFragment();
-        }
         let element = document.createElement(this.tag);
-        element.id = `view-${this._id}`;
+        element.id = this.id;
+        element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
+        element.classList.add(...this.classList); // We add any remaining classes.
         element.innerHTML = this.template(this.model, 0);
-
         // First we make any element ids in this View - unique.
         walk(element, function(node) {
             // console.log("node", node); // DEBUG ONLY
@@ -101,14 +94,29 @@ class View {
             }
         }.bind(this));
 
+        // Collect events
+        let viewEvents = this.events();
 
+
+        // Now we add any sub-views
+        if(this.views !== null) {
+            for(let id in this.views) {
+                let view = this.views[id];
+                viewEvents[view._id] = view._render(false, element);
+            }
+        }
+
+        // Are we a top-level view?
+        if(this._parent === null && fragment === null) {
+            // YES - without passed fragment or parent
+            fragment = document.createDocumentFragment();
+        }
         fragment.appendChild(element);
-
 
         if(doInsert === true) {
             jQuery(this.target).append(fragment);
         }
-        return this.events();
+        return viewEvents;
     }
 }
 
