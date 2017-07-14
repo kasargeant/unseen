@@ -37,6 +37,14 @@ function ModelCollection(ModelClass, records=[]) {
         this._emit("change"); // Relay the event forward
     });
 
+    this.on("view-remove", function(args) {
+        console.log(`ModelCollection #${this._id}: View #${args} changed.`);
+        console.log(`ModelCollection #${this._id}: Removing Model #${args}`);
+        console.log("exists? " + (this.models[args] !== undefined));
+        delete this.models[args];
+        console.log("exists? " + (this.models[args] !== undefined));
+        this._emit("change"); // Relay the event forward
+    });
 }
 
 ModelCollection.prototype._emit = function(eventType) {

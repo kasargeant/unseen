@@ -26,11 +26,7 @@ class ViewCollection {
         this.model._parent = this;
         this.views = {};
 
-        // for(let id in this.model.models) {
-        //     let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
-        //     let view = new this.ViewClass(model, this, id);
-        //     this.views.push(view);
-        // }
+        // Instantiate initial View components from ModelCollection models
         this.length = 0;
         for(let id in this.model.models) {
             let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
@@ -43,60 +39,24 @@ class ViewCollection {
 
         this.el = "";
 
+        // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
         this.on("change", function(args) {
             console.log(`ViewCollection #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
-        });
+            jQuery(this.target).children().first().detach();
+            this.renderFragment(true);
+        }.bind(this));
+
+        // TODO - Add internal events listener used by Views signalling this ViewCollection
+        //
     }
 
     // LIFECYCLE METHODS
     initialize() {
         // Lifecycle method.
     }
+
     destroy() {}
-
-    _addEvents(element) {
-        console.log("_addEvents()");
-        // let events = this.events(); // Gets an array of user-defined events.
-        // if(events !== null) {
-        //     for(let event of events) {
-        //         let element = fragment.querySelector(event[0]);
-        //         if(element) {
-        //             console.log(`Listening to ${event[0]} for a '${event[1]}' event to trigger method this.${event[2]}()`);
-        //             element.addEventListener(event[1], function(evt) {
-        //                 console.log(`${event[0]}: ${event[1]}`);
-        //                 this[event[2]](evt);
-        //             }.bind(this), false);
-        //         } else {
-        //             console.error(`Error: Unable to bind event for selector '${event[0]}'.`);
-        //         }
-        //
-        //     }
-        // }
-
-        // // Add blanket debug listener
-        // let element = fragment.firstElementChild;
-        // if(element !== null) {
-        //     console.log("got element")
-        //     element.addEventListener("click", function(evt) {
-        //         console.log(`${evt.type}: ${evt.target.name}`);
-        //     }.bind(this), false);
-        // }
-
-        // Add blanket debug listener
-        if(element !== null) {
-            element.addEventListener("click", function(evt) {
-                console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
-
-                let eventTargetId = evt.target.id;
-                let splitPoint = eventTargetId.lastIndexOf("-");
-                let elementId = eventTargetId.slice(0, splitPoint);
-                let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-                console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
-
-            }.bind(this), false);
-        }
-    }
 
     _emit(eventType) {
         if(this._parent !== null) {
@@ -164,7 +124,13 @@ class ViewCollection {
                 let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
                 console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
                 console.log(`Have found ${viewEvents[viewId]} events for View component ${viewId}`);
-                //this.model.emit("remove", viewId);
+
+                // let modelId = this.views[viewId].model._id;
+                // console.log("Have model id: " + modelId);
+
+                // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
+                delete this.views[viewId];
+                this.model.emit("view-remove", viewId);
             }.bind(this), false);
         }
     }

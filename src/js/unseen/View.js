@@ -44,53 +44,6 @@ class View {
     }
     destroy() {}
 
-    _addEvents(element) {
-        console.log("_addEvents()");
-
-        // First we make any element ids in this View - unique.
-        walk(element, function(node) {
-            console.log("node", node);
-            if(node.id !== null) {
-                node.id = node.id + "-" + this._id;
-            }
-        }.bind(this));
-
-
-        // let events = this.events(); // Gets an array of user-defined events.
-        // if(events !== null) {
-        //     for(let event of events) {
-        //         let element = fragment.querySelector(event[0]);
-        //         if(element) {
-        //             console.log(`Listening to ${event[0]} for a '${event[1]}' event to trigger method this.${event[2]}()`);
-        //             element.addEventListener(event[1], function(evt) {
-        //                 console.log(`${event[0]}: ${event[1]}`);
-        //                 this[event[2]](evt);
-        //             }.bind(this), false);
-        //         } else {
-        //             console.error(`Error: Unable to bind event for selector '${event[0]}'.`);
-        //         }
-        //
-        //     }
-        // }
-
-        // // Add blanket debug listener
-        // let element = fragment.firstElementChild;
-        // if(element !== null) {
-        //     console.log("got element")
-        //     element.addEventListener("click", function(evt) {
-        //         console.log(`${evt.type}: ${evt.target.name}`);
-        //     }.bind(this), false);
-        // }
-
-        // Add blanket debug listener
-        if(element !== null) {
-            element.addEventListener("click", function(evt) {
-                console.log(`View Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
-            }.bind(this), false);
-        }
-    }
-
-
     // return [
     //    ["button-delete", "click", "deleteAction"]
     // ];
@@ -139,12 +92,10 @@ class View {
         let element = document.createElement(this.tag);
         element.id = `view-${this._id}`;
         element.innerHTML = this.template(this.model, 0);
-        //this._addEvents(element);
-
 
         // First we make any element ids in this View - unique.
         walk(element, function(node) {
-            console.log("node", node);
+            // console.log("node", node); // DEBUG ONLY
             if(node.id !== null) {
                 node.id = node.id + "-" + this._id;
             }
@@ -159,39 +110,6 @@ class View {
         }
         return this.events();
     }
-
-    // render() {
-    //
-    //     // Render view for single model
-    //     if(this.subViews === null) {
-    //         this.el = this.template(this.model);
-    //     } else {
-    //         for(let i = 0; i < this.subViews.length; i++) {
-    //             this.el += this.subViews.render();
-    //         }
-    //     }
-    //     return this.el;
-    // }
-    //
-    // renderFragment() {
-    //
-    //     this.fragment = document.createDocumentFragment();
-    //     let element = null;
-    //
-    //     // Render view for single model
-    //     if(this.subViews === null) {
-    //         element = document.createElement(this.tag);
-    //         element.innerHTML = this.template(this.model);
-    //         this.fragment.appendChild(element);
-    //     } else {
-    //         for(let i = 0; i < this.subViews.length; i++) {
-    //             element = document.createElement(this.tag);
-    //             element.innerHTML = this.subViews.render();
-    //             this.fragment.appendChild(element);
-    //         }
-    //     }
-    //     return this.fragment;
-    // }
 }
 
 EventEmitter(View.prototype);
