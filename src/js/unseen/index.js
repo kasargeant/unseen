@@ -14,7 +14,7 @@ const ViewCollection = require("./ViewCollection");
 
 const jQuery = require("jquery");
 
-let rawData = require("../../data/processed_half.json");
+let rawData = require("../../data/processed_sample.json");
 
 
 class MyModel extends Model {
@@ -35,18 +35,19 @@ let myModelCollection = new MyModelCollection(rawData);
 class MyView extends View {
 
     initialize() {
+        this.id = "my-item";
         this.tag = "article";
-    }
-
-    template(model, idx) {
-        return `<div id="somediv">${model.id}: ${model.type} - ${model.name}</div>
-                <button id="button-delete" class="pure-button">Delete</button>`;
     }
 
     events() {
         return {
             "#button-delete": ["click", "deleteAction"]
         };
+    }
+
+    template(model, idx) {
+        return `<div id="somediv">${model.id}: ${model.type} - ${model.name}</div>
+                <button id="button-delete" class="pure-button">Delete</button>`;
     }
 
     deleteAction(evt) {
@@ -58,6 +59,11 @@ class MyView extends View {
 class MyViewCollection extends ViewCollection {
     constructor(modelCollection, parent, id) {
         super(MyView, modelCollection, parent, id);
+    }
+
+    initialize() {
+        this.id = "my-list";
+        this.tag = "section";
     }
 }
 
@@ -79,7 +85,7 @@ console.time("render");
 // With 99161 records.
 // render: 1147.885009765625ms
 // insert: 21828.57470703125ms
-myViewCollection.renderFragment(true);
+myViewCollection._render(true);
 
 // With 99161 records.
 // render: 427.306884765625ms

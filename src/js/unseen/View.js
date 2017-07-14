@@ -17,19 +17,19 @@ class View {
     constructor(model, parent=null, id=0) {
 
         this._parent = parent;
-        this._id = id;
+        this._id = id;          // View ID
 
+        this.id = "view";       // HTML Element ID
         this.target = "main";
-        this.tag = "section";
+        this.tag = "div";
 
         this.model = model;
         //this.model._parent = this;
+        this.views = null;
 
         this.el = "";
 
-        this.subViews = null;
-        this.fragment = null;
-
+        // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
         this.on("change", function(args) {
             console.log(`View #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
@@ -39,14 +39,25 @@ class View {
     }
 
     // LIFECYCLE METHODS
+
+    /**
+     * @override
+     */
     initialize() {
         // Lifecycle method.
     }
 
+    /**
+     * @override
+     */
+    finalize() {
+
+    }
+
     destroy() {
-        console.log(`View ${this._id} is being destroyed!!!`);
-        let selector = `#view-${this._id}-${this._id}`;
+        let selector = `#${this.id}-${this._id}`;
         console.log("SELECTOR" + selector);
+        console.log(`View ${this._id} is being destroyed!!!`);
         jQuery(selector).remove();
     }
 
@@ -64,32 +75,15 @@ class View {
     template(model, params) {return JSON.stringify(model);}
 
     style() {
-        return `
-            <style scoped>
-              :scope { background-color: lime; }
-            </style>
-        `;
+        return "";
     }
 
-    // render(doInsert=false, id="") {
-    //     // Render view for single model
-    //     this.el = `<${this.tag} id="view-${this._id}">`;
-    //     this.el += this.template(this.model, id);
-    //     this.el += "</" + this.tag + ">";
-    //     if(doInsert === true) {
-    //         jQuery(this.target).append(this.el);
-    //     } else {
-    //         return this.el;
-    //     }
-    // }
-
-    // Psuedo-tree building render()
-    render(doInsert=false, parentEl=null) {
+    _render(doInsert=false, fragment=null) {
 
         let element = document.createElement(this.tag);
-        element.id = `view-${this._id}`;
+        element.id = this.id;
+        element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
         element.innerHTML = this.template(this.model, 0);
-
         // First we make any element ids in this View - unique.
         walk(element, function(node) {
             // console.log("node", node); // DEBUG ONLY
@@ -98,44 +92,17 @@ class View {
             }
         }.bind(this));
 
-        // If we have a parent element... append directly.
-        if(parentEl !== null) {
-            parentEl.appendChild(element);
-        } else {
-            if(doInsert === true) {
-                jQuery(this.target).append(element);
+        // Collect events
+        let viewEvents = this.events();
+
+
+        // Now we add any sub-views
+        if(this.views !== null) {
+            for(let id in this.views) {
+                let view = this.views[id];
+                viewEvents[view._id] = view._render(false, element);
             }
         }
-        return this.events();
-    }
-
-    renderTree(doInsert=false) {
-        // Render view for single model
-        this.el = document.createElement(this.tag);
-        for(let i = 0; i < this.model.length; i++) {
-            let model = this.model.get(i); // Note if the 'model' IS a single model... it returns itself
-            this.el.appendChild(this.template(model, i));
-        }
-        if(doInsert === true) {
-            jQuery(this.target).append(this.el);
-        } else {
-            return this.el;
-        }
-    }
-
-    renderFragment(doInsert=false, fragment=null) {
-
-        let element = document.createElement(this.tag);
-        element.id = `view-${this._id}`;
-        element.innerHTML = this.template(this.model, 0);
-
-        // First we make any element ids in this View - unique.
-        walk(element, function(node) {
-            // console.log("node", node); // DEBUG ONLY
-            if(node.id !== null) {
-                node.id = node.id + "-" + this._id;
-            }
-        }.bind(this));
 
         // Are we a top-level view?
         if(this._parent === null && fragment === null) {
@@ -147,7 +114,7 @@ class View {
         if(doInsert === true) {
             jQuery(this.target).append(fragment);
         }
-        return this.events();
+        return viewEvents;
     }
 }
 

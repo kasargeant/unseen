@@ -16,15 +16,18 @@ class ViewCollection {
     constructor(ViewClass, modelCollection, parent=null, id=0) {
 
         this._parent = parent;
-        this._id = id;
+        this._id = id;          // View ID
 
+        this.id = "view";       // HTML Element ID
         this.target = "main";
-        this.tag = "section";
+        this.tag = "div";
 
         this.ViewClass = ViewClass;
         this.model = modelCollection;
         this.model._parent = this;
         this.views = {};
+
+        this.allEvents = null;
 
         // Instantiate initial View components from ModelCollection models
         this.length = 0;
@@ -44,19 +47,41 @@ class ViewCollection {
             console.log(`ViewCollection #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
-            // this.renderFragment(true);
+            // this._render(true);
         }.bind(this));
 
         // TODO - Add internal events listener used by Views signalling this ViewCollection
-        //
+
+        this.initialize(); // User initialization.
     }
 
     // LIFECYCLE METHODS
+
+    /**
+     * @override
+     */
     initialize() {
         // Lifecycle method.
     }
 
-    destroy() {}
+    /**
+     * @override
+     */
+    finalize() {
+
+    }
+
+    destroy() {
+        let selector = `#${this.id}-${this._id}`;
+        console.log("SELECTOR" + selector);
+        console.log(`View ${this._id} is being destroyed!!!`);
+        jQuery(selector).remove();
+    }
+
+    // return [
+    //    ["#button-delete", "click", "deleteAction"]
+    // ];
+    events() {return null;}
 
     _emit(eventType) {
         if(this._parent !== null) {
@@ -64,147 +89,55 @@ class ViewCollection {
         }
     }
 
+    _handleEvents(evt) {
+        console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+
+        let eventTargetId = evt.target.id;
+        let splitPoint = eventTargetId.lastIndexOf("-");
+        let elementId = "#" + eventTargetId.slice(0, splitPoint);
+        if(elementId === "#") {
+            throw new Error("Missing event target.");
+        }
+        let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
+        // console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
+        //
+        console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
+        // console.log(`Have found ${this.viewEvents[viewId]} events for View component ${viewId}`);
+
+        let events = this.viewEvents[viewId];
+        let elementEvent = events[elementId];
+        if(elementEvent !== undefined && elementEvent[0] === evt.type) {
+            console.log(`ViewCollection '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
+            let view = this.views[viewId];
+            if(view !== undefined) {
+                view[elementEvent[1]]();
+
+                // DELETE A VIEW
+                // this.views[viewId]._destroy(); // Always call private life-cycle method first.
+                // delete this.views[viewId];
+                // this.model.emit("view-remove", viewId);
+            }
+        }
+
+        // let modelId = this.views[viewId].model._id;
+        // console.log("Have model id: " + modelId);
+
+
+    }
+
     // template(model, params) {return JSON.stringify(model);}
 
-    // Note that 'el' of course isn't really an el now... just markup!
-    // render(doInsert=false, el=null) {
-    //
-    //     let viewEvents = {};
-    //
-    //     el = `<${this.tag} id="view-collection-${this._id}">`;
-    //     for(let id in this.views) {
-    //         let view = this.views[id];
-    //         viewEvents[view._id] = view.render(false, el);
-    //     }
-    //
-    //     el += "</" + this.tag + ">";
-    //     if(doInsert === true) {
-    //         // jQuery(this.target).append(el);
-    //         let element = jQuery(el).appendTo(this.target).get(0);
-    //
-    //         // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-    //         if(this._parent === null) {
-    //             element.addEventListener("click", function (evt) {
-    //                 console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
-    //
-    //                 let eventTargetId = evt.target.id;
-    //                 let splitPoint = eventTargetId.lastIndexOf("-");
-    //                 let elementId = eventTargetId.slice(0, splitPoint);
-    //                 let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-    //                 console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
-    //                 console.log(`Have found ${viewEvents[viewId]} events for View component ${viewId}`);
-    //
-    //                 // let modelId = this.views[viewId].model._id;
-    //                 // console.log("Have model id: " + modelId);
-    //
-    //                 // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
-    //                 delete this.views[viewId];
-    //                 this.model.emit("view-remove", viewId);
-    //             }.bind(this), false);
-    //         }
-    //     } else {
-    //         return el;
-    //     }
-    // }
-    render(doInsert=false, parentEl=null) {
+    _render(doInsert=false, fragment=null) {
 
         let viewEvents = {};
 
         let element = document.createElement(this.tag);
-        element.id = `view-collection-${this._id}`;
+        element.id = this.id + "-" + this._id;
+        element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
         for(let id in this.views) {
             let view = this.views[id];
-            viewEvents[view._id] = view.render(false, element);
-        }
-
-        // If we have a parent element... append directly.
-        if(parentEl !== null) {
-            parentEl.appendChild(element);
-        } else {
-            if(doInsert === true) {
-                jQuery(this.target).append(element);
-
-                // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-                if(this._parent === null) {
-                    element.addEventListener("click", function(evt) {
-                        console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
-
-                        let eventTargetId = evt.target.id;
-                        let splitPoint = eventTargetId.lastIndexOf("-");
-                        let elementId = "#" + eventTargetId.slice(0, splitPoint);
-                        if(elementId === "#") {
-                            throw new Error("Missing event target.");
-                        }
-                        let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-                        // console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
-
-                        //console.log(`View events are: ${JSON.stringify(viewEvents)}`);
-                        //console.log(`Have found ${viewEvents[viewId]} events for View component ${viewId}`);
-
-                        let events = viewEvents[viewId];
-                        let elementEvent = events[elementId];
-                        if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-                            console.log(`ViewCollection '${evt.type}' event for component '${viewId}' element ${elementId}`);
-                            // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
-                            this.views[viewId].destroy(); // Always call life-cycle method first.
-                            delete this.views[viewId];
-                            this.model.emit("view-remove", viewId);
-                        }
-
-                        // let modelId = this.views[viewId].model._id;
-                        // console.log("Have model id: " + modelId);
-
-
-                    }.bind(this), false);
-                }
-            }
-        }
-    }
-
-    renderTree(doInsert=false) {
-        // Render view for single model
-        this.el = document.createElement(this.tag);
-        this.el.id = `view-collection-${this._id}`;
-        for(let id in this.views) {
-            this.el.appendChild(this.views[id].render(false));
-        }
-        if(doInsert === true) {
-            jQuery(this.target).append(this.el);
-
-            // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-            if(this._parent === null) {
-                element.addEventListener("click", function (evt) {
-                    console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
-
-                    let eventTargetId = evt.target.id;
-                    let splitPoint = eventTargetId.lastIndexOf("-");
-                    let elementId = eventTargetId.slice(0, splitPoint);
-                    let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-                    console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
-                    console.log(`Have found ${viewEvents[viewId]} events for View component ${viewId}`);
-
-                    // let modelId = this.views[viewId].model._id;
-                    // console.log("Have model id: " + modelId);
-
-                    // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
-                    delete this.views[viewId];
-                    this.model.emit("view-remove", viewId);
-                }.bind(this), false);
-            }
-        } else {
-            return this.el;
-        }
-    }
-
-    renderFragment(doInsert=false, fragment=null) {
-
-        let viewEvents = {};
-
-        let element = document.createElement(this.tag);
-        element.id = `view-collection-${this._id}`;
-        for(let id in this.views) {
-            let view = this.views[id];
-            viewEvents[view._id] = view.renderFragment(false, element);
+            viewEvents[view._id] = view._render(false, element);
         }
 
         // Are we a top-level view?
@@ -219,44 +152,15 @@ class ViewCollection {
 
             // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
             if(this._parent === null) {
-                element.addEventListener("click", function(evt) {
-                    console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
-                    let eventTargetId = evt.target.id;
-                    let splitPoint = eventTargetId.lastIndexOf("-");
-                    let elementId = "#" + eventTargetId.slice(0, splitPoint);
-                    if(elementId === "#") {
-                        throw new Error("Missing event target.");
-                    }
-                    let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-                    // console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
-                    //
-                    // console.log(`View events are: ${JSON.stringify(viewEvents)}`);
-                    // console.log(`Have found ${viewEvents[viewId]} events for View component ${viewId}`);
+                // We set the viewEvents lookup
+                this.viewEvents = viewEvents;
 
-                    let events = viewEvents[viewId];
-                    let elementEvent = events[elementId];
-                    if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-                        console.log(`ViewCollection '${evt.type}' event for component '${viewId}' element ${elementId}`);
-                        // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
-                        let view = this.views[viewId];
-                        if(view !== undefined) {
-                            view[elementEvent[1]]();
-
-                            // DELETE A VIEW
-                            // this.views[viewId]._destroy(); // Always call private life-cycle method first.
-                            // delete this.views[viewId];
-                            // this.model.emit("view-remove", viewId);
-                        }
-                    }
-
-                    // let modelId = this.views[viewId].model._id;
-                    // console.log("Have model id: " + modelId);
-
-
-                }.bind(this), false);
+                // Add top-level event listener
+                element.addEventListener("click", this._handleEvents.bind(this), false);
             }
         }
+        return viewEvents;
     }
 }
 
