@@ -44,9 +44,9 @@ class MyView extends View {
     }
 
     events() {
-        return [
-            ["#button-delete", "click", "deleteAction"]
-        ];
+        return {
+            "#button-delete": ["click", "deleteAction"]
+        };
     }
 
     deleteAction(evt) {
@@ -73,12 +73,12 @@ console.time("render");
 // With 99161 records.
 // render: 255.842041015625ms
 // insert: 21221.27880859375ms
-myViewCollection.renderFragment(true);
+// myViewCollection.render(true);
 
 // With 99161 records.
 // render: 1147.885009765625ms
 // insert: 21828.57470703125ms
-// myView.renderFragment(true);
+myViewCollection.renderFragment(true);
 
 // With 99161 records.
 // render: 427.306884765625ms

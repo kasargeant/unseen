@@ -45,7 +45,7 @@ class View {
     destroy() {}
 
     // return [
-    //    ["button-delete", "click", "deleteAction"]
+    //    ["#button-delete", "click", "deleteAction"]
     // ];
     events() {return null;}
 
