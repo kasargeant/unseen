@@ -42,7 +42,16 @@ class View {
     initialize() {
         // Lifecycle method.
     }
-    destroy() {}
+
+    _destroy() {
+        this.destroy();
+        let selector = `#view-${this._id}-${this._id}`;
+        console.log("SELECTOR" + selector);
+        jQuery(selector).remove();
+    }
+    destroy() {
+        console.log(`View ${this._id} is being destroyed!!!`);
+    }
 
     // return [
     //    ["#button-delete", "click", "deleteAction"]
@@ -57,16 +66,50 @@ class View {
 
     template(model, params) {return JSON.stringify(model);}
 
-    render(doInsert=false, id="") {
-        // Render view for single model
-        this.el = `<${this.tag} id="view-${this._id}">`;
-        this.el += this.template(this.model, id);
-        this.el += "</" + this.tag + ">";
-        if(doInsert === true) {
-            jQuery(this.target).append(this.el);
+    style() {
+        return `
+            <style scoped>
+              :scope { background-color: lime; }
+            </style>
+        `;
+    }
+
+    // render(doInsert=false, id="") {
+    //     // Render view for single model
+    //     this.el = `<${this.tag} id="view-${this._id}">`;
+    //     this.el += this.template(this.model, id);
+    //     this.el += "</" + this.tag + ">";
+    //     if(doInsert === true) {
+    //         jQuery(this.target).append(this.el);
+    //     } else {
+    //         return this.el;
+    //     }
+    // }
+
+    // Psuedo-tree building render()
+    render(doInsert=false, parentEl=null) {
+
+        let element = document.createElement(this.tag);
+        element.id = `view-${this._id}`;
+        element.innerHTML = this.template(this.model, 0);
+
+        // First we make any element ids in this View - unique.
+        walk(element, function(node) {
+            // console.log("node", node); // DEBUG ONLY
+            if(node.id !== null) {
+                node.id = node.id + "-" + this._id;
+            }
+        }.bind(this));
+
+        // If we have a parent element... append directly.
+        if(parentEl !== null) {
+            parentEl.appendChild(element);
         } else {
-            return this.el;
+            if(doInsert === true) {
+                jQuery(this.target).append(element);
+            }
         }
+        return this.events();
     }
 
     renderTree(doInsert=false) {
@@ -84,11 +127,7 @@ class View {
     }
 
     renderFragment(doInsert=false, fragment=null) {
-        // Are we a top-level view?
-        if(fragment === null && this._parent === null) {
-            // YES - without passed fragment or parent
-            fragment = document.createDocumentFragment();
-        }
+
         let element = document.createElement(this.tag);
         element.id = `view-${this._id}`;
         element.innerHTML = this.template(this.model, 0);
@@ -101,9 +140,12 @@ class View {
             }
         }.bind(this));
 
-
+        // Are we a top-level view?
+        if(this._parent === null && fragment === null) {
+            // YES - without passed fragment or parent
+            fragment = document.createDocumentFragment();
+        }
         fragment.appendChild(element);
-
 
         if(doInsert === true) {
             jQuery(this.target).append(fragment);

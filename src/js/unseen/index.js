@@ -14,7 +14,7 @@ const ViewCollection = require("./ViewCollection");
 
 const jQuery = require("jquery");
 
-let rawData = require("../../data/processed_sample.json");
+let rawData = require("../../data/processed_half.json");
 
 
 class MyModel extends Model {
@@ -40,7 +40,7 @@ class MyView extends View {
 
     template(model, idx) {
         return `<div id="somediv">${model.id}: ${model.type} - ${model.name}</div>
-                <button id="button-delete"></button>`;
+                <button id="button-delete" class="pure-button">Delete</button>`;
     }
 
     events() {
