@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../../node_modules/lodash/lodash.js"></script>
+    <script src="../../node_modules/benchmark/benchmark.js"></script>
+    <script src="../../node_modules/jquery/dist/jquery.js"></script>
+</head>
+<body>
+
+<p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+<p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+<p>Here is some random text.<span id="special">Here</span> is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+<p>Here is some random text.Here is some random text.Here is some <span data-id="special2">random</span> text.Here is some random text.Here is some random text.</p>
+<p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+<p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+
+
+    <script>
+    "use strict";
+//    console.log($(`#special`).text());
+//    console.log($(`[data-id=special2]`).text());
+    let suite = new Benchmark.Suite("Relative selector speeds: id vs data-");
+
+    // Benchmark
+    suite
+        .add("jquery - select by id", function() {
+            return $(`#special`);
+        })
+        .add("jquery - select by id", function() {
+            return $(`[data-id=special2]`);
+        })
+        // add listeners
+        .on("cycle", function(event) {
+            console.log(String(event.target));
+        })
+        .on("complete", function() {
+            console.log("Fastest is " + this.filter("fastest").map("name"));
+        })
+        // run async
+        .run({"async": true});
+
+</script>
+</body>
+</html>
