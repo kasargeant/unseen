@@ -8,7 +8,8 @@
 // Imports
 const Vue = require("vue");
 const jQuery = require("jquery");
-let rawData = require("../../data/processed_half.json");
+
+let rawData = require("../../data/processed_sample.json");
 
 Vue.component("article-post", {
     props: ["post"],

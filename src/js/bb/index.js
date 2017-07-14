@@ -14,7 +14,8 @@ const $ = require("jquery");
 
 const PostCollection = require("./models/PostCollection");
 const PostCollectionView = require("./views/PostCollectionView");
-let rawData = require("../../data/processed_half.json");
+
+let rawData = require("../../data/processed_sample.json");
 
 $(document).ready(function() {
 
