@@ -50,7 +50,8 @@ class MyView extends View {
     }
 
     deleteAction(evt) {
-        console.log(`deleteAction for ${this._id} called by ${evt.data.name}.`);
+        console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
+        this.destroy();
     }
 }
 

@@ -241,9 +241,12 @@ class ViewCollection {
                         // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
                         let view = this.views[viewId];
                         if(view !== undefined) {
-                            this.views[viewId]._destroy(); // Always call private life-cycle method first.
-                            delete this.views[viewId];
-                            this.model.emit("view-remove", viewId);
+                            view[elementEvent[1]]();
+
+                            // DELETE A VIEW
+                            // this.views[viewId]._destroy(); // Always call private life-cycle method first.
+                            // delete this.views[viewId];
+                            // this.model.emit("view-remove", viewId);
                         }
                     }
 

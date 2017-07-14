@@ -43,14 +43,11 @@ class View {
         // Lifecycle method.
     }
 
-    _destroy() {
-        this.destroy();
+    destroy() {
+        console.log(`View ${this._id} is being destroyed!!!`);
         let selector = `#view-${this._id}-${this._id}`;
         console.log("SELECTOR" + selector);
         jQuery(selector).remove();
-    }
-    destroy() {
-        console.log(`View ${this._id} is being destroyed!!!`);
     }
 
     // return [
