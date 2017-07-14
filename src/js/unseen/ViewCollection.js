@@ -21,6 +21,7 @@ class ViewCollection {
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
+        this.classList = [];
 
         this.ViewClass = ViewClass;
         this.model = modelCollection;
@@ -135,6 +136,7 @@ class ViewCollection {
         let element = document.createElement(this.tag);
         element.id = this.id + "-" + this._id;
         element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
+        element.classList.add(...this.classList); // We add any remaining classes.
         for(let id in this.views) {
             let view = this.views[id];
             viewEvents[view._id] = view._render(false, element);

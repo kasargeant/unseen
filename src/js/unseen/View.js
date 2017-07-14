@@ -22,6 +22,7 @@ class View {
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
+        this.classList = [];
 
         this.model = model;
         //this.model._parent = this;
@@ -83,6 +84,7 @@ class View {
         let element = document.createElement(this.tag);
         element.id = this.id;
         element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
+        element.classList.add(...this.classList); // We add any remaining classes.
         element.innerHTML = this.template(this.model, 0);
         // First we make any element ids in this View - unique.
         walk(element, function(node) {
