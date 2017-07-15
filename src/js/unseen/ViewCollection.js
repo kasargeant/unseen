@@ -141,12 +141,15 @@ class ViewCollection {
 
     _render(doInsert=false, fragment=null) {
 
-        let viewEvents = {};
-
         let element = document.createElement(this.tag);
         element.id = this.id + "-" + this._id;
         element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
         element.classList.add(...this.classList); // We add any remaining classes.
+
+        // Collect events
+        let viewEvents = {};
+
+        // Now we add any sub-views
         for(let id in this.views) {
             let view = this.views[id];
             viewEvents[view._id] = view._render(false, element);
@@ -177,35 +180,34 @@ class ViewCollection {
 
     _renderMarkup(doInsert=false, markup=null) {
 
-        let viewEvents = {};
-
         let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
         classList.push(...this.classList); // We add any remaining classes.
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
-        // let element = {html: this.template(this.base, 0)};
-        let element = {html: ""};
+        // let elementBody = this.template(this.base, 0);
+        let elementBody = "";
 
         // First we make any element ids in this View - unique.
-        element.html = element.html.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
         // console.log("CONTENT: " + JSON.stringify(element.html));
 
+        // Collect events
+        let viewEvents = {};
+
         // Now we add any sub-views
+        let elementChildren = {html: ""};
         for(let id in this.views) {
             let view = this.views[id];
-            viewEvents[view._id] = view._renderMarkup(false, element);
+            viewEvents[view._id] = view._renderMarkup(false, elementChildren);
         }
-
-        // Close the element's tag
-        element.html = elementOpen + element.html + elementClose;
 
         // Are we a top-level view?
         if(this._parent === null && markup === null) {
             // YES - without passed fragment or parent
             markup = {html: ""};
         }
-        markup.html += element.html;
+        markup.html += elementOpen + elementBody + elementChildren.html + elementClose;
         // console.log("MARKUP: " + JSON.stringify(markup.html));
 
         if(doInsert === true) {
