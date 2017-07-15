@@ -1,6 +1,6 @@
 /**
- * @file View.js
- * @description The View class.
+ * @file BaseView.js
+ * @description The Base View class.
  * @author Kyle Alexis Sargeant <kasargeant@gmail.com> {@link https://github.com/kasargeant https://github.com/kasargeant}.
  * @copyright Kyle Alexis Sargeant 2017
  * @license See LICENSE file included in this distribution.
@@ -14,44 +14,42 @@ const jQuery = require("jquery");
 const walk = require("./walk");
 
 /**
- * The View class.
+ * The base View class.
  * @class
  */
-class View {
-
+class BaseView {
     /**
+     * @param model
      * @param parent
      * @param id
      * @constructor
      */
-    constructor(parent=null, id=0) {
+    constructor(model, parent=null, id=0) {
 
-        // Set internally (or by parent).
         this._parent = parent;
         this._id = id;          // View ID
 
-        // Set by user (or default).
-        this.base = null;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
         this.classList = [];
-        this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
-        // Calculated from previous internal/user properties.
+        this.model = model;
+        //this.model._parent = this;
         this.views = null;
+
         this.el = "";
 
         // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
         this.on("change", function(args) {
-            console.log(`View #${this._id}: Model/Collection #${args} changed.`);
+            console.log(`BaseView #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
         });
+
+        this.initialize(); // User initialization.
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // LIFECYCLE METHODS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * @override
@@ -70,7 +68,7 @@ class View {
     destroy() {
         let selector = `#${this.id}-${this._id}`;
         console.log("SELECTOR" + selector);
-        console.log(`View ${this._id} is being destroyed!!!`);
+        console.log(`BaseView ${this._id} is being destroyed!!!`);
         jQuery(selector).remove();
     }
 
@@ -97,7 +95,7 @@ class View {
         element.id = this.id;
         element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
         element.classList.add(...this.classList); // We add any remaining classes.
-        element.innerHTML = this.template(this.base, 0);
+        element.innerHTML = this.template(this.model, 0);
         // First we make any element ids in this View - unique.
         walk(element, function(node) {
             // console.log("node", node); // DEBUG ONLY
@@ -132,10 +130,10 @@ class View {
     }
 }
 
-EventEmitter(View.prototype);
+EventEmitter(BaseView.prototype);
 
 // Exports
-module.exports = View;
+module.exports = BaseView;
 
 
 

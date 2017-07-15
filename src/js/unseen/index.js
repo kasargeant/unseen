@@ -19,14 +19,14 @@ let rawData = require("../../data/processed_sample.json");
 // MODEL
 class MyModel extends Model {
     initialize() {
-        this.schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+        this.base = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
     }
 }
 
 // MODEL COLLECTION
 class MyModelCollection extends ModelCollection {
     initialize() {
-        this.ModelClass = MyModel;
+        this.baseClass = MyModel;
     }
 }
 
@@ -34,7 +34,7 @@ class MyModelCollection extends ModelCollection {
 class MyView extends View {
 
     initialize() {
-        this.model = null;
+        this.base = null;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];
@@ -71,7 +71,7 @@ class MyView extends View {
 // VIEW COLLECTION
 class MyViewCollection extends ViewCollection {
     initialize() {
-        this.ViewClass = MyView;
+        this.baseClass = MyView;
         this.id = "my-list";
         this.tag = "div";
         this.classList = ["container"];
