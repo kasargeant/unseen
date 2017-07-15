@@ -4,7 +4,8 @@
 
 ## ABOUT
 
-An experiment...
+**Unseen** is a micro-library designed to provide a robust and performant foundation for building SPAs and other front-end applications.
+
 
 ## INSTALLATION
 
@@ -12,11 +13,11 @@ An experiment...
 
 ## USAGE
 
-I'm still working it out...
+I'm still working it out... ;)
 
 ## DOCUMENTATION
 
-None at present.
+See the [Unseen Wiki](https://github.com/kasargeant/unseen/wiki) for current documentation.
 
 ## LICENSE INFORMATION
  
