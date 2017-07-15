@@ -16,11 +16,18 @@
  * @param collectionId
  * @constructor
  */
-const BaseModel = function(definition={}, record={}, parent=null, collectionId=0) {
+const BaseModel = function(base={}, record={}, parent=null, collectionId=0) {
+
+    // Set internally (or by parent).
     this._id = collectionId; // An internal ID only.
     this._parent = parent; // Note: Parent can EITHER be a collection OR a view. NOT BOTH.
-    this._defaults = definition;
-    this._keys = Object.keys(definition);
+
+    // Set by user (or default).
+    this.base = base;
+    this.initialize();  // LIFECYCLE CALL: INITIALIZE
+
+    // Calculated from previous internal/user properties.
+    this._keys = Object.keys(this.base);
     this._record = {};
 
     for(let key of this._keys) {
@@ -35,10 +42,24 @@ const BaseModel = function(definition={}, record={}, parent=null, collectionId=0
             }
         });
 
-        this._record[key] = record[key] || this._defaults[key];
+        this._record[key] = record[key] || this.base[key];
     }
     this.length = 1; // Always 1... included only for compatibility with Collection interface.
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// LIFECYCLE METHODS
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/**
+ * @override
+ */
+BaseModel.prototype.initialize = function() {};
+
+/**
+ * @override
+ */
+BaseModel.prototype.finalize = function() {};
 
 BaseModel.prototype._emit = function(eventType) {
     if(this._parent !== null) {

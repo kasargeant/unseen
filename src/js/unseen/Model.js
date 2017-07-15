@@ -45,6 +45,7 @@ const Model = function(record={}, parent=null, collectionId=0) {
     }
     this.length = 1; // Always 1... included only for compatibility with Collection interface.
 };
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // LIFECYCLE METHODS
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

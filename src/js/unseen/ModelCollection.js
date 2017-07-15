@@ -24,7 +24,6 @@ function ModelCollection(records=[]) {
 
     // Set by user (or default).
     this.baseClass = null;
-    this._defaults = {};
     this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
     // Calculated from previous internal/user properties.

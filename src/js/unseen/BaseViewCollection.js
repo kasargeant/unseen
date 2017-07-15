@@ -18,33 +18,35 @@ const jQuery = require("jquery");
  */
 class BaseViewCollection {
     /**
-     * @param ViewClass
+     * @param baseClass
      * @param modelCollection
      * @param parent
      * @param id
      */
-    constructor(ViewClass, modelCollection, parent=null, id=0) {
+    constructor(baseClass, modelCollection, parent=null, id=0) {
 
+        // Set internally (or by parent).
         this._parent = parent;
         this._id = id;          // View ID
 
+        // Set by user (or default).
+        this.baseClass = baseClass;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
         this.classList = [];
+        this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
-        this.ViewClass = ViewClass;
+        // Calculated from previous internal/user properties.
         this.model = modelCollection;
         this.model._parent = this;
         this.views = {};
-
-        this.allEvents = null;
 
         // Instantiate initial View components from ModelCollection models
         this.length = 0;
         for(let id in this.model.models) {
             let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
-            let view = new this.ViewClass(model, this, id);
+            let view = new this.baseClass(model, this, id);
             this.views[id] = view;
             this.length++;
         }
@@ -62,8 +64,6 @@ class BaseViewCollection {
         }.bind(this));
 
         // TODO - Add internal events listener used by Views signalling this BaseViewCollection
-
-        this.initialize(); // User initialization.
     }
 
     // LIFECYCLE METHODS
@@ -71,16 +71,12 @@ class BaseViewCollection {
     /**
      * @override
      */
-    initialize() {
-        // Lifecycle method.
-    }
+    initialize() {}
 
     /**
      * @override
      */
-    finalize() {
-
-    }
+    finalize() {}
 
     destroy() {
         let selector = `#${this.id}-${this._id}`;

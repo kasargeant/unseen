@@ -13,22 +13,27 @@ const EventEmitter = require("event-emitter");
 
 /**
  * The base ModelCollection class.
- * @param ModelClass
+ * @param baseClass
  * @param records
  * @constructor
  */
-function BaseModelCollection(ModelClass, records=[]) {
+function BaseModelCollection(baseClass, records=[]) {
 
+    // Set internally (or by parent).
     this._parent = null;
     this._id = 0;
 
-    this.ModelClass = ModelClass;
+    // Set by user (or default).
+    this.baseClass = baseClass;
+    this.initialize();  // LIFECYCLE CALL: INITIALIZE
+
+    // Calculated from previous internal/user properties.
     this.models = {};
     this.length = 0;
 
     let i;
     for(i = 0; i < records.length; i++) {
-        this.models[i] = new this.ModelClass(records[i], this, i);
+        this.models[i] = new this.baseClass(records[i], this, i);
     }
     this.length = i;
     this._modelCounter = i; // This provides a unique ID for every model.
@@ -52,6 +57,20 @@ function BaseModelCollection(ModelClass, records=[]) {
     });
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// LIFECYCLE METHODS
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/**
+ * @override
+ */
+BaseModelCollection.prototype.initialize = function() {};
+
+/**
+ * @override
+ */
+BaseModelCollection.prototype.finalize = function() {};
+
 BaseModelCollection.prototype._emit = function(eventType) {
     if(this._parent !== null) {
         // this._parent.dispatchEvent(eventType);
@@ -61,7 +80,7 @@ BaseModelCollection.prototype._emit = function(eventType) {
 
 BaseModelCollection.prototype.add = function(record) {
     let id = this._modelCounter++;
-    this.models[id] = new this.ModelClass(record, this, id);
+    this.models[id] = new this.baseClass(record, this, id);
     this.length++;
 };
 
@@ -73,7 +92,7 @@ BaseModelCollection.prototype.set = function(records) {
     this.models = {};
     let i;
     for(i = 0; i < records.length; i++) {
-        this.models[i] = new this.ModelClass(records[i], this, i);
+        this.models[i] = new this.baseClass(records[i], this, i);
     }
     this.length = i;
     this._modelCounter = i; // This provides a unique ID for every model.
