@@ -14,20 +14,22 @@ const jQuery = require("jquery");
 const walk = require("./walk");
 
 class View {
-    constructor(model, parent=null, id=0) {
+    constructor(parent=null, id=0) {
 
+        // Set internally (or by parent).
         this._parent = parent;
         this._id = id;          // View ID
 
+        // Set by user (or default).
+        this.model = null;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
         this.classList = [];
+        this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
-        this.model = model;
-        //this.model._parent = this;
+        // Calculated from previous internal/user properties.
         this.views = null;
-
         this.el = "";
 
         // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
@@ -35,8 +37,6 @@ class View {
             console.log(`View #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
         });
-
-        this.initialize(); // User initialization.
     }
 
     // LIFECYCLE METHODS

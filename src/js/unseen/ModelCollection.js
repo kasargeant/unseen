@@ -12,12 +12,18 @@
 const EventEmitter = require("event-emitter");
 
 // Component
-function ModelCollection(ModelClass, records=[]) {
+function ModelCollection(records=[]) {
 
+    // Set internally (or by parent).
     this._parent = null;
     this._id = 0;
 
-    this.ModelClass = ModelClass;
+    // Set by user (or default).
+    this.ModelClass = null;
+    this._defaults = {};
+    this.initialize();  // LIFECYCLE CALL: INITIALIZE
+
+    // Calculated from previous internal/user properties.
     this.models = {};
     this.length = 0;
 

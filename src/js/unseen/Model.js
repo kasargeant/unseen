@@ -8,11 +8,18 @@
 
 "use strict";
 
-const Model = function(definition={}, record={}, parent=null, collectionId=0) {
+const Model = function(record={}, parent=null, collectionId=0) {
+
+    // Set internally (or by parent).
     this._id = collectionId; // An internal ID only.
     this._parent = parent; // Note: Parent can EITHER be a collection OR a view. NOT BOTH.
-    this._defaults = definition;
-    this._keys = Object.keys(definition);
+
+    // Set by user (or default).
+    this._defaults = {};
+    this.initialize();  // LIFECYCLE CALL: INITIALIZE
+
+    // Calculated from previous internal/user properties.
+    this._keys = Object.keys(this._defaults);
     this._record = {};
 
     for(let key of this._keys) {
