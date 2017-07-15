@@ -56,6 +56,7 @@ class ViewCollection {
         this._viewCounter = this.length; // This provides a unique ID for every view.
 
         this.el = "";
+        this.$el = null;
 
         // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
         this.on("change", function(args) {
@@ -112,8 +113,7 @@ class ViewCollection {
         let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
         // console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
         //
-        console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
-        // console.log(`Have found ${this.viewEvents[viewId]} events for View component ${viewId}`);
+        //console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
         let events = this.viewEvents[viewId];
         let elementEvent = events[elementId];
@@ -170,6 +170,57 @@ class ViewCollection {
 
                 // Add top-level event listener
                 element.addEventListener("click", this._handleEvents.bind(this), false);
+            }
+        }
+        return viewEvents;
+    }
+
+    _renderMarkup(doInsert=false, markup=null) {
+
+        let viewEvents = {};
+
+        let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
+        classList.push(...this.classList); // We add any remaining classes.
+
+        let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
+        let elementClose = "</" + this.tag + ">";
+        // let element = {html: this.template(this.base, 0)};
+        let element = {html: ""};
+
+        // First we make any element ids in this View - unique.
+        element.html = element.html.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        // console.log("CONTENT: " + JSON.stringify(element.html));
+
+        // Now we add any sub-views
+        for(let id in this.views) {
+            let view = this.views[id];
+            viewEvents[view._id] = view._renderMarkup(false, element);
+        }
+
+        // Close the element's tag
+        element.html = elementOpen + element.html + elementClose;
+
+        // Are we a top-level view?
+        if(this._parent === null && markup === null) {
+            // YES - without passed fragment or parent
+            markup = {html: ""};
+        }
+        markup.html += element.html;
+        // console.log("MARKUP: " + JSON.stringify(markup.html));
+
+        if(doInsert === true) {
+            // jQuery(this.target).append(markup);
+
+            this.$el = jQuery(markup.html).appendTo(this.target).get(0);
+
+            // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+            if(this._parent === null) {
+
+                // We set the viewEvents lookup
+                this.viewEvents = viewEvents;
+
+                // Add top-level event listener
+                this.$el.addEventListener("click", this._handleEvents.bind(this), false);
             }
         }
         return viewEvents;

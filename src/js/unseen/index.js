@@ -14,7 +14,7 @@ const ViewCollection = require("./ViewCollection");
 
 const jQuery = require("jquery");
 
-let rawData = require("../../data/processed_sample.json");
+let rawData = require("../../data/processed_half.json");
 
 // MODEL
 class MyModel extends Model {
@@ -86,7 +86,8 @@ let myViewCollection = new MyViewCollection(myModelCollection);
 console.log(`With ${myModelCollection.length} records.`);
 console.time("render");
 
-myViewCollection._render(true);
+// myViewCollection._render(true);
+myViewCollection._renderMarkup(true);
 
 console.timeEnd("render");
 
