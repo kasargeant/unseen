@@ -19,7 +19,7 @@ let rawData = require("../../data/processed_sample.json");
 // MODEL
 class MyModel extends Model {
     initialize() {
-        this._defaults = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+        this.schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
     }
 }
 
@@ -34,6 +34,7 @@ class MyModelCollection extends ModelCollection {
 class MyView extends View {
 
     initialize() {
+        this.model = null;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];

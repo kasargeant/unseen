@@ -15,11 +15,11 @@ const Model = function(record={}, parent=null, collectionId=0) {
     this._parent = parent; // Note: Parent can EITHER be a collection OR a view. NOT BOTH.
 
     // Set by user (or default).
-    this._defaults = {};
+    this.schema = {};
     this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
     // Calculated from previous internal/user properties.
-    this._keys = Object.keys(this._defaults);
+    this._keys = Object.keys(this.schema);
     this._record = {};
 
     for(let key of this._keys) {
@@ -34,7 +34,7 @@ const Model = function(record={}, parent=null, collectionId=0) {
             }
         });
 
-        this._record[key] = record[key] || this._defaults[key];
+        this._record[key] = record[key] || this.schema[key];
     }
     this.length = 1; // Always 1... included only for compatibility with Collection interface.
 };
