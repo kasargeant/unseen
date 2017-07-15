@@ -39,9 +39,8 @@ describe("Class: Unseen", function() {
     describe("Models", function() {
 
         class TestModel extends Unseen.Model {
-            constructor(record, parent, id) {
-                let definition = {a: "hi", b: "ho", c: 3};
-                super(definition, record, parent, id);
+            initialize() {
+                this.base = {a: "hi", b: "ho", c: 3};
             }
         }
         let testModelInstance1 = new TestModel({b: "o"});
@@ -74,14 +73,13 @@ describe("Class: Unseen", function() {
     describe("Collections", function() {
 
         class TestModel extends Unseen.Model {
-            constructor(record, parent, id) {
-                let definition = {a: "hi", b: "ho", c: 3};
-                super(definition, record, parent, id);
+            initialize() {
+                this.base = {a: "hi", b: "ho", c: 3};
             }
         }
         class TestCollection extends Unseen.ModelCollection {
-            constructor(data) {
-                super(TestModel, data);
+            initialize() {
+                this.baseClass = TestModel;
             }
         }
         let testCollectionInstance1 = new TestCollection();
@@ -104,23 +102,23 @@ describe("Class: Unseen", function() {
             expect(testCollectionInstance1).toBeDefined();
             expect(testCollectionInstance1.length).toBe(0);
         });
-        //
-        // it("should be able to make instances of the Collection with initial model data.", function() {
-        //     expect(testCollectionInstance2).toBeDefined();
-        //     expect(testCollectionInstance2.length).toBe(3);
-        // });
-        // //
-        // it("should be able to make instances of the Model with all values.", function() {
-        //     expect(testModelInstance3.a).toBe("riii");
-        //     expect(testModelInstance3.b).toBe("biii");
-        //     expect(testModelInstance3.c).toBe(20);
-        // });
 
-        // it("should be able to make instances of the Model with binding contamination", function() {
-        //     expect(testModelInstance2.a).toBe("hiya");
-        //     expect(testModelInstance2.b).toBe("hoho");
-        //     expect(testModelInstance2.c).toBe(1);
-        // });
+        it("should be able to make instances of the Collection with initial model data.", function() {
+            expect(testCollectionInstance2).toBeDefined();
+            expect(testCollectionInstance2.length).toBe(3);
+        });
+        //
+        it("should be able to make instances of the Model with all values.", function() {
+            expect(testModelInstance3.a).toBe("riii");
+            expect(testModelInstance3.b).toBe("biii");
+            expect(testModelInstance3.c).toBe(20);
+        });
+
+        it("should be able to make instances of the Model with binding contamination", function() {
+            expect(testModelInstance2.a).toBe("hiya");
+            expect(testModelInstance2.b).toBe("hoho");
+            expect(testModelInstance2.c).toBe(1);
+        });
     });
 
 });

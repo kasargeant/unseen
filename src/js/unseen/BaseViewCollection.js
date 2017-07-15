@@ -1,6 +1,6 @@
 /**
- * @file View.js
- * @description The ViewCollection class.
+ * @file BaseViewCollection.js
+ * @description The Base ViewCollection class.
  * @author Kyle Alexis Sargeant <kasargeant@gmail.com> {@link https://github.com/kasargeant https://github.com/kasargeant}.
  * @copyright Kyle Alexis Sargeant 2017
  * @license See LICENSE file included in this distribution.
@@ -13,46 +13,38 @@ const EventEmitter = require("event-emitter");
 const jQuery = require("jquery");
 
 /**
- * The ViewCollection class.
+ * The base ViewCollection class.
  * @class
  */
-class ViewCollection {
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // CONSTRUCTOR
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+class BaseViewCollection {
     /**
+     * @param ViewClass
      * @param modelCollection
      * @param parent
      * @param id
-     * @constructor
      */
-    constructor(modelCollection, parent=null, id=0) {
+    constructor(ViewClass, modelCollection, parent=null, id=0) {
 
-        // Set internally (or by parent).
         this._parent = parent;
         this._id = id;          // View ID
 
-        // Set by user (or default).
-        this.baseClass = null;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
         this.classList = [];
-        this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
-        // Calculated from previous internal/user properties.
+        this.ViewClass = ViewClass;
         this.model = modelCollection;
         this.model._parent = this;
         this.views = {};
 
+        this.allEvents = null;
+
         // Instantiate initial View components from ModelCollection models
         this.length = 0;
         for(let id in this.model.models) {
-            let view = new this.baseClass(this, id);
             let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
-            view.base = model;
+            let view = new this.ViewClass(model, this, id);
             this.views[id] = view;
             this.length++;
         }
@@ -61,30 +53,34 @@ class ViewCollection {
 
         this.el = "";
 
-        // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
+        // Adds internal events listener used by the ModelCollection to signal this BaseViewCollection on update.
         this.on("change", function(args) {
-            console.log(`ViewCollection #${this._id}: Model/Collection #${args} changed.`);
+            console.log(`BaseViewCollection #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
             // this._render(true);
         }.bind(this));
 
-        // TODO - Add internal events listener used by Views signalling this ViewCollection
+        // TODO - Add internal events listener used by Views signalling this BaseViewCollection
+
+        this.initialize(); // User initialization.
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // LIFECYCLE METHODS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * @override
      */
-    initialize() {}
+    initialize() {
+        // Lifecycle method.
+    }
 
     /**
      * @override
      */
-    finalize() {}
+    finalize() {
+
+    }
 
     destroy() {
         let selector = `#${this.id}-${this._id}`;
@@ -105,7 +101,7 @@ class ViewCollection {
     }
 
     _handleEvents(evt) {
-        console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+        console.log(`BaseViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
         let eventTargetId = evt.target.id;
         let splitPoint = eventTargetId.lastIndexOf("-");
@@ -114,7 +110,7 @@ class ViewCollection {
             throw new Error("Missing event target.");
         }
         let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-        // console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
+        // console.log(`BaseViewCollection event matched: View component '${viewId}', element ${elementId}`);
         //
         console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
         // console.log(`Have found ${this.viewEvents[viewId]} events for View component ${viewId}`);
@@ -122,7 +118,7 @@ class ViewCollection {
         let events = this.viewEvents[viewId];
         let elementEvent = events[elementId];
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-            console.log(`ViewCollection '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            console.log(`BaseViewCollection '${evt.type}' event for component '${viewId}' element ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view !== undefined) {
@@ -180,10 +176,10 @@ class ViewCollection {
     }
 }
 
-EventEmitter(ViewCollection.prototype);
+EventEmitter(BaseViewCollection.prototype);
 
 // Exports
-module.exports = ViewCollection;
+module.exports = BaseViewCollection;
 
 
 
