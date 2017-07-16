@@ -15,80 +15,161 @@
  * * TODO...
  * @class
  */
+class Model {
+    /**
+     * @param {Object} [record] - A data object to initially populate this ModelCollection.
+     * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
+     * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelCollection (if any).
+     * @constructor
+     */
+    constructor(record = {}, parent = null, parentRefId = 0) {
 
-/**
- * @param {Object} [record] - A data object to initially populate this ModelCollection.
- * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
- * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelCollection (if any).
- * @constructor
- */
-const Model = function(record={}, parent=null, parentRefId=0) {
+        // Set internally (or by parent).
+        this._parent = parent; // The parent component.
+        this._id = parentRefId; // The parent's reference ID for this component.
 
-    // Set internally (or by parent).
-    this._parent = parent; // The parent component.
-    this._id = parentRefId; // The parent's reference ID for this component.
+        // Set by user (or default).
+        this.base = {};
+        this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
-    // Set by user (or default).
-    this.base = {};
-    this.initialize();  // LIFECYCLE CALL: INITIALIZE
+        // Calculated from previous internal/user properties.
+        this._keys = Object.keys(this.base);
+        this._record = {};
 
-    // Calculated from previous internal/user properties.
-    this._keys = Object.keys(this.base);
-    this._record = {};
+        for(let key of this._keys) {
 
-    for(let key of this._keys) {
+            Object.defineProperty(this, key, {
+                get: function() {
+                    return this._record[key];
+                },
+                set: function(value) {
+                    this._record[key] = value;
+                    this._emit("change");
+                }
+            });
 
-        Object.defineProperty(this, key, {
-            get: function() {
-                return this._record[key];
-            },
-            set: function(value) {
-                this._record[key] = value;
-                this._emit("change");
-            }
-        });
-
-        this._record[key] = record[key] || this.base[key];
+            this._record[key] = record[key] || this.base[key];
+        }
+        this.length = 1; // Always 1... included only for compatibility with Collection interface.
     }
-    this.length = 1; // Always 1... included only for compatibility with Collection interface.
-};
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// LIFECYCLE METHODS
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // LIFECYCLE METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-/**
- * @override
- */
-Model.prototype.initialize = function() {};
+    /**
+     * @override
+     */
+    initialize() {}
 
-/**
- * @override
- */
-Model.prototype.finalize = function() {};
+    /**
+     * @override
+     */
+    finalize() {}
 
-Model.prototype._emit = function(eventType) {
-    if(this._parent !== null) {
-        // this._parent.dispatchEvent(eventType);
-        this._parent.emit(eventType, this._id);
+    _emit(eventType) {
+        if(this._parent !== null) {
+            // this._parent.dispatchEvent(eventType);
+            this._parent.emit(eventType, this._id);
+        }
     }
-};
 
-Model.prototype.reset = function() {
-    this._record = {}; // For compatibility with Collection interface
-};
+    reset() {
+        this._record = {}; // For compatibility with Collection interface
+    }
 
-Model.prototype.get = function() {
-    return this; // For compatibility with Collection interface
-};
+    get() {
+        return this; // For compatibility with Collection interface
+    }
 
-Model.prototype.set = function() {
-    return this; // TODO - Implement a finer granularity of Model methods
-};
+    set() {
+        return this; // TODO - Implement a finer granularity of Model methods
+    }
 
-Model.prototype._dump = function() {
-    return JSON.stringify(this._record);
-};
+    _dump() {
+        return JSON.stringify(this._record);
+    }
+
+}
+
 
 // Exports
 module.exports = Model;
+
+//
+// /**
+//  * @param {Object} [record] - A data object to initially populate this ModelCollection.
+//  * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
+//  * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelCollection (if any).
+//  * @constructor
+//  */
+// const Model = function(record={}, parent=null, parentRefId=0) {
+//
+//     // Set internally (or by parent).
+//     this._parent = parent; // The parent component.
+//     this._id = parentRefId; // The parent's reference ID for this component.
+//
+//     // Set by user (or default).
+//     this.base = {};
+//     this.initialize();  // LIFECYCLE CALL: INITIALIZE
+//
+//     // Calculated from previous internal/user properties.
+//     this._keys = Object.keys(this.base);
+//     this._record = {};
+//
+//     for(let key of this._keys) {
+//
+//         Object.defineProperty(this, key, {
+//             get: function() {
+//                 return this._record[key];
+//             },
+//             set: function(value) {
+//                 this._record[key] = value;
+//                 this._emit("change");
+//             }
+//         });
+//
+//         this._record[key] = record[key] || this.base[key];
+//     }
+//     this.length = 1; // Always 1... included only for compatibility with Collection interface.
+// };
+//
+// //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// // LIFECYCLE METHODS
+// //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+// /**
+//  * @override
+//  */
+// Model.prototype.initialize = function() {};
+//
+// /**
+//  * @override
+//  */
+// Model.prototype.finalize = function() {};
+//
+// Model.prototype._emit = function(eventType) {
+//     if(this._parent !== null) {
+//         // this._parent.dispatchEvent(eventType);
+//         this._parent.emit(eventType, this._id);
+//     }
+// };
+//
+// Model.prototype.reset = function() {
+//     this._record = {}; // For compatibility with Collection interface
+// };
+//
+// Model.prototype.get = function() {
+//     return this; // For compatibility with Collection interface
+// };
+//
+// Model.prototype.set = function() {
+//     return this; // TODO - Implement a finer granularity of Model methods
+// };
+//
+// Model.prototype._dump = function() {
+//     return JSON.stringify(this._record);
+// };
+//
+// // Exports
+// module.exports = Model;
