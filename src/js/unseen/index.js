@@ -23,6 +23,7 @@ class MyModel extends Model {
         super(definition, record, parent);
     }
 }
+let myModelInstance = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
 // MODEL COLLECTION
 class MyModelCollection extends ModelCollection {
@@ -30,12 +31,12 @@ class MyModelCollection extends ModelCollection {
         super(MyModel, data);
     }
 }
+let myModelCollectionInstance = new MyModelCollection(rawData);
 
 // VIEW
 class MyView extends View {
 
     initialize() {
-        this.base = null;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];
@@ -68,6 +69,8 @@ class MyView extends View {
         this.destroy();
     }
 }
+let myViewInstance = new MyView(myModelInstance);
+
 
 // VIEW COLLECTION
 class MyViewCollection extends ViewCollection {
@@ -82,20 +85,19 @@ class MyViewCollection extends ViewCollection {
 
 // DEMO
 
-let myModelCollection = new MyModelCollection(rawData);
-let myViewCollection = new MyViewCollection(myModelCollection);
-
-console.log(`With ${myModelCollection.length} records.`);
-console.time("render");
-
-// myViewCollection._render(true);
-myViewCollection._renderMarkup(true);
-
-console.timeEnd("render");
-
-console.time("insert");
-jQuery(document).ready(function() {
-    // Action after append is completely done
-    console.timeEnd("insert");
-});
-
+// let myModelCollection = new MyModelCollection(rawData);
+// let myViewCollectionInstance = new MyViewCollection(myModelCollection);
+// console.log(`Testing with ${myModelCollection.length} records.`);
+// console.time("render");
+//
+// // myViewCollectionInstance._render(true);
+// myViewCollectionInstance._renderMarkup(true);
+//
+// console.timeEnd("render");
+//
+// console.time("insert");
+// jQuery(document).ready(function() {
+//     // Action after append is completely done
+//     console.timeEnd("insert");
+// });
+//

@@ -1,0 +1,207 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Class: View View should return render text output. 1`] = `
+"<div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">123</h4>
+                <h6 class=\\"card-subtitle\\">Test Street</h6>
+            </div>
+            <div class=\\"card-body\\">
+                123: test - Test Street
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div>"
+`;
+
+exports[`Class: View ViewCollection should return render text output. 1`] = `
+"<div id=\\"my-list-0\\" class=\\"my-list container\\"><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100011508</h4>
+                <h6 class=\\"card-subtitle\\">St. Mary's Gate</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100011508: residential - St. Mary's Gate
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100013440</h4>
+                <h6 class=\\"card-subtitle\\">La Perla</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100013440: restaurant - La Perla
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100013447</h4>
+                <h6 class=\\"card-subtitle\\">The Lady</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100013447: unknown - The Lady
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100015712</h4>
+                <h6 class=\\"card-subtitle\\">Carlisle Lane</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100015712: unclassified - Carlisle Lane
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100015713</h4>
+                <h6 class=\\"card-subtitle\\">Virgil Street</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100015713: unclassified - Virgil Street
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100015714</h4>
+                <h6 class=\\"card-subtitle\\">Virgil Street</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100015714: unclassified - Virgil Street
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100015715</h4>
+                <h6 class=\\"card-subtitle\\">Carlisle Lane</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100015715: unclassified - Carlisle Lane
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100015716</h4>
+                <h6 class=\\"card-subtitle\\">Centaur Street</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100015716: unclassified - Centaur Street
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100015720</h4>
+                <h6 class=\\"card-subtitle\\">Upper Marsh</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100015720: unclassified - Upper Marsh
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100015721</h4>
+                <h6 class=\\"card-subtitle\\">Upper Marsh</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100015721: unclassified - Upper Marsh
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100015723</h4>
+                <h6 class=\\"card-subtitle\\">Station Approach</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100015723: unclassified - Station Approach
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100026128</h4>
+                <h6 class=\\"card-subtitle\\">Sterling Way</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100026128: trunk - Sterling Way
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100026129</h4>
+                <h6 class=\\"card-subtitle\\">North Circular Road</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100026129: trunk - North Circular Road
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100026130</h4>
+                <h6 class=\\"card-subtitle\\">Sterling Way</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100026130: trunk - Sterling Way
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">100026131</h4>
+                <h6 class=\\"card-subtitle\\">North Circular Road</h6>
+            </div>
+            <div class=\\"card-body\\">
+                100026131: trunk - North Circular Road
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">1000463949</h4>
+                <h6 class=\\"card-subtitle\\">Empire</h6>
+            </div>
+            <div class=\\"card-body\\">
+                1000463949: supermarket - Empire
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+            <div class=\\"card-header\\">
+                <h4 class=\\"card-title\\">1000467325</h4>
+                <h6 class=\\"card-subtitle\\">Trusha (indian cuisine)</h6>
+            </div>
+            <div class=\\"card-body\\">
+                1000467325: restaurant - Trusha (indian cuisine)
+            </div>
+            <div class=\\"card-footer\\">
+                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+            </div>
+        </div></div>"
+`;
