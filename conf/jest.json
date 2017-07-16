@@ -1,0 +1,18 @@
+{
+  "rootDir": "../",
+  "collectCoverage": true,
+  "coverageDirectory": "./docs/coverage",
+  "coveragePathIgnorePatterns": [
+    "conf/",
+    "dist/",
+    "test/data/",
+    "test/shared/"
+  ],
+  "testPathIgnorePatterns": [
+    "conf/",
+    "dist/",
+    "src/",
+    "test/data/",
+    "test/shared/"
+  ]
+}
