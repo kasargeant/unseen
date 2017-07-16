@@ -16,10 +16,10 @@ let rawData = require("../../../test/data/jest_results.json");
 // console.log(JSON.stringify(Object.keys(rawData)));
 
 // MODEL
+// ["numFailedTestSuites","numFailedTests","numPassedTestSuites","numPassedTests","numPendingTestSuites","numPendingTests","numRuntimeErrorTestSuites","numTotalTestSuites","numTotalTests","snapshot","startTime","success","testResults","wasInterrupted","coverageMap"]
 class ReportModel extends Unseen.Model {
-    initialize() {
-        // ["numFailedTestSuites","numFailedTests","numPassedTestSuites","numPassedTests","numPendingTestSuites","numPendingTests","numRuntimeErrorTestSuites","numTotalTestSuites","numTotalTests","snapshot","startTime","success","testResults","wasInterrupted","coverageMap"]
-        this.base = {
+    constructor(record, parent) {
+        let schema = {
             "numFailedTestSuites": 0,
             "numFailedTests": 0,
             "numPassedTestSuites": 0,
@@ -36,6 +36,7 @@ class ReportModel extends Unseen.Model {
             "wasInterrupted": 0,
             "coverageMap": {}
         };
+        super(schema, record, parent);
     }
 }
 
@@ -45,7 +46,6 @@ let reportModel = new ReportModel(rawData);
 class MyView extends Unseen.View {
 
     initialize() {
-        this.base = reportModel;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];
@@ -61,26 +61,36 @@ class MyView extends Unseen.View {
 
         return `
             <div class="card-header">
-                ${JSON.stringify(model)}
+            numFailedTestSuites: ${model.numFailedTestSuites}<br />
+            numFailedTests: ${model.numFailedTests}<br />
+            numPassedTestSuites: ${model.numPassedTestSuites}<br />
+            numPassedTests: ${model.numPassedTests}<br />
+            numPendingTestSuites: ${model.numPendingTestSuites}<br />
+            numPendingTests: ${model.numPendingTests}<br />
+            numRuntimeErrorTestSuites: ${model.numRuntimeErrorTestSuites}<br />
+            numTotalTestSuites: ${model.numTotalTestSuites}<br />
+            numTotalTests: ${model.numTotalTests}<br />
             </div>
         `;
     }
 }
 
-let myView = new MyView();
+let myView = new MyView(reportModel);
 
 console.time("render");
 
-myView._renderMarkup(true);
-// console.log(myView._renderMarkup(false));
+// myView._renderMarkup(true);
+let markupResult = {html: ""};
+myView._renderMarkup(false, markupResult);
+console.log(markupResult.html);
 
 console.timeEnd("render");
 
 console.time("insert");
-jQuery(document).ready(function() {
-    // Action after append is completely done
-    console.timeEnd("insert");
-});
+// jQuery(document).ready(function() {
+//     // Action after append is completely done
+//     console.timeEnd("insert");
+// });
 
 
 

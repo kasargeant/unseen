@@ -85,19 +85,19 @@ class MyViewCollection extends ViewCollection {
 
 // DEMO
 
-// let myModelCollection = new MyModelCollection(rawData);
-// let myViewCollectionInstance = new MyViewCollection(myModelCollection);
-// console.log(`Testing with ${myModelCollection.length} records.`);
-// console.time("render");
-//
-// // myViewCollectionInstance._render(true);
-// myViewCollectionInstance._renderMarkup(true);
-//
-// console.timeEnd("render");
-//
-// console.time("insert");
-// jQuery(document).ready(function() {
-//     // Action after append is completely done
-//     console.timeEnd("insert");
-// });
-//
+let myModelCollection = new MyModelCollection(rawData);
+let myViewCollectionInstance = new MyViewCollection(myModelCollection);
+console.log(`Testing with ${myModelCollection.length} records.`);
+console.time("render");
+
+// myViewCollectionInstance._render(true);
+myViewCollectionInstance._renderMarkup(true);
+
+console.timeEnd("render");
+
+console.time("insert");
+jQuery(document).ready(function() {
+    // Action after append is completely done
+    console.timeEnd("insert");
+});
+

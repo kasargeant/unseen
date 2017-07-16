@@ -103,9 +103,9 @@ console.log(`Testing with ${myModelCollectionInstance.length} records.`);
 // myViewCollectionInstance._renderMarkup(false, markupResult);
 
 
-let markupResult = {html: ""};
-myViewInstance._renderMarkup(false, markupResult);
-console.log(markupResult);
+// let markupResult = {html: ""};
+// myViewInstance._renderMarkup(false, markupResult);
+// console.log(markupResult);
 
 
 
