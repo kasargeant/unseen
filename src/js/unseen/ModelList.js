@@ -26,14 +26,16 @@ class ModelList {
      * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelList (if any).
      * @constructor
      */
-    constructor(records = [], parent = null, parentRefId = 0) {
+    constructor(baseClass, records = [], parent = null, parentRefId = 0) {
 
         // Set internally (or by parent).
         this._parent = parent; // The parent component.
         this._id = parentRefId; // The parent's reference ID for this component.
 
-        // Set by user (or default).
-        this.baseClass = null;
+        // Set by constructor (or default).
+        this.baseClass = baseClass;
+
+        // Set by user.
         this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
         // Calculated from previous internal/user properties.

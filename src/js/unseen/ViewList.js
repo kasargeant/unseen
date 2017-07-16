@@ -22,26 +22,29 @@ const jQuery = require("jquery");
 class ViewList {
 
     /**
+     * @param {View} baseClass - An extended View class.
      * @param {ModelCollection} modelCollection - An instantiated ModelCollection object.
-     * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
-     * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelList (if any).
+     * @param {ViewCollection|ViewList} [parent] - The parent ViewCollection or ViewList (if any).
+     * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(modelCollection, parent=null, parentRefId=0) {
+    constructor(baseClass, modelCollection, parent=null, parentRefId=0) {
 
         // Set internally (or by parent).
         this._parent = parent; // The parent component.
         this._id = parentRefId; // The parent's reference ID for this component.
 
-        // Set by user (or default).
-        this.baseClass = null;
+        // Set by constructor (or default).
+        this.baseClass = baseClass;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
         this.classList = [];
+
+        // Set by user.
         this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
-        // Calculated from previous internal/user properties.
+        // Set depending on previous internal/user properties.
         this.model = modelCollection;
         this.model._parent = this;
         this.views = {};

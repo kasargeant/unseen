@@ -17,118 +17,117 @@ const walk = require("./walk");
  * The base View class.
  * @class
  */
-class BaseView {
-    /**
-     * @param base
-     * @param parent
-     * @param id
-     * @constructor
-     */
-    constructor(base, parent=null, id=0) {
 
-        // Set internally (or by parent).
-        this._parent = parent;
-        this._id = id;          // View ID
+/**
+ * @param {Model} [base] - A Model instance.
+ * @param {ViewCollection|ViewList} [parent] - The parent ViewCollection or ViewList (if any).
+ * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
+ * @constructor
+ */
+const BaseView = function(base, parent=null, parentRefId=0) {
 
-        // Set by user (or default).
-        this.base = base;
-        this.id = "view";       // HTML Element ID
-        this.target = "main";
-        this.tag = "div";
-        this.classList = [];
-        this.initialize();  // LIFECYCLE CALL: INITIALIZE
+    // Set internally (or by parent).
+    this._parent = parent;
+    this._id = parentRefId;          // View ID
 
-        // Calculated from previous internal/user properties.
-        this.views = null;
-        this.el = "";
+    // Set by user (or default).
+    this.base = base;
+    this.id = "view";       // HTML Element ID
+    this.target = "main";
+    this.tag = "div";
+    this.classList = [];
+    this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
-        // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
-        this.on("change", function(args) {
-            console.log(`BaseView #${this._id}: Model/Collection #${args} changed.`);
-            this._emit("change"); // Relay the event forward
-        });
+    // Calculated from previous internal/user properties.
+    this.views = null;
+    this.el = "";
+
+    // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
+    this.on("change", function(args) {
+        console.log(`BaseView #${this._id}: Model/Collection #${args} changed.`);
+        this._emit("change"); // Relay the event forward
+    });
+};
+
+// LIFECYCLE METHODS
+
+/**
+ * @override
+ */
+BaseView.prototype.initialize = function() {
+    // Lifecycle method.
+};
+
+/**
+ * @override
+ */
+BaseView.prototype.finalize = function() {
+
+};
+
+BaseView.prototype.destroy = function() {
+    let selector = `#${this.id}-${this._id}`;
+    console.log("SELECTOR" + selector);
+    console.log(`BaseView ${this._id} is being destroyed!!!`);
+    jQuery(selector).remove();
+};
+
+// return [
+//    ["#button-delete", "click", "deleteAction"]
+// ];
+BaseView.prototype.events = function() {return null;};
+
+BaseView.prototype._emit = function(eventType) {
+    if(this._parent !== null) {
+        this._parent.emit(eventType, this._id);
     }
+};
 
-    // LIFECYCLE METHODS
+BaseView.prototype.template = function(model, params) {return JSON.stringify(model);}
 
-    /**
-     * @override
-     */
-    initialize() {
-        // Lifecycle method.
-    }
+BaseView.prototype.style = function() {
+    return "";
+};
 
-    /**
-     * @override
-     */
-    finalize() {
+BaseView.prototype._render = function(doInsert=false, fragment=null) {
 
-    }
+    let element = document.createElement(this.tag);
+    element.id = this.id;
+    element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
+    element.classList.add(...this.classList); // We add any remaining classes.
+    element.innerHTML = this.template(this.base, this._id);
+    // First we make any element ids in this View - unique.
+    walk(element, function(node) {
+        // console.log("node", node); // DEBUG ONLY
+        if(node.id !== null) {
+            node.id = node.id + "-" + this._id;
+        }
+    }.bind(this));
 
-    destroy() {
-        let selector = `#${this.id}-${this._id}`;
-        console.log("SELECTOR" + selector);
-        console.log(`BaseView ${this._id} is being destroyed!!!`);
-        jQuery(selector).remove();
-    }
+    // Collect events
+    let viewEvents = this.events();
 
-    // return [
-    //    ["#button-delete", "click", "deleteAction"]
-    // ];
-    events() {return null;}
 
-    _emit(eventType) {
-        if(this._parent !== null) {
-            this._parent.emit(eventType, this._id);
+    // Now we add any sub-views
+    if(this.views !== null) {
+        for(let id in this.views) {
+            let view = this.views[id];
+            viewEvents[view._id] = view._render(false, element);
         }
     }
 
-    template(model, params) {return JSON.stringify(model);}
-
-    style() {
-        return "";
+    // Are we a top-level view?
+    if(this._parent === null && fragment === null) {
+        // YES - without passed fragment or parent
+        fragment = document.createDocumentFragment();
     }
+    fragment.appendChild(element);
 
-    _render(doInsert=false, fragment=null) {
-
-        let element = document.createElement(this.tag);
-        element.id = this.id;
-        element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
-        element.classList.add(...this.classList); // We add any remaining classes.
-        element.innerHTML = this.template(this.base, this._id);
-        // First we make any element ids in this View - unique.
-        walk(element, function(node) {
-            // console.log("node", node); // DEBUG ONLY
-            if(node.id !== null) {
-                node.id = node.id + "-" + this._id;
-            }
-        }.bind(this));
-
-        // Collect events
-        let viewEvents = this.events();
-
-
-        // Now we add any sub-views
-        if(this.views !== null) {
-            for(let id in this.views) {
-                let view = this.views[id];
-                viewEvents[view._id] = view._render(false, element);
-            }
-        }
-
-        // Are we a top-level view?
-        if(this._parent === null && fragment === null) {
-            // YES - without passed fragment or parent
-            fragment = document.createDocumentFragment();
-        }
-        fragment.appendChild(element);
-
-        if(doInsert === true) {
-            jQuery(this.target).append(fragment);
-        }
-        return viewEvents;
+    if(doInsert === true) {
+        jQuery(this.target).append(fragment);
     }
-}
+    return viewEvents;
+};
 
 EventEmitter(BaseView.prototype);
 

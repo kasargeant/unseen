@@ -20,25 +20,28 @@ const walk = require("./walk");
 class View {
 
     /**
-     * @param parent
-     * @param id
+     * @param {Model} [base] - A Model instance.
+     * @param {ViewCollection|ViewList} [parent] - The parent ViewCollection or ViewList (if any).
+     * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(parent=null, parentRefId=0) {
+    constructor(base=null, parent=null, parentRefId=0) {
 
         // Set internally (or by parent).
         this._parent = parent; // The parent component.
         this._id = parentRefId; // The parent's reference ID for this component.
 
-        // Set by user (or default).
-        this.base = null;
+        // Set by constructor (or default).
+        this.base = base;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
         this.classList = [];
+
+        // Set by user.
         this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
-        // Calculated from previous internal/user properties.
+        // Set depending on previous internal/user properties.
         this.views = null;
         this.el = "";
 
@@ -56,16 +59,12 @@ class View {
     /**
      * @override
      */
-    initialize() {
-        // Lifecycle method.
-    }
+    initialize() {}
 
     /**
      * @override
      */
-    finalize() {
-
-    }
+    finalize() {}
 
     destroy() {
         let selector = `#${this.id}-${this._id}`;
