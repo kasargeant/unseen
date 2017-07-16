@@ -24,11 +24,11 @@ class View {
      * @param id
      * @constructor
      */
-    constructor(parent=null, id=0) {
+    constructor(parent=null, parentRefId=0) {
 
         // Set internally (or by parent).
-        this._parent = parent;
-        this._id = id;          // View ID
+        this._parent = parent; // The parent component.
+        this._id = parentRefId; // The parent's reference ID for this component.
 
         // Set by user (or default).
         this.base = null;

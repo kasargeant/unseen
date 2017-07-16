@@ -10,16 +10,23 @@
 
 /**
  * The Model class.
- * @param record
- * @param parent
- * @param collectionId
+ *
+ * Responsibilities:-
+ * * TODO...
+ * @class
+ */
+
+/**
+ * @param {Object} [record] - A data object to initially populate this ModelCollection.
+ * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
+ * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelCollection (if any).
  * @constructor
  */
-const Model = function(record={}, parent=null, collectionId=0) {
+const Model = function(record={}, parent=null, parentRefId=0) {
 
     // Set internally (or by parent).
-    this._id = collectionId; // An internal ID only.
-    this._parent = parent; // Note: Parent can EITHER be a collection OR a view. NOT BOTH.
+    this._parent = parent; // The parent component.
+    this._id = parentRefId; // The parent's reference ID for this component.
 
     // Set by user (or default).
     this.base = {};
@@ -67,8 +74,16 @@ Model.prototype._emit = function(eventType) {
     }
 };
 
+Model.prototype.reset = function() {
+    this._record = {}; // For compatibility with Collection interface
+};
+
 Model.prototype.get = function() {
     return this; // For compatibility with Collection interface
+};
+
+Model.prototype.set = function() {
+    return this; // TODO - Implement a finer granularity of Model methods
 };
 
 Model.prototype._dump = function() {

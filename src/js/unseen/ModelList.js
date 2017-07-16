@@ -1,6 +1,6 @@
 /**
- * @file ModelCollection.js
- * @description The ModelCollection class.
+ * @file ModelList.js
+ * @description The ModelList class.
  * @author Kyle Alexis Sargeant <kasargeant@gmail.com> {@link https://github.com/kasargeant https://github.com/kasargeant}.
  * @copyright Kyle Alexis Sargeant 2017
  * @license See LICENSE file included in this distribution.
@@ -12,7 +12,7 @@
 const EventEmitter = require("event-emitter");
 
 /**
- * The ModelCollection class.
+ * The ModelList class.
  *
  * Responsibilities:-
  * * TODO...
@@ -20,12 +20,12 @@ const EventEmitter = require("event-emitter");
  */
 
 /**
- * @param {Array} records - A data array to initially populate this ModelCollection.
+ * @param {Array} [records] - A data array to initially populate this ModelList.
  * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
- * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelCollection (if any).
+ * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelList (if any).
  * @constructor
  */
-function ModelCollection(records=[], parent=null, parentRefId=0) {
+function ModelList(records=[], parent=null, parentRefId=0) {
 
     // Set internally (or by parent).
     this._parent = parent; // The parent component.
@@ -51,13 +51,13 @@ function ModelCollection(records=[], parent=null, parentRefId=0) {
     // });
 
     this.on("change", function(args) {
-        console.log(`ModelCollection #${this._id}: Model #${args} changed.`);
+        console.log(`ModelList #${this._id}: Model #${args} changed.`);
         this._emit("change"); // Relay the event forward
     });
 
     this.on("view-remove", function(args) {
-        console.log(`ModelCollection #${this._id}: View #${args} changed.`);
-        console.log(`ModelCollection #${this._id}: Removing Model #${args}`);
+        console.log(`ModelList #${this._id}: View #${args} changed.`);
+        console.log(`ModelList #${this._id}: Removing Model #${args}`);
         console.log("exists? " + (this.models[args] !== undefined));
         delete this.models[args];
         console.log("exists? " + (this.models[args] !== undefined));
@@ -72,29 +72,29 @@ function ModelCollection(records=[], parent=null, parentRefId=0) {
 /**
  * @override
  */
-ModelCollection.prototype.initialize = function() {};
+ModelList.prototype.initialize = function() {};
 
 /**
  * @override
  */
-ModelCollection.prototype.finalize = function() {};
+ModelList.prototype.finalize = function() {};
 
-ModelCollection.prototype._emit = function(eventType) {
+ModelList.prototype._emit = function(eventType) {
     if(this._parent !== null) {
         // this._parent.dispatchEvent(eventType);
         this._parent.emit(eventType, this._id);
     }
 };
 
-ModelCollection.prototype.reset = function() {
+ModelList.prototype.reset = function() {
     this.models = {};
 };
 
-ModelCollection.prototype.get = function(id) {
+ModelList.prototype.get = function(id) {
     return this.models[id];
 };
 
-ModelCollection.prototype.set = function(records) {
+ModelList.prototype.set = function(records) {
     this.models = {};
     let i;
     for(i = 0; i < records.length; i++) {
@@ -104,19 +104,19 @@ ModelCollection.prototype.set = function(records) {
     this._modelCounter = i; // This provides a unique ID for every model.
 };
 
-ModelCollection.prototype.add = function(record) {
+ModelList.prototype.add = function(record) {
     let id = this._modelCounter++;
     this.models[id] = new this.baseClass(record, this, id);
     this.length++;
 };
 
-ModelCollection.prototype._dump = function() {
+ModelList.prototype._dump = function() {
     for(let id in this.models) {
         console.log(this.models[id]._dump());
     }
 };
 
-EventEmitter(ModelCollection.prototype);
+EventEmitter(ModelList.prototype);
 
 // Exports
-module.exports = ModelCollection;
+module.exports = ModelList;

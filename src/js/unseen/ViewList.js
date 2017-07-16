@@ -1,6 +1,6 @@
 /**
  * @file View.js
- * @description The ViewCollection class.
+ * @description The ViewList class.
  * @author Kyle Alexis Sargeant <kasargeant@gmail.com> {@link https://github.com/kasargeant https://github.com/kasargeant}.
  * @copyright Kyle Alexis Sargeant 2017
  * @license See LICENSE file included in this distribution.
@@ -13,18 +13,18 @@ const EventEmitter = require("event-emitter");
 const jQuery = require("jquery");
 
 /**
- * The ViewCollection class.
+ * The ViewList class.
  *
  * Responsibilities:-
- * * Handle all events for self and contained Views.
+ * * Handle all events for self and contained list View items.
  * @class
  */
-class ViewCollection {
+class ViewList {
 
     /**
      * @param {ModelCollection} modelCollection - An instantiated ModelCollection object.
-     * @param {ViewCollection} [parent] - The parent ViewCollection (if any).
-     * @param {number} [parentRefId] - The parent ViewCollection's reference ID for this ModelList (if any).
+     * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
+     * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelList (if any).
      * @constructor
      */
     constructor(modelCollection, parent=null, parentRefId=0) {
@@ -62,15 +62,15 @@ class ViewCollection {
         this.$el = null;
         this.deferred = [];
 
-        // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
+        // Adds internal events listener used by the ModelCollection to signal this ViewList on update.
         this.on("change", function(args) {
-            console.log(`ViewCollection #${this._id}: Model/Collection #${args} changed.`);
+            console.log(`ViewList #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
             // this._render(true);
         }.bind(this));
 
-        // TODO - Add internal events listener used by Views signalling this ViewCollection
+        // TODO - Add internal events listener used by Views signalling this ViewList
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -106,7 +106,7 @@ class ViewCollection {
     }
 
     _handleEvents(evt) {
-        console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+        console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
         let eventTargetId = evt.target.id;
         let splitPoint = eventTargetId.lastIndexOf("-");
@@ -115,14 +115,14 @@ class ViewCollection {
             throw new Error("Missing event target.");
         }
         let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-        // console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
+        // console.log(`ViewList event matched: View component '${viewId}', element ${elementId}`);
         //
         //console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
         let events = this.viewEvents[viewId];
         let elementEvent = events[elementId];
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-            console.log(`ViewCollection '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            console.log(`ViewList '${evt.type}' event for component '${viewId}' element ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view !== undefined) {
@@ -318,10 +318,10 @@ class ViewCollection {
     }
 }
 
-EventEmitter(ViewCollection.prototype);
+EventEmitter(ViewList.prototype);
 
 // Exports
-module.exports = ViewCollection;
+module.exports = ViewList;
 
 
 
