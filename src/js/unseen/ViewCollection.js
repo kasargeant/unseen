@@ -185,6 +185,56 @@ class ViewCollection {
         return viewEvents;
     }
 
+    _renderMarkup(doInsert=false, markup=null) {
+
+        let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
+        classList.push(...this.classList); // We add any remaining classes.
+
+        let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
+        let elementClose = "</" + this.tag + ">";
+        // let elementBody = this.template(this.base, 0);
+        let elementBody = "";
+
+        // First we make any element ids in this View - unique.
+        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        // console.log("CONTENT: " + JSON.stringify(element.html));
+
+        // Collect events
+        let viewEvents = {};
+
+        // Now we add any sub-views
+        let elementChildren = {html: ""};
+        for(let id in this.views) {
+            let view = this.views[id];
+            viewEvents[view._id] = view._renderMarkup(false, elementChildren);
+        }
+
+        // Are we a top-level view?
+        if(this._parent === null && markup === null) {
+            // YES - without passed fragment or parent
+            markup = {html: ""};
+        }
+        markup.html += elementOpen + elementBody + elementChildren.html + elementClose;
+        // console.log("MARKUP: " + JSON.stringify(markup.html));
+
+        if(doInsert === true) {
+            // jQuery(this.target).append(markup);
+
+            this.$el = jQuery(markup.html).appendTo(this.target).get(0);
+
+            // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+            if(this._parent === null) {
+
+                // We set the viewEvents lookup
+                this.viewEvents = viewEvents;
+
+                // Add top-level event listener
+                this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+            }
+        }
+        return viewEvents;
+    }
+
     _deferAppend(html) {
         this.deferred.push(html);
     }
@@ -270,55 +320,6 @@ class ViewCollection {
         return viewEvents;
     }
 
-    _renderMarkup(doInsert=false, markup=null) {
-
-        let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
-        classList.push(...this.classList); // We add any remaining classes.
-
-        let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
-        let elementClose = "</" + this.tag + ">";
-        // let elementBody = this.template(this.base, 0);
-        let elementBody = "";
-
-        // First we make any element ids in this View - unique.
-        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
-        // console.log("CONTENT: " + JSON.stringify(element.html));
-
-        // Collect events
-        let viewEvents = {};
-
-        // Now we add any sub-views
-        let elementChildren = {html: ""};
-        for(let id in this.views) {
-            let view = this.views[id];
-            viewEvents[view._id] = view._renderMarkup(false, elementChildren);
-        }
-
-        // Are we a top-level view?
-        if(this._parent === null && markup === null) {
-            // YES - without passed fragment or parent
-            markup = {html: ""};
-        }
-        markup.html += elementOpen + elementBody + elementChildren.html + elementClose;
-        // console.log("MARKUP: " + JSON.stringify(markup.html));
-
-        if(doInsert === true) {
-            // jQuery(this.target).append(markup);
-
-            this.$el = jQuery(markup.html).appendTo(this.target).get(0);
-
-            // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-            if(this._parent === null) {
-
-                // We set the viewEvents lookup
-                this.viewEvents = viewEvents;
-
-                // Add top-level event listener
-                this.$el.addEventListener("click", this._handleEvents.bind(this), false);
-            }
-        }
-        return viewEvents;
-    }
 }
 
 EventEmitter(ViewCollection.prototype);

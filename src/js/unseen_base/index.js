@@ -87,7 +87,8 @@ let myViewCollection = new MyViewCollection(myModelCollection);
 console.log(`With ${myModelCollection.length} records.`);
 console.time("render");
 
-myViewCollection._render(true);
+// myViewCollection._render(true);
+myViewCollection._renderMarkup(true);
 
 console.timeEnd("render");
 

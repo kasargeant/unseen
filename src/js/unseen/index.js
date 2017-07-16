@@ -14,19 +14,20 @@ const ViewCollection = require("./ViewCollection");
 
 const jQuery = require("jquery");
 
-let rawData = require("../../data/processed_half.json");
+let rawData = require("../../data/processed_sample.json");
 
 // MODEL
 class MyModel extends Model {
-    initialize() {
-        this.base = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+    constructor(record, parent) {
+        let definition = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+        super(definition, record, parent);
     }
 }
 
 // MODEL COLLECTION
 class MyModelCollection extends ModelCollection {
-    initialize() {
-        this.baseClass = MyModel;
+    constructor(data) {
+        super(MyModel, data);
     }
 }
 
@@ -70,8 +71,9 @@ class MyView extends View {
 
 // VIEW COLLECTION
 class MyViewCollection extends ViewCollection {
-    initialize() {
-        this.baseClass = MyView;
+    constructor(modelCollection, parent, id) {
+        super(MyView, modelCollection, parent, id);
+
         this.id = "my-list";
         this.tag = "div";
         this.classList = ["container"];
