@@ -20,25 +20,28 @@ const walk = require("./walk");
 class View {
 
     /**
-     * @param parent
-     * @param id
+     * @param {Model} [base] - A Model instance.
+     * @param {ViewCollection|ViewList} [parent] - The parent ViewCollection or ViewList (if any).
+     * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(parent=null, id=0) {
+    constructor(base=null, parent=null, parentRefId=0) {
 
         // Set internally (or by parent).
-        this._parent = parent;
-        this._id = id;          // View ID
+        this._parent = parent; // The parent component.
+        this._id = parentRefId; // The parent's reference ID for this component.
 
-        // Set by user (or default).
-        this.base = null;
+        // Set by constructor (or default).
+        this.base = base;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
         this.classList = [];
+
+        // Set by user.
         this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
-        // Calculated from previous internal/user properties.
+        // Set depending on previous internal/user properties.
         this.views = null;
         this.el = "";
 
@@ -56,16 +59,12 @@ class View {
     /**
      * @override
      */
-    initialize() {
-        // Lifecycle method.
-    }
+    initialize() {}
 
     /**
      * @override
      */
-    finalize() {
-
-    }
+    finalize() {}
 
     destroy() {
         let selector = `#${this.id}-${this._id}`;
@@ -85,7 +84,7 @@ class View {
         }
     }
 
-    template(model, params) {return JSON.stringify(model);}
+    template(model, params) {return "";}
 
     style() {
         return "";
@@ -109,7 +108,6 @@ class View {
         // Collect events
         let viewEvents = this.events();
 
-
         // Now we add any sub-views
         if(this.views !== null) {
             for(let id in this.views) {
@@ -127,6 +125,47 @@ class View {
 
         if(doInsert === true) {
             jQuery(this.target).append(fragment);
+        }
+        return viewEvents;
+    }
+
+    _renderMarkup(doInsert=false, markup=null) {
+
+        let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
+        classList.push(...this.classList); // We add any remaining classes.
+
+        let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
+        let elementClose = "</" + this.tag + ">";
+        let elementBody = this.template(this.base, this._id);
+
+        // First we make any element ids in this View - unique.
+        // let matches = content.match(/(?:id|class)="([^"]*)"/gi);    // Matches class="sfasdf" or id="dfssf"
+        // console.log("MATCHES: " + JSON.stringify(matches));
+        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        // console.log("CONTENT: " + JSON.stringify(element));
+
+        // Collect events
+        let viewEvents = this.events();
+
+        // Now we add any sub-views
+        let elementChildren = {html: ""};
+        if(this.views !== null) {
+            for(let id in this.views) {
+                let view = this.views[id];
+                viewEvents[view._id] = view._renderMarkup(false, elementChildren);
+            }
+        }
+
+        // Are we a top-level view?
+        if(markup === null) {
+            // YES - without passed fragment or parent
+            markup = {html: ""};
+        }
+        markup.html += elementOpen + elementBody + elementChildren.html + elementClose;
+        // console.log("MARKUP: " + JSON.stringify(markup.html));
+
+        if(doInsert === true) {
+            jQuery(this.target).append(markup.html);
         }
         return viewEvents;
     }

@@ -1,26 +1,22 @@
 "use strict";
 
 const Benchmark = require("benchmark");
-let suite = new Benchmark.Suite("Relative selector speeds: id vs data-");
+let suite = new Benchmark.Suite("Appending/slicing a string that's embedded in object vs array");
 
-
-const chalk = require("chalk");
-const colors = require("colors/safe");
-const tinter = require("tinter");
+let benchObj = {text: ""};
+let benchArr = [""];
 
 // Benchmark
 suite
-    .add(`chalk - single color i.e. chalk.red("hi there!")`, function() {
-        return chalk.red("hi there!");
+    .add(`Appending to a string embedded in an object`, function() {
+        benchObj.text += "hi there!";
+        benchObj.text = benchObj.text.slice(9);
+        return benchObj;
     })
-    .add(`colors.js - single color i.e. colors.red("hi there!")`, function() {
-        return colors.red("hi there!");
-    })
-    .add(`tinter - single color i.e. tinter.red("hi there!")`, function() {
-        return tinter.red("hi there!");
-    })
-    .add(`tinter#2 - single color i.e. tinter.style("hi there!", "red")`, function() {
-        return tinter.style("hi there!", "red");
+    .add(`Appending to a string embedded in an array`, function() {
+        benchArr[0] += "hi there!";
+        benchArr[0] = benchArr[0].slice(9);
+        return benchArr;
     })
     // add listeners
     .on("cycle", function(event) {

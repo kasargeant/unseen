@@ -39,8 +39,9 @@ describe("Class: Unseen", function() {
     describe("Models", function() {
 
         class TestModel extends Unseen.Model {
-            initialize() {
-                this.base = {a: "hi", b: "ho", c: 3};
+            constructor(record, parent, id) {
+                let definition = {a: "hi", b: "ho", c: 3};
+                super(definition, record, parent, id);
             }
         }
         let testModelInstance1 = new TestModel({b: "o"});
@@ -73,13 +74,14 @@ describe("Class: Unseen", function() {
     describe("Collections", function() {
 
         class TestModel extends Unseen.Model {
-            initialize() {
-                this.base = {a: "hi", b: "ho", c: 3};
+            constructor(record, parent, id) {
+                let definition = {a: "hi", b: "ho", c: 3};
+                super(definition, record, parent, id);
             }
         }
         class TestCollection extends Unseen.ModelCollection {
-            initialize() {
-                this.baseClass = TestModel;
+            constructor(data) {
+                super(TestModel, data);
             }
         }
         let testCollectionInstance1 = new TestCollection();

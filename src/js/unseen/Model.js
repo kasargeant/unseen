@@ -10,69 +10,90 @@
 
 /**
  * The Model class.
- * @param record
- * @param parent
- * @param collectionId
- * @constructor
+ *
+ * Responsibilities:-
+ * * TODO...
+ * @class
  */
-const Model = function(record={}, parent=null, collectionId=0) {
+class Model {
+    /**
+     * @param {Object} base - The record Schema and default values this Model is to be defined by.
+     * @param {Object} [record] - A data object to initially populate this ModelCollection.
+     * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
+     * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
+     * @constructor
+     */
+    constructor(base={}, record = {}, parent = null, parentRefId = 0) {
 
-    // Set internally (or by parent).
-    this._id = collectionId; // An internal ID only.
-    this._parent = parent; // Note: Parent can EITHER be a collection OR a view. NOT BOTH.
+        // Set internally (or by parent).
+        this._parent = parent; // The parent component.
+        this._id = parentRefId; // The parent's reference ID for this component.
 
-    // Set by user (or default).
-    this.base = {};
-    this.initialize();  // LIFECYCLE CALL: INITIALIZE
+        // Set by constructor (or default).
+        this.base = base;
 
-    // Calculated from previous internal/user properties.
-    this._keys = Object.keys(this.base);
-    this._record = {};
+        // Set by user.
+        this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
-    for(let key of this._keys) {
+        // Set depending on previous internal/user properties.
+        this._keys = Object.keys(this.base);
+        this._record = {};
 
-        Object.defineProperty(this, key, {
-            get: function() {
-                return this._record[key];
-            },
-            set: function(value) {
-                this._record[key] = value;
-                this._emit("change");
-            }
-        });
+        for(let key of this._keys) {
 
-        this._record[key] = record[key] || this.base[key];
+            Object.defineProperty(this, key, {
+                get: function() {
+                    return this._record[key];
+                },
+                set: function(value) {
+                    this._record[key] = value;
+                    this._emit("change");
+                }
+            });
+
+            this._record[key] = record[key] || this.base[key];
+        }
+        this.length = 1; // Always 1... included only for compatibility with Collection interface.
     }
-    this.length = 1; // Always 1... included only for compatibility with Collection interface.
-};
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// LIFECYCLE METHODS
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-/**
- * @override
- */
-Model.prototype.initialize = function() {};
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // LIFECYCLE METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-/**
- * @override
- */
-Model.prototype.finalize = function() {};
+    /**
+     * @override
+     */
+    initialize() {}
 
-Model.prototype._emit = function(eventType) {
-    if(this._parent !== null) {
-        // this._parent.dispatchEvent(eventType);
-        this._parent.emit(eventType, this._id);
+    /**
+     * @override
+     */
+    finalize() {}
+
+    _emit(eventType) {
+        if(this._parent !== null) {
+            // this._parent.dispatchEvent(eventType);
+            this._parent.emit(eventType, this._id);
+        }
     }
-};
 
-Model.prototype.get = function() {
-    return this; // For compatibility with Collection interface
-};
+    reset() {
+        this._record = {}; // For compatibility with Collection interface
+    }
 
-Model.prototype._dump = function() {
-    return JSON.stringify(this._record);
-};
+    get() {
+        return this; // For compatibility with Collection interface
+    }
+
+    set() {
+        return this; // TODO - Implement a finer granularity of Model methods
+    }
+
+    _dump() {
+        return JSON.stringify(this._record);
+    }
+
+}
 
 // Exports
 module.exports = Model;
