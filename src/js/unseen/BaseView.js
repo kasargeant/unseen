@@ -95,7 +95,7 @@ class BaseView {
         element.id = this.id;
         element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
         element.classList.add(...this.classList); // We add any remaining classes.
-        element.innerHTML = this.template(this.base, 0);
+        element.innerHTML = this.template(this.base, this._id);
         // First we make any element ids in this View - unique.
         walk(element, function(node) {
             // console.log("node", node); // DEBUG ONLY
