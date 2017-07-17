@@ -99,17 +99,6 @@ let myViewCollectionInstance = new MyViewCollection(myModelCollectionInstance);
 
 console.log(`Testing with ${myModelCollectionInstance.length} records.`);
 
-// let markupResult = {html: ""};
-// // myViewCollectionInstance._render(true);
-// myViewCollectionInstance._renderMarkup(false, markupResult);
-
-
-// let markupResult = {html: ""};
-// myViewInstance._renderMarkup(false, markupResult);
-// console.log(markupResult);
-
-
-
 // Tests
 describe("Class: View", function() {
 

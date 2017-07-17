@@ -40,7 +40,7 @@ let myModelCollectionInstance = new MyModelCollection(rawData);
 class MyView extends View {
 
     initialize() {
-        this.base = {};
+        this.base = myModelInstance;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];
@@ -90,6 +90,16 @@ class MyViewCollection extends ViewCollection {
 
 let myModelCollection = new MyModelCollection(rawData);
 let myViewCollectionInstance = new MyViewCollection(myModelCollection);
+
+// DEMO: CONSOLE
+// let markupResult = {html: ""};
+// myView._renderMarkup(false, markupResult);
+// console.log(markupResult.html);
+// let markupResult = {html: ""};
+// myViewCollectionInstance._renderMarkup(false, markupResult);
+// console.log(markupResult.html);
+
+// DEMO: BROWSER
 console.log(`Testing with ${myModelCollection.length} records.`);
 console.time("render");
 
