@@ -31,7 +31,7 @@ class View {
         this._id = parentRefId; // The parent's reference ID for this component.
 
         // Set by constructor (or default).
-        this.base = null;
+        this.baseModel = null;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
@@ -41,7 +41,7 @@ class View {
         this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
         // Sanity check user initialization.
-        if(this.base === null) {
+        if(this.baseModel === null) {
             throw new Error("View requires a base model instance.");
         }
 
@@ -100,7 +100,7 @@ class View {
         element.id = this.id;
         element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
         element.classList.add(...this.classList); // We add any remaining classes.
-        element.innerHTML = this.template(this.base, 0);
+        element.innerHTML = this.template(this.baseModel, 0);
         // First we make any element ids in this View - unique.
         walk(element, function(node) {
             // console.log("node", node); // DEBUG ONLY
@@ -140,7 +140,7 @@ class View {
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
-        let elementBody = this.template(this.base, this._id);
+        let elementBody = this.template(this.baseModel, this._id);
 
         // First we make any element ids in this View - unique.
         // let matches = content.match(/(?:id|class)="([^"]*)"/gi);    // Matches class="sfasdf" or id="dfssf"

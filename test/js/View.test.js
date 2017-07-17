@@ -49,7 +49,7 @@ let myModelCollectionInstance = new MyModelCollection(rawData);
 class MyView extends Unseen.View {
 
     initialize() {
-        this.base = myModelInstance;
+        this.baseModel = myModelInstance;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];

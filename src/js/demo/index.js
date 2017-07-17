@@ -45,7 +45,7 @@ let reportModel = new ReportModel(rawData);
 class MyView extends Unseen.View {
 
     initialize() {
-        this.base = reportModel;
+        this.baseModel = reportModel;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];
@@ -105,7 +105,7 @@ console.time("insert");
 // class MyView extends Unseen.View {
 //
 //     initialize() {
-//         this.base = null;
+//         this.baseModel = null;
 //         this.id = "my-item";
 //         this.tag = "div";
 //         this.classList = ["card"];

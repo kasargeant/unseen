@@ -58,7 +58,7 @@ class ViewCollection {
         for(let id in this.model.models) {
             let view = new this.baseClass(this, id);
             let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
-            view.base = model;
+            view.baseModel = model;
             this.views[id] = view;
             this.length++;
         }
@@ -196,7 +196,7 @@ class ViewCollection {
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
-        // let elementBody = this.template(this.base, 0);
+        // let elementBody = this.template(this.baseModel, 0);
         let elementBody = "";
 
         // First we make any element ids in this View - unique.
@@ -256,7 +256,7 @@ class ViewCollection {
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
-        // let elementBody = this.template(this.base, 0);
+        // let elementBody = this.template(this.baseModel, 0);
         let elementBody = "";
 
         // First we make any element ids in this View - unique.
