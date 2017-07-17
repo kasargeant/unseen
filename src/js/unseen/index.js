@@ -16,19 +16,22 @@ const jQuery = require("jquery");
 
 let rawData = require("../../data/processed_sample.json");
 
+// SCHEMA
+const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+
 // MODEL
 class MyModel extends Model {
-    constructor(record, parent) {
-        let definition = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
-        super(definition, record, parent);
+    initialize() {
+        this.baseSchema = schema;
     }
 }
 let myModelInstance = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
+
 // MODEL COLLECTION
 class MyModelCollection extends ModelCollection {
-    constructor(data) {
-        super(MyModel, data);
+    initialize() {
+        this.baseClass = MyModel;
     }
 }
 let myModelCollectionInstance = new MyModelCollection(rawData);
@@ -37,6 +40,7 @@ let myModelCollectionInstance = new MyModelCollection(rawData);
 class MyView extends View {
 
     initialize() {
+        this.base = {};
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];
@@ -74,9 +78,8 @@ let myViewInstance = new MyView(myModelInstance);
 
 // VIEW COLLECTION
 class MyViewCollection extends ViewCollection {
-    constructor(modelCollection, parent, id) {
-        super(MyView, modelCollection, parent, id);
-
+    initialize() {
+        this.baseClass = MyView;
         this.id = "my-list";
         this.tag = "div";
         this.classList = ["container"];

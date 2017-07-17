@@ -17,48 +17,50 @@
  */
 class Model {
     /**
-     * @param {Object} base - The record Schema and default values this Model is to be defined by.
      * @param {Object} [record] - A data object to initially populate this ModelCollection.
      * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
      * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(base={}, record = {}, parent = null, parentRefId = 0) {
+    constructor(record = {}, parent = null, parentRefId = 0) {
 
         // Set internally (or by parent).
         this._parent = parent; // The parent component.
         this._id = parentRefId; // The parent's reference ID for this component.
 
         // Set by constructor (or default).
-        this.base = base;
+        this.baseSchema = null;
 
         // Set by user.
         this.initialize();  // LIFECYCLE CALL: INITIALIZE
 
+        // Sanity check user initialization.
+        if(this.baseSchema === null) {
+            throw new Error("Model requires a base Schema.");
+        }
+
         // Set depending on previous internal/user properties.
-        this._keys = Object.keys(this.base);
-        this._record = {};
+        this._keys = Object.keys(this.baseSchema);
 
+        // Add getters and setters - so that this can be treated 'as if' it were its contained data object.
+        this._data = {};
         for(let key of this._keys) {
-
+            // Define property
             Object.defineProperty(this, key, {
                 get: function() {
-                    return this._record[key];
+                    return this._data[key];
                 },
                 set: function(value) {
-                    this._record[key] = value;
-                    this._emit("change");
+                    // Assign new value - or default value if none given.
+                    this._data[key] = value || this.baseSchema[key];
+                    // Inform parent
+                    if(this._parent !== null) {this._parent.emit("model-change", this._id);}
                 }
             });
-
-            this._record[key] = record[key] || this.base[key];
+            // Then assign the property a value - or default value if none given.
+            this._data[key] = record[key] || this.baseSchema[key];
         }
-        this.length = 1; // Always 1... included only for compatibility with Collection interface.
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // LIFECYCLE METHODS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * @override
@@ -70,27 +72,23 @@ class Model {
      */
     finalize() {}
 
-    _emit(eventType) {
-        if(this._parent !== null) {
-            // this._parent.dispatchEvent(eventType);
-            this._parent.emit(eventType, this._id);
-        }
-    }
-
     reset() {
-        this._record = {}; // For compatibility with Collection interface
+        this._data = JSON.parse(JSON.stringify(this.baseSchema)); // Clone the base schema.
     }
 
     get() {
-        return this; // For compatibility with Collection interface
+        return this._data;
     }
 
-    set() {
-        return this; // TODO - Implement a finer granularity of Model methods
+    set(record) {
+        for(let key of this._keys) {
+            // Then assign the property a value - or reassign if none given. // TODO optimise this!
+            this._data[key] = record[key] || this._data[key];
+        }
     }
 
-    _dump() {
-        return JSON.stringify(this._record);
+    toString() {
+        return JSON.stringify(this._data);
     }
 
 }

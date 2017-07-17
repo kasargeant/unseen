@@ -27,7 +27,7 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
             <div class=\\"card-footer\\">
                 <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-1\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100013440</h4>
                 <h6 class=\\"card-subtitle\\">La Perla</h6>
@@ -36,9 +36,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100013440: restaurant - La Perla
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-1\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-2\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100013447</h4>
                 <h6 class=\\"card-subtitle\\">The Lady</h6>
@@ -47,9 +47,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100013447: unknown - The Lady
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-2\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-3\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100015712</h4>
                 <h6 class=\\"card-subtitle\\">Carlisle Lane</h6>
@@ -58,9 +58,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100015712: unclassified - Carlisle Lane
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-3\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-4\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100015713</h4>
                 <h6 class=\\"card-subtitle\\">Virgil Street</h6>
@@ -69,9 +69,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100015713: unclassified - Virgil Street
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-4\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-5\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100015714</h4>
                 <h6 class=\\"card-subtitle\\">Virgil Street</h6>
@@ -80,9 +80,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100015714: unclassified - Virgil Street
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-5\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-6\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100015715</h4>
                 <h6 class=\\"card-subtitle\\">Carlisle Lane</h6>
@@ -91,9 +91,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100015715: unclassified - Carlisle Lane
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-6\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-7\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100015716</h4>
                 <h6 class=\\"card-subtitle\\">Centaur Street</h6>
@@ -102,9 +102,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100015716: unclassified - Centaur Street
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-7\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-8\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100015720</h4>
                 <h6 class=\\"card-subtitle\\">Upper Marsh</h6>
@@ -113,9 +113,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100015720: unclassified - Upper Marsh
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-8\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-9\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100015721</h4>
                 <h6 class=\\"card-subtitle\\">Upper Marsh</h6>
@@ -124,9 +124,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100015721: unclassified - Upper Marsh
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-9\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-10\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100015723</h4>
                 <h6 class=\\"card-subtitle\\">Station Approach</h6>
@@ -135,9 +135,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100015723: unclassified - Station Approach
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-10\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-11\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100026128</h4>
                 <h6 class=\\"card-subtitle\\">Sterling Way</h6>
@@ -146,9 +146,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100026128: trunk - Sterling Way
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-11\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-12\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100026129</h4>
                 <h6 class=\\"card-subtitle\\">North Circular Road</h6>
@@ -157,9 +157,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100026129: trunk - North Circular Road
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-12\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-13\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100026130</h4>
                 <h6 class=\\"card-subtitle\\">Sterling Way</h6>
@@ -168,9 +168,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100026130: trunk - Sterling Way
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-13\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-14\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">100026131</h4>
                 <h6 class=\\"card-subtitle\\">North Circular Road</h6>
@@ -179,9 +179,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 100026131: trunk - North Circular Road
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-14\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-15\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">1000463949</h4>
                 <h6 class=\\"card-subtitle\\">Empire</h6>
@@ -190,9 +190,9 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 1000463949: supermarket - Empire
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-15\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
-        </div><div id=\\"my-item-0\\" class=\\"my-item card\\">
+        </div><div id=\\"my-item-16\\" class=\\"my-item card\\">
             <div class=\\"card-header\\">
                 <h4 class=\\"card-title\\">1000467325</h4>
                 <h6 class=\\"card-subtitle\\">Trusha (indian cuisine)</h6>
@@ -201,7 +201,7 @@ exports[`Class: View ViewCollection should return render text output. 1`] = `
                 1000467325: restaurant - Trusha (indian cuisine)
             </div>
             <div class=\\"card-footer\\">
-                <button id=\\"button-delete-0\\" class=\\"btn btn-primary\\">Delete</button>
+                <button id=\\"button-delete-16\\" class=\\"btn btn-primary\\">Delete</button>
             </div>
         </div></div>"
 `;

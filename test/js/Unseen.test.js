@@ -24,6 +24,10 @@ const Unseen = require("../../src/index");
 let workingDirectory = process.cwd();
 if(IS_TRAVIS) {workingDirectory = process.env.TRAVIS_BUILD_DIR;} // Usually: "/home/travis/build/kasargeant/warhorse"
 
+// Setup
+const schema = {a: "hi", b: "ho", c: 3};
+
+
 // Tests
 describe("Class: Unseen", function() {
 
@@ -39,9 +43,8 @@ describe("Class: Unseen", function() {
     describe("Models", function() {
 
         class TestModel extends Unseen.Model {
-            constructor(record, parent, id) {
-                let definition = {a: "hi", b: "ho", c: 3};
-                super(definition, record, parent, id);
+            initialize() {
+                this.baseSchema = {a: "hi", b: "ho", c: 3};
             }
         }
         let testModelInstance1 = new TestModel({b: "o"});
@@ -74,14 +77,13 @@ describe("Class: Unseen", function() {
     describe("Collections", function() {
 
         class TestModel extends Unseen.Model {
-            constructor(record, parent, id) {
-                let definition = {a: "hi", b: "ho", c: 3};
-                super(definition, record, parent, id);
+            initialize() {
+                this.baseSchema = {a: "hi", b: "ho", c: 3};
             }
         }
         class TestCollection extends Unseen.ModelCollection {
-            constructor(data) {
-                super(TestModel, data);
+            initialize() {
+                this.baseClass = TestModel;
             }
         }
         let testCollectionInstance1 = new TestCollection();

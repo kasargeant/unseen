@@ -21,23 +21,27 @@ const EventEmitter = require("event-emitter");
 class ModelCollection {
 
     /**
-     * @param {Model} baseClass - An extended (i.e. schema-defined) Model class.
      * @param {Array} records - A data array to initially populate this ModelCollection.
      * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
      * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelCollection (if any).
      * @constructor
      */
-    constructor(baseClass, records = [], parent = null, parentRefId = 0) {
+    constructor(records = [], parent = null, parentRefId = 0) {
 
         // Set internally (or by parent).
         this._parent = parent; // The parent component.
         this._id = parentRefId; // The parent's reference ID for this component.
 
         // Set by constructor (or default).
-        this.baseClass = baseClass;
+        this.baseClass = null;
 
         // Set by user.
         this.initialize();  // LIFECYCLE CALL: INITIALIZE
+
+        // Sanity check user initialization.
+        if(this.baseClass === null) {
+            throw new Error("ModelCollection requires a base Model class.");
+        }
 
         // Set depending on previous internal/user properties.
         this.models = {};

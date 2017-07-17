@@ -20,19 +20,18 @@ const walk = require("./walk");
 class View {
 
     /**
-     * @param {Model} [base] - A Model instance.
      * @param {ViewCollection|ViewList} [parent] - The parent ViewCollection or ViewList (if any).
      * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(base=null, parent=null, parentRefId=0) {
+    constructor(parent=null, parentRefId=0) {
 
         // Set internally (or by parent).
         this._parent = parent; // The parent component.
         this._id = parentRefId; // The parent's reference ID for this component.
 
         // Set by constructor (or default).
-        this.base = base;
+        this.base = null;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
@@ -40,6 +39,11 @@ class View {
 
         // Set by user.
         this.initialize();  // LIFECYCLE CALL: INITIALIZE
+
+        // Sanity check user initialization.
+        if(this.base === null) {
+            throw new Error("View requires a base model instance.");
+        }
 
         // Set depending on previous internal/user properties.
         this.views = null;
