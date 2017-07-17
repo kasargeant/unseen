@@ -22,21 +22,17 @@ class ModelList {
 
     /**
      * @param {Array} [records] - A data array to initially populate this ModelList.
-     * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
-     * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelList (if any).
      * @constructor
      */
-    constructor(records = [], parent = null, parentRefId = 0) {
+    constructor(records = []) {
 
         // Set internally (or by parent).
-        this._parent = parent; // The parent component.
-        this._id = parentRefId; // The parent's reference ID for this component.
+        this._parent = null;    // The parent component (if any).
+        this._id = 0;           // The parent's reference ID for this component (if any).
 
-        // Set by constructor (or default).
-        this.baseClass = baseClass;
-
-        // Set by user.
-        this.initialize();  // LIFECYCLE CALL: INITIALIZE
+        // Set by user (or default).
+        this.baseClass = null;
+        this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
         // Sanity check user initialization.
         if(this.baseClass === null) {
@@ -54,16 +50,13 @@ class ModelList {
         this.length = i;
         this._modelCounter = i; // This provides a unique ID for every model.
 
-        // Object.defineProperty(this, "length", {
-        //     get: function() { return this.length; }
-        // });
-
-        this.on("change", function (args) {
+        // Adds internal events listener used by the Model to signal this ModelList on update.
+        this.on("change", function(args) {
             console.log(`ModelList #${this._id}: Model #${args} changed.`);
             this._emit("change"); // Relay the event forward
         });
 
-        this.on("view-remove", function (args) {
+        this.on("view-remove", function(args) {
             console.log(`ModelList #${this._id}: View #${args} changed.`);
             console.log(`ModelList #${this._id}: Removing Model #${args}`);
             console.log("exists? " + (this.models[args] !== undefined));

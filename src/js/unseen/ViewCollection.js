@@ -22,26 +22,22 @@ const jQuery = require("jquery");
 class ViewCollection {
 
     /**
-     * @param {ModelCollection} modelCollection - An instantiated ModelCollection object.
-     * @param {ViewCollection|ViewList} [parent] - The parent ViewCollection or ViewList (if any).
-     * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
+     * @param {modelCollection} modelCollection - An instantiated ModelCollection object.
      * @constructor
      */
-    constructor(modelCollection, parent=null, parentRefId=0) {
+    constructor(modelCollection) {
 
         // Set internally (or by parent).
-        this._parent = parent; // The parent component.
-        this._id = parentRefId; // The parent's reference ID for this component.
+        this._parent = null;    // The parent component (if any).
+        this._id = 0;           // The parent's reference ID for this component (if any).
 
-        // Set by constructor (or default).
+        // Set by user (or default).
         this.baseClass = null;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
         this.classList = [];
-
-        // Set by user.
-        this.initialize();  // LIFECYCLE CALL: INITIALIZE
+        this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
         // Sanity check user initialization.
         if(this.baseClass === null) {
@@ -56,14 +52,17 @@ class ViewCollection {
         // Instantiate initial View components from ModelCollection models
         this.length = 0;
         for(let id in this.model.models) {
+            // Instantiate view and set private properties.
             let view = new this.baseClass(this, id);
+            view._parent = this;
+            view._id = id;
+
+            // Retrieve associated model from collection and assign to View.
             let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
             view.baseModel = model;
             this.views[id] = view;
             this.length++;
         }
-
-        this._viewCounter = this.length; // This provides a unique ID for every view.
 
         this.el = "";
         this.$el = null;

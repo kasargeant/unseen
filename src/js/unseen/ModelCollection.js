@@ -22,21 +22,17 @@ class ModelCollection {
 
     /**
      * @param {Array} records - A data array to initially populate this ModelCollection.
-     * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
-     * @param {number} [parentRefId] - The parent ModelCollection's reference ID for this ModelCollection (if any).
      * @constructor
      */
-    constructor(records = [], parent = null, parentRefId = 0) {
+    constructor(records = []) {
 
         // Set internally (or by parent).
-        this._parent = parent; // The parent component.
-        this._id = parentRefId; // The parent's reference ID for this component.
+        this._parent = null;    // The parent component (if any).
+        this._id = 0;           // The parent's reference ID for this component (if any).
 
-        // Set by constructor (or default).
+        // Set by user (or default).
         this.baseClass = null;
-
-        // Set by user.
-        this.initialize();  // LIFECYCLE CALL: INITIALIZE
+        this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
         // Sanity check user initialization.
         if(this.baseClass === null) {
@@ -47,23 +43,23 @@ class ModelCollection {
         this.models = {};
         this.length = 0;
 
-        let i;
-        for(i = 0; i < records.length; i++) {
-            this.models[i] = new this.baseClass(records[i], this, i);
+        let id;
+        for(id = 0; id < records.length; id++) {
+            // Instantiate new model and set private properties.
+            this.models[id] = new this.baseClass(records[id]);
+            this.models[id]._parent = this;
+            this.models[id]._id = id;
         }
-        this.length = i;
-        this._modelCounter = i; // This provides a unique ID for every model.
+        this.length = id;
+        this._modelCounter = id; // This provides a unique ID for every model.
 
-        // Object.defineProperty(this, "length", {
-        //     get: function() { return this.length; }
-        // });
-
-        this.on("change", function (args) {
+        // Adds internal events listener used by the Model to signal this ModelCollection on update.
+        this.on("change", function(args) {
             console.log(`ModelCollection #${this._id}: Model #${args} changed.`);
             this._emit("change"); // Relay the event forward
         });
 
-        this.on("view-remove", function (args) {
+        this.on("view-remove", function(args) {
             console.log(`ModelCollection #${this._id}: View #${args} changed.`);
             console.log(`ModelCollection #${this._id}: Removing Model #${args}`);
             console.log("exists? " + (this.models[args] !== undefined));

@@ -17,22 +17,18 @@
  */
 class Model {
     /**
-     * @param {Object} [record] - A data object to initially populate this ModelCollection.
-     * @param {ModelCollection} [parent] - The parent ModelCollection (if any).
-     * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
+     * @param {Object} [record] - A data record object.
      * @constructor
      */
-    constructor(record = {}, parent = null, parentRefId = 0) {
+    constructor(record = {}) {
 
         // Set internally (or by parent).
-        this._parent = parent; // The parent component.
-        this._id = parentRefId; // The parent's reference ID for this component.
+        this._parent = null;    // The parent component (if any).
+        this._id = 0;           // The parent's reference ID for this component (if any).
 
-        // Set by constructor (or default).
+        // Set by user (or default).
         this.baseSchema = null;
-
-        // Set by user.
-        this.initialize();  // LIFECYCLE CALL: INITIALIZE
+        this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
         // Sanity check user initialization.
         if(this.baseSchema === null) {
