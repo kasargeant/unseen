@@ -90,7 +90,7 @@ class View {
         return "";
     }
 
-    _render(doInsert=false, fragment=null) {
+    _renderFragment(doInsert=false, fragment=null) {
 
         let element = document.createElement(this.tag);
         element.id = this.id;
@@ -112,7 +112,7 @@ class View {
         if(this.views !== null) {
             for(let id in this.views) {
                 let view = this.views[id];
-                viewEvents[view._id] = view._render(false, element);
+                viewEvents[view._id] = view._renderFragment(false, element);
             }
         }
 

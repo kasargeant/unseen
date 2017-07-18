@@ -8,6 +8,10 @@
 
 "use strict";
 
+// Imports
+const jQuery = require("jquery");
+
+
 /**
  * The Model class.
  *
@@ -28,6 +32,8 @@ class Model {
 
         // Set by user (or default).
         this.baseSchema = null;
+        this.url = null;
+        this.lastUpdated = 0;
         this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
         // Sanity check user initialization.
@@ -72,15 +78,67 @@ class Model {
         this._data = JSON.parse(JSON.stringify(this.baseSchema)); // Clone the base schema.
     }
 
-    get() {
-        return this._data;
+    fetch(callback) {
+        // Are we storing data locally - or proxying a backend?
+        if(this.url === null) {
+            // We're local... we call the callback immediately.
+            return this._data;
+        } else {
+            // We're proxying... we call the callback on data receipt.
+            this._rest("GET", {}, function(responseData, textStatus, jqXHR) {
+                console.log("RESPONSE: " + JSON.stringify(responseData));
+                // Prepare data - handling any missing/default values.
+                let data = {};
+                for(let key of this._keys) {
+                    // Then assign the property a value - or reassign if none given. // TODO optimise this!
+                    this._data[key] = responseData[key] || this.baseSchema[key];
+                }
+                // Fire any callback
+                if(callback !== undefined) {
+                    callback(this._data);
+                }
+            }.bind(this));
+        }
     }
 
-    set(record) {
+    store(record) {
+
+        // Prepare data - handling any missing/default values.
+        let data = {};
         for(let key of this._keys) {
             // Then assign the property a value - or reassign if none given. // TODO optimise this!
-            this._data[key] = record[key] || this._data[key];
+            data = record[key] || this._data[key];
         }
+
+        // Are we storing data locally - or proxying a backend?
+        if(this.url === null) {
+            // We're local...
+            this._data = data;
+        } else {
+            // We're proxying...
+            this._rest("PUT", data, function(responseData, textStatus, jqXHR) {
+                this._data = data;
+            });
+        }
+    }
+
+    _restFailure(jqXHR, textStatus, errorThrown) {
+        console.error(`Model Error: Failure to sync data with backend.  \n${errorThrown}`);
+    }
+
+    _restSuccess() {
+
+    }
+
+    _rest(method="GET", data=[], success) {
+        jQuery.ajax({
+            type: method,
+            url: this.url,
+            data: data,
+            error: this._restFailure,
+            success: success,
+            dataType: "json"
+        });
     }
 
     toString() {

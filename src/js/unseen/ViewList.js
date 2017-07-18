@@ -58,8 +58,7 @@ class ViewList {
             view._id = id;
 
             // Retrieve associated model from collection and assign to View.
-            let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
-            view.baseModel = model;
+            view.baseModel = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
             this.views[id] = view;
             this.length++;
         }
@@ -73,7 +72,7 @@ class ViewList {
             console.log(`ViewList #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
-            // this._render(true);
+            // this._renderFragment(true);
         }.bind(this));
 
         // TODO - Add internal events listener used by Views signalling this ViewList
@@ -149,7 +148,7 @@ class ViewList {
 
     // template(model, params) {return JSON.stringify(model);}
 
-    _render(doInsert=false, fragment=null) {
+    _renderFragment(doInsert=false, fragment=null) {
 
         let element = document.createElement(this.tag);
         element.id = this.id + "-" + this._id;
@@ -162,7 +161,7 @@ class ViewList {
         // Now we add any sub-views
         for(let id in this.views) {
             let view = this.views[id];
-            viewEvents[view._id] = view._render(false, element);
+            viewEvents[view._id] = view._renderFragment(false, element);
         }
 
         // Are we a top-level view?

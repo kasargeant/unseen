@@ -10,6 +10,7 @@
 
 // Imports
 const EventEmitter = require("event-emitter");
+const jQuery = require("jquery");
 
 /**
  * The ModelCollection class.
@@ -32,6 +33,8 @@ class ModelCollection {
 
         // Set by user (or default).
         this.baseClass = null;
+        this.url = null;
+        this.lastUpdated = 0;
         this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
         // Sanity check user initialization.
@@ -43,12 +46,14 @@ class ModelCollection {
         this.models = {};
         this.length = 0;
 
+        // Instantiate ModelCollection's contents
         let id;
         for(id = 0; id < records.length; id++) {
             // Instantiate new model and set private properties.
             this.models[id] = new this.baseClass(records[id]);
             this.models[id]._parent = this;
             this.models[id]._id = id;
+            this.models[id].url = `${this.url}/${id}`;
         }
         this.length = id;
         this._modelCounter = id; // This provides a unique ID for every model.
@@ -93,19 +98,84 @@ class ModelCollection {
         this.models = {};
     }
 
-    get(id) {
-        return this.models[id];
+    fetch(callback) {
+        // Are we storing data locally - or proxying a backend?
+        if(this.url === null) {
+            // We're local... we call the callback immediately.
+            callback(this.models);
+        } else {
+            // We're proxying... we call the callback on data receipt.
+            this._rest("GET", {}, function(responseData, textStatus, jqXHR) {
+                console.log("RESPONSE: " + JSON.stringify(responseData));
+
+                // Prepare data - handling any missing/default values.
+                this.models = {};
+                this.length = 0;
+
+                let records = responseData;
+                let id;
+                for(id = 0; id < records.length; id++) {
+                    // Instantiate new model and set private properties.
+                    this.models[id] = new this.baseClass(records[id]);
+                    this.models[id]._parent = this;
+                    this.models[id]._id = id;
+                }
+                this.length = id;
+
+                // Fire any callback
+                if(callback !== undefined) {
+                    callback(this.models);
+                }
+            }.bind(this));
+        }
     }
 
-    set(records) {
-        this.models = {};
+    /**
+     *
+     * @param {Array} records
+     */
+    store(records) {
+
+        // Prepare data - handling any missing/default values.
+        let data = {};
         let i;
         for(i = 0; i < records.length; i++) {
-            this.models[i] = new this.baseClass(records[i], this, i);
+            data[i] = new this.baseClass(records[i], this, i);
         }
         this.length = i;
         this._modelCounter = i; // This provides a unique ID for every model.
+
+        // Are we storing data locally - or proxying a backend?
+        if(this.url === null) {
+            // We're local...
+            this.models = data;
+        } else {
+            // We're proxying...
+            this._rest("POST", data, function(responseData, textStatus, jqXHR) {
+                this.models = responseData;
+            });
+        }
     }
+
+    _restFailure(jqXHR, textStatus, errorThrown) {
+        console.error(`Model Error: Failure to sync data with backend.  \n${errorThrown}`);
+    }
+
+    _restSuccess() {
+
+    }
+
+    _rest(method="GET", data=[], success) {
+        jQuery.ajax({
+            type: method,
+            url: this.url,
+            data: data,
+            error: this._restFailure,
+            success: success,
+            dataType: "json"
+        });
+    }
+
 
     add(record) {
         let id = this._modelCounter++;
@@ -113,7 +183,7 @@ class ModelCollection {
         this.length++;
     }
 
-    _dump() {
+    toString() {
         for(let id in this.models) {
             console.log(this.models[id]._dump());
         }

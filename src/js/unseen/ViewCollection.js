@@ -22,7 +22,7 @@ const jQuery = require("jquery");
 class ViewCollection {
 
     /**
-     * @param {modelCollection} modelCollection - An instantiated ModelCollection object.
+     * @param {ModelCollection} modelCollection - An instantiated ModelCollection object.
      * @constructor
      */
     constructor(modelCollection) {
@@ -45,24 +45,9 @@ class ViewCollection {
         }
 
         // Set depending on previous internal/user properties.
-        this.model = modelCollection;
-        this.model._parent = this;
+        this.collection = modelCollection;
+        this.collection._parent = this;
         this.views = {};
-
-        // Instantiate initial View components from ModelCollection models
-        this.length = 0;
-        for(let id in this.model.models) {
-            // Instantiate view and set private properties.
-            let view = new this.baseClass(this, id);
-            view._parent = this;
-            view._id = id;
-
-            // Retrieve associated model from collection and assign to View.
-            let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
-            view.baseModel = model;
-            this.views[id] = view;
-            this.length++;
-        }
 
         this.el = "";
         this.$el = null;
@@ -73,11 +58,82 @@ class ViewCollection {
             console.log(`ViewCollection #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
-            // this._render(true);
+            // this._renderFragment(true);
         }.bind(this));
 
         // TODO - Add internal events listener used by Views signalling this ViewCollection
+
+
+        this.collection.fetch(function(models) {
+            console.log("GOT: " + JSON.stringify(Object.keys(models)));
+
+            // Instantiate initial View components from ModelCollection models
+            this.length = 0;
+            for(let id in models) {
+                // Instantiate view and set private properties.
+                let view = new this.baseClass(this, id);
+                view._parent = this;
+                view._id = id;
+
+                // Retrieve associated model from collection and assign to View.
+                view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
+
+                // Now add newly created View to store.
+                this.views[id] = view;
+                this.length++;
+            }
+
+            this._renderMarkup(true);
+
+        }.bind(this));
     }
+
+    fetch() {
+
+        console.log(this.collection.fetch(function(models) {
+            console.log("GOT: " + JSON.stringify(Object.keys(models)));
+
+            // Instantiate initial View components from ModelCollection models
+            this.length = 0;
+            for(let id in models) {
+                // Instantiate view and set private properties.
+                let view = new this.baseClass(this, id);
+                view._parent = this;
+                view._id = id;
+
+                // Retrieve associated model from collection and assign to View.
+                view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
+
+                // Now add newly created View to store.
+                this.views[id] = view;
+                this.length++;
+            }
+
+            this._renderMarkup(true);
+
+
+            // // Instantiate initial View components from ModelCollection models
+            // this.length = 0;
+            // let models = this.collection.models;
+            // for(let id in models) {
+            //     // Instantiate view and set private properties.
+            //     let view = new this.baseClass(this, id);
+            //     view._parent = this;
+            //     view._id = id;
+            //
+            //     // Retrieve associated model from collection and assign to View.
+            //     view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
+            //
+            //     // Now add newly created View to store.
+            //     this.views[id] = view;
+            //     this.length++;
+            // }
+        }.bind(this)));
+
+
+
+    }
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // LIFECYCLE METHODS
@@ -137,7 +193,7 @@ class ViewCollection {
                 // DELETE A VIEW
                 // this.views[viewId]._destroy(); // Always call private life-cycle method first.
                 // delete this.views[viewId];
-                // this.model.emit("view-remove", viewId);
+                // this.collection.emit("view-remove", viewId);
             }
         }
 
@@ -149,7 +205,7 @@ class ViewCollection {
 
     // template(model, params) {return JSON.stringify(model);}
 
-    _render(doInsert=false, fragment=null) {
+    _renderFragment(doInsert=false, fragment=null) {
 
         let element = document.createElement(this.tag);
         element.id = this.id + "-" + this._id;
@@ -162,7 +218,7 @@ class ViewCollection {
         // Now we add any sub-views
         for(let id in this.views) {
             let view = this.views[id];
-            viewEvents[view._id] = view._render(false, element);
+            viewEvents[view._id] = view._renderFragment(false, element);
         }
 
         // Are we a top-level view?
