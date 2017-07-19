@@ -65,7 +65,7 @@ class ViewCollection {
 
 
         this.collection.fetch(function(models) {
-            console.log("GOT: " + JSON.stringify(Object.keys(models)));
+            //console.log("GOT: " + JSON.stringify(Object.keys(models)));
 
             // Instantiate initial View components from ModelCollection models
             this.length = 0;
@@ -91,7 +91,7 @@ class ViewCollection {
     fetch() {
 
         console.log(this.collection.fetch(function(models) {
-            console.log("GOT: " + JSON.stringify(Object.keys(models)));
+            //console.log("GOT: " + JSON.stringify(Object.keys(models)));
 
             // Instantiate initial View components from ModelCollection models
             this.length = 0;

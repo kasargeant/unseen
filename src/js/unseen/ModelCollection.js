@@ -10,7 +10,10 @@
 
 // Imports
 const EventEmitter = require("event-emitter");
-const jQuery = require("jquery");
+const fetchival = require("fetchival");
+if(typeof window === "undefined") {
+    fetchival.fetch = require("node-fetch");
+}
 
 /**
  * The ModelCollection class.
@@ -98,6 +101,24 @@ class ModelCollection {
         this.models = {};
     }
 
+    get(id) {
+        return this.models[id];
+    }
+
+    set(records) {
+        if(Array.isArray(records)) {
+            this.models = {};
+            let i;
+            for(i = 0; i < records.length; i++) {
+                this.models[i] = new this.baseClass(records[i], this, i);
+            }
+            this.length = i;
+            this._modelCounter = i; // This provides a unique ID for every model.
+        } else {
+            throw new Error("ModelCollection Error: Attempt to set without using a data array.");
+        }
+    }
+
     fetch(callback) {
         // Are we storing data locally - or proxying a backend?
         if(this.url === null) {
@@ -166,14 +187,31 @@ class ModelCollection {
     }
 
     _rest(method="GET", data=[], success) {
-        jQuery.ajax({
-            type: method,
-            url: this.url,
-            data: data,
-            error: this._restFailure,
-            success: success,
-            dataType: "json"
-        });
+        console.log("ModelCollection: FETCHING!!!");
+        switch(method) {
+            case "GET":
+                fetchival(this.url).get(data).then(success);
+                break;
+            case "POST":
+                fetchival(this.url).post(data).then(success);
+                break;
+            case "PUT":
+                fetchival(this.url).put(data).then(success);
+                break;
+            case "DELETE":
+                fetchival(this.url).delete(data).then(success);
+                break;
+            default:
+
+        }
+        // jQuery.ajax({
+        //     type: method,
+        //     url: this.url,
+        //     data: data,
+        //     error: this._restFailure,
+        //     success: success,
+        //     dataType: "json"
+        // });
     }
 
 

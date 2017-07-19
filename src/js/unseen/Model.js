@@ -9,8 +9,10 @@
 "use strict";
 
 // Imports
-const jQuery = require("jquery");
-
+const fetchival = require("fetchival");
+if(typeof window === "undefined") {
+    fetchival.fetch = require("node-fetch");
+}
 
 /**
  * The Model class.
@@ -131,14 +133,31 @@ class Model {
     }
 
     _rest(method="GET", data=[], success) {
-        jQuery.ajax({
-            type: method,
-            url: this.url,
-            data: data,
-            error: this._restFailure,
-            success: success,
-            dataType: "json"
-        });
+        console.log("Model: FETCHING!!!");
+        switch(method) {
+            case "GET":
+                fetchival(this.url).get(data).then(success);
+                break;
+            case "POST":
+                fetchival(this.url).post(data).then(success);
+                break;
+            case "PUT":
+                fetchival(this.url).put(data).then(success);
+                break;
+            case "DELETE":
+                fetchival(this.url).delete(data).then(success);
+                break;
+            default:
+
+        }
+        // jQuery.ajax({
+        //     type: method,
+        //     url: this.url,
+        //     data: data,
+        //     error: this._restFailure,
+        //     success: success,
+        //     dataType: "json"
+        // });
     }
 
     toString() {
