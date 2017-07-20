@@ -22,44 +22,32 @@ const jQuery = require("jquery");
 class ViewCollection {
 
     /**
-     * @param {View} baseClass - An extended View class.
      * @param {ModelCollection} modelCollection - An instantiated ModelCollection object.
-     * @param {ViewCollection|ViewList} [parent] - The parent ViewCollection or ViewList (if any).
-     * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(baseClass, modelCollection, parent=null, parentRefId=0) {
+    constructor(modelCollection) {
 
         // Set internally (or by parent).
-        this._parent = parent; // The parent component.
-        this._id = parentRefId; // The parent's reference ID for this component.
+        this._parent = null;    // The parent component (if any).
+        this._id = 0;           // The parent's reference ID for this component (if any).
 
-        // Set by constructor (or default).
-        this.baseClass = baseClass;
+        // Set by user (or default).
+        this.baseClass = null;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
         this.classList = [];
+        this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
-        // Set by user.
-        this.initialize();  // LIFECYCLE CALL: INITIALIZE
-
-        // Set depending on previous internal/user properties.
-        this.model = modelCollection;
-        this.model._parent = this;
-        this.views = {};
-
-        // Instantiate initial View components from ModelCollection models
-        this.length = 0;
-        for(let id in this.model.models) {
-            let view = new this.baseClass(this, id);
-            let model = this.model.models[id]; // Note if the 'model' IS a single model... it returns itself
-            view.base = model;
-            this.views[id] = view;
-            this.length++;
+        // Sanity check user initialization.
+        if(this.baseClass === null) {
+            throw new Error("ViewCollection requires a base View class.");
         }
 
-        this._viewCounter = this.length; // This provides a unique ID for every view.
+        // Set depending on previous internal/user properties.
+        this.collection = modelCollection;
+        this.collection._parent = this;
+        this.views = {};
 
         this.el = "";
         this.$el = null;
@@ -70,11 +58,40 @@ class ViewCollection {
             console.log(`ViewCollection #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
-            // this._render(true);
+            // this._renderFragment(true);
         }.bind(this));
 
         // TODO - Add internal events listener used by Views signalling this ViewCollection
+        
     }
+
+    fetch(doInsert) {
+
+        this.collection.fetch(function(models) {
+            //console.log("GOT: " + JSON.stringify(Object.keys(models)));
+
+            // Instantiate initial View components from ModelCollection models
+            this.length = 0;
+            for(let id in models) {
+                // Instantiate view and set private properties.
+                let view = new this.baseClass(this, id);
+                view._parent = this;
+                view._id = id;
+
+                // Retrieve associated model from collection and assign to View.
+                view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
+
+                // Now add newly created View to store.
+                this.views[id] = view;
+                this.length++;
+            }
+
+            this._renderMarkup(doInsert);
+
+        }.bind(this));
+
+    }
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // LIFECYCLE METHODS
@@ -134,7 +151,7 @@ class ViewCollection {
                 // DELETE A VIEW
                 // this.views[viewId]._destroy(); // Always call private life-cycle method first.
                 // delete this.views[viewId];
-                // this.model.emit("view-remove", viewId);
+                // this.collection.emit("view-remove", viewId);
             }
         }
 
@@ -146,7 +163,7 @@ class ViewCollection {
 
     // template(model, params) {return JSON.stringify(model);}
 
-    _render(doInsert=false, fragment=null) {
+    _renderFragment(doInsert=false, fragment=null) {
 
         let element = document.createElement(this.tag);
         element.id = this.id + "-" + this._id;
@@ -159,7 +176,7 @@ class ViewCollection {
         // Now we add any sub-views
         for(let id in this.views) {
             let view = this.views[id];
-            viewEvents[view._id] = view._render(false, element);
+            viewEvents[view._id] = view._renderFragment(false, element);
         }
 
         // Are we a top-level view?
@@ -192,7 +209,7 @@ class ViewCollection {
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
-        // let elementBody = this.template(this.base, 0);
+        // let elementBody = this.template(this.baseModel, 0);
         let elementBody = "";
 
         // First we make any element ids in this View - unique.
@@ -252,7 +269,7 @@ class ViewCollection {
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
-        // let elementBody = this.template(this.base, 0);
+        // let elementBody = this.template(this.baseModel, 0);
         let elementBody = "";
 
         // First we make any element ids in this View - unique.

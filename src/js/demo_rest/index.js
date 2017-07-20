@@ -7,37 +7,37 @@
 "use strict";
 
 // Imports
-const Model = require("./Model");
-const ModelCollection = require("./ModelCollection");
-const View = require("./View");
-const ViewCollection = require("./ViewCollection");
+const Unseen = require("../../index");
 
 const jQuery = require("jquery");
 
-let rawData = require("../../data/processed_sample.json");
+// let rawData = require("../../data/processed_sample.json");
+let rawData = [];
 
 // SCHEMA
 const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
 
 // MODEL
-class MyModel extends Model {
+class MyModel extends Unseen.Model {
     initialize() {
         this.baseSchema = schema;
+        // this.url = "http://localhost:8080/entity/1";
     }
 }
 let myModelInstance = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
 
 // MODEL COLLECTION
-class MyModelCollection extends ModelCollection {
+class MyModelCollection extends Unseen.ModelCollection {
     initialize() {
         this.baseClass = MyModel;
+        this.url = "http://localhost:8080/entity";
     }
 }
 let myModelCollectionInstance = new MyModelCollection(rawData);
 
 // VIEW
-class MyView extends View {
+class MyView extends Unseen.View {
 
     initialize() {
         this.baseModel = myModelInstance;
@@ -77,7 +77,7 @@ let myViewInstance = new MyView(myModelInstance);
 
 
 // VIEW COLLECTION
-class MyViewCollection extends ViewCollection {
+class MyViewCollection extends Unseen.ViewCollection {
     initialize() {
         this.baseClass = MyView;
         this.id = "my-list";
@@ -104,7 +104,7 @@ console.log(`Testing with ${myModelCollection.length} records.`);
 console.time("render");
 
 // myViewCollectionInstance._render(true);
-myViewCollectionInstance._renderMarkup(true);
+// myViewCollectionInstance._renderMarkup(true);
 
 console.timeEnd("render");
 

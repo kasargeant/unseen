@@ -27,19 +27,20 @@ if(IS_TRAVIS) {workingDirectory = process.env.TRAVIS_BUILD_DIR;} // Usually: "/h
 // Setup
 let rawData = require("../data/processed_sample.json");
 
+const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+
 // MODEL
 class MyModel extends Unseen.Model {
-    constructor(record, parent) {
-        let definition = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
-        super(definition, record, parent);
+    initialize() {
+        this.baseSchema = schema;
     }
 }
 let myModelInstance = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
 // MODEL COLLECTION
 class MyModelCollection extends Unseen.ModelCollection {
-    constructor(data) {
-        super(MyModel, data);
+    initialize() {
+        this.baseClass = MyModel;
     }
 }
 let myModelCollectionInstance = new MyModelCollection(rawData);
@@ -48,6 +49,7 @@ let myModelCollectionInstance = new MyModelCollection(rawData);
 class MyView extends Unseen.View {
 
     initialize() {
+        this.baseModel = myModelInstance;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];
@@ -85,29 +87,18 @@ let myViewInstance = new MyView(myModelInstance);
 
 // VIEW COLLECTION
 class MyViewCollection extends Unseen.ViewCollection {
-    constructor(modelCollection, parent, id) {
-        super(MyView, modelCollection, parent, id);
-
+    initialize() {
+        this.baseClass = MyView;
         this.id = "my-list";
         this.tag = "div";
         this.classList = ["container"];
     }
 }
 let myViewCollectionInstance = new MyViewCollection(myModelCollectionInstance);
+myViewCollectionInstance.fetch(false);
 
 
 console.log(`Testing with ${myModelCollectionInstance.length} records.`);
-
-// let markupResult = {html: ""};
-// // myViewCollectionInstance._render(true);
-// myViewCollectionInstance._renderMarkup(false, markupResult);
-
-
-// let markupResult = {html: ""};
-// myViewInstance._renderMarkup(false, markupResult);
-// console.log(markupResult);
-
-
 
 // Tests
 describe("Class: View", function() {
@@ -141,57 +132,5 @@ describe("Class: View", function() {
         });
 
     });
-
-    // describe("Collections", function() {
-    //
-    //     class TestModel extends Unseen.Model {
-    //         constructor(record, parent, id) {
-    //             let definition = {a: "hi", b: "ho", c: 3};
-    //             super(definition, record, parent, id);
-    //         }
-    //     }
-    //     class TestCollection extends Unseen.ModelCollection {
-    //         constructor(data) {
-    //             super(TestModel, data);
-    //         }
-    //     }
-    //     let testCollectionInstance1 = new TestCollection();
-    //     let testCollectionInstance2 = new TestCollection([
-    //         {b: "o"},
-    //         {a: "hiya", b: "hoho", c: 1},
-    //         {a: "riii", b: "biii", c: 20}
-    //     ]);
-    //     let testModelInstance1 = testCollectionInstance2.get(0);
-    //     let testModelInstance2 = testCollectionInstance2.get(1);
-    //     let testModelInstance3 = testCollectionInstance2.get(2);
-    //
-    //
-    //
-    //     it("should be able to manufacture a Collection class for a given Model.", function() {
-    //         expect(TestCollection).toBeDefined();
-    //     });
-    //
-    //     it("should be able to make instances of the Collection without model data.", function() {
-    //         expect(testCollectionInstance1).toBeDefined();
-    //         expect(testCollectionInstance1.length).toBe(0);
-    //     });
-    //
-    //     it("should be able to make instances of the Collection with initial model data.", function() {
-    //         expect(testCollectionInstance2).toBeDefined();
-    //         expect(testCollectionInstance2.length).toBe(3);
-    //     });
-    //     //
-    //     it("should be able to make instances of the Model with all values.", function() {
-    //         expect(testModelInstance3.a).toBe("riii");
-    //         expect(testModelInstance3.b).toBe("biii");
-    //         expect(testModelInstance3.c).toBe(20);
-    //     });
-    //
-    //     it("should be able to make instances of the Model with binding contamination", function() {
-    //         expect(testModelInstance2.a).toBe("hiya");
-    //         expect(testModelInstance2.b).toBe("hoho");
-    //         expect(testModelInstance2.c).toBe(1);
-    //     });
-    // });
 
 });

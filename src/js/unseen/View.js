@@ -20,26 +20,26 @@ const walk = require("./walk");
 class View {
 
     /**
-     * @param {Model} [base] - A Model instance.
-     * @param {ViewCollection|ViewList} [parent] - The parent ViewCollection or ViewList (if any).
-     * @param {number} [parentRefId] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(base=null, parent=null, parentRefId=0) {
+    constructor() {
 
         // Set internally (or by parent).
-        this._parent = parent; // The parent component.
-        this._id = parentRefId; // The parent's reference ID for this component.
+        this._parent = null;    // The parent component (if any).
+        this._id = 0;           // The parent's reference ID for this component (if any).
 
-        // Set by constructor (or default).
-        this.base = base;
+        // Set by user (or default).
+        this.baseModel = null;
         this.id = "view";       // HTML Element ID
         this.target = "main";
         this.tag = "div";
         this.classList = [];
+        this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
-        // Set by user.
-        this.initialize();  // LIFECYCLE CALL: INITIALIZE
+        // Sanity check user initialization.
+        if(this.baseModel === null) {
+            throw new Error("View requires a base model instance.");
+        }
 
         // Set depending on previous internal/user properties.
         this.views = null;
@@ -90,13 +90,13 @@ class View {
         return "";
     }
 
-    _render(doInsert=false, fragment=null) {
+    _renderFragment(doInsert=false, fragment=null) {
 
         let element = document.createElement(this.tag);
         element.id = this.id;
         element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
         element.classList.add(...this.classList); // We add any remaining classes.
-        element.innerHTML = this.template(this.base, 0);
+        element.innerHTML = this.template(this.baseModel, 0);
         // First we make any element ids in this View - unique.
         walk(element, function(node) {
             // console.log("node", node); // DEBUG ONLY
@@ -112,7 +112,7 @@ class View {
         if(this.views !== null) {
             for(let id in this.views) {
                 let view = this.views[id];
-                viewEvents[view._id] = view._render(false, element);
+                viewEvents[view._id] = view._renderFragment(false, element);
             }
         }
 
@@ -136,7 +136,7 @@ class View {
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
-        let elementBody = this.template(this.base, this._id);
+        let elementBody = this.template(this.baseModel, this._id);
 
         // First we make any element ids in this View - unique.
         // let matches = content.match(/(?:id|class)="([^"]*)"/gi);    // Matches class="sfasdf" or id="dfssf"
