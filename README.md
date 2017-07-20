@@ -4,6 +4,10 @@
 
 ## ABOUT
 
+```diff
+- NOTE: THIS LIBRARY IS BEING PROTOTYPED AND UNDER HEAVY DEVELOPMENT.  PLEASE VISIT LATER... FOR SOMETHING A LITTLE MORE STABLE! ;)
+```
+
 **Unseen** is a micro-library designed to provide a robust and performant foundation for building SPAs and other front-end applications.
 
 It is a library - in the Backbone.js sense - that provides developers with a selection of core components that they can use or ignore as their needs require.  
@@ -12,10 +16,13 @@ It does not force "buy-in" to some one all encompassing framework of UI Truth!  
 
 For example, if you want to use Unseen's powerful data model and back-end support - but with React or Vue providing the visuals - you can.
 
+## FEATURES
+
+
 
 ## INSTALLATION
 
-    npm install
+    npm install unseen
 
 ## USAGE
 
@@ -28,7 +35,3 @@ For example, if you want to use Unseen's powerful data model and back-end suppor
 ## DOCUMENTATION
 
 See the [Unseen Wiki](https://github.com/kasargeant/unseen/wiki) for current documentation.
-
-## LICENSE INFORMATION
- 
-Please see the LICENSE file included in this distribution.
