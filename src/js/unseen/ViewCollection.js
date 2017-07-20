@@ -62,7 +62,10 @@ class ViewCollection {
         }.bind(this));
 
         // TODO - Add internal events listener used by Views signalling this ViewCollection
+        
+    }
 
+    fetch(doInsert) {
 
         this.collection.fetch(function(models) {
             //console.log("GOT: " + JSON.stringify(Object.keys(models)));
@@ -83,54 +86,9 @@ class ViewCollection {
                 this.length++;
             }
 
-            this._renderMarkup(true);
+            this._renderMarkup(doInsert);
 
         }.bind(this));
-    }
-
-    fetch() {
-
-        console.log(this.collection.fetch(function(models) {
-            //console.log("GOT: " + JSON.stringify(Object.keys(models)));
-
-            // Instantiate initial View components from ModelCollection models
-            this.length = 0;
-            for(let id in models) {
-                // Instantiate view and set private properties.
-                let view = new this.baseClass(this, id);
-                view._parent = this;
-                view._id = id;
-
-                // Retrieve associated model from collection and assign to View.
-                view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
-
-                // Now add newly created View to store.
-                this.views[id] = view;
-                this.length++;
-            }
-
-            this._renderMarkup(true);
-
-
-            // // Instantiate initial View components from ModelCollection models
-            // this.length = 0;
-            // let models = this.collection.models;
-            // for(let id in models) {
-            //     // Instantiate view and set private properties.
-            //     let view = new this.baseClass(this, id);
-            //     view._parent = this;
-            //     view._id = id;
-            //
-            //     // Retrieve associated model from collection and assign to View.
-            //     view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
-            //
-            //     // Now add newly created View to store.
-            //     this.views[id] = view;
-            //     this.length++;
-            // }
-        }.bind(this)));
-
-
 
     }
 

@@ -95,6 +95,7 @@ class MyViewCollection extends Unseen.ViewCollection {
     }
 }
 let myViewCollectionInstance = new MyViewCollection(myModelCollectionInstance);
+myViewCollectionInstance.fetch(false);
 
 
 console.log(`Testing with ${myModelCollectionInstance.length} records.`);
