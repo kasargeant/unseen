@@ -47,8 +47,8 @@ class ViewCollection {
         // Set depending on previous internal/user properties.
         this.collection = modelCollection;
         this.collection._parent = this;
-        this.fetch();
         this.views = {};
+        this.fetch();
 
         this.el = "";
         this.$el = null;
@@ -68,19 +68,19 @@ class ViewCollection {
 
     fetch() {
 
-        this.collection.fetch(function(models) {
+        this.collection.fetch(function(collection) {
             //console.log("GOT: " + JSON.stringify(Object.keys(models)));
 
             // Instantiate initial View components from ModelCollection models
             this.length = 0;
-            for(let id in models) {
+            for(let id in collection.models) {
                 // Instantiate view and set private properties.
-                let view = new this.baseClass(this, id);
+                let view = new this.baseClass();
                 view._parent = this;
                 view._id = id;
 
                 // Retrieve associated model from collection and assign to View.
-                view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
+                view.baseModel = collection.models[id]; // Note if the 'model' IS a single model... it returns itself
 
                 // Now add newly created View to store.
                 this.views[id] = view;

@@ -25,14 +25,19 @@
 class AbstractModel {
     /**
      * @param {Object} data - A data record object.
+     * @param {ModelCollection} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(data = {}, parent = null, parentRef = null) {
+    constructor(data = {}, datasource = null, parent = null, parentRef = null) {
 
-        // Args guard.
-        if(typeof data !== "object") {
-            throw new Error("AbstractModel construction requires an object.");
-        }
+        // let defaults = {
+        //     data: {},
+        //     datasource: null,
+        //     parent: null,
+        //     parentRef: null
+        // };
+        // this.config = Object.assign(default, options);
 
         // Set internally (or by parent).
         this._parent = parent;  // The parent component (if any).
@@ -78,6 +83,9 @@ class AbstractModel {
                     if(this._parent !== null) {this._parent.emit("model-change", this._id);}
                 }
             });
+            // if(this.schema !== null) {
+            //     this._data[key] = this._data[key] || this.schema[key];
+            // }
         }
     }
 

@@ -30,6 +30,8 @@ if(typeof window === "undefined") {
 class Model extends AbstractModel {
     /**
      * @param {Object} data - A data record object.
+     * @param {ModelCollection} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
     constructor(data, parent, parentRef) {
@@ -45,8 +47,8 @@ class Model extends AbstractModel {
             // We're proxying... we call the callback on data receipt.
             this._rest("GET", {}, function(resData, textStatus, jqXHR) {
                 console.log("RESPONSE: " + JSON.stringify(resData));
-                // Prepare data - handling any missing/default values.
-                this._reset(resData);  // Add accessors.
+                // Load fresh data.
+                this._reset(resData);
 
                 // Fire any callback
                 if(callback !== undefined) {
@@ -64,10 +66,9 @@ class Model extends AbstractModel {
         } else {
             // We're proxying...
             this._rest("PUT", data, function(resData, textStatus, jqXHR) {
-                this._data = resData;
-                this._resetKeys();  // Add accessors.
+                // Load fresh data.
+                this._reset(resData);
                 return callback(this);
-
             });
         }
     }
@@ -104,3 +105,7 @@ class Model extends AbstractModel {
 
 // Exports
 module.exports = Model;
+
+
+// let myModel = new Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
+// console.log(myModel.idn);

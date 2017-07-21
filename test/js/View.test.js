@@ -27,19 +27,13 @@ if(IS_TRAVIS) {workingDirectory = process.env.TRAVIS_BUILD_DIR;} // Usually: "/h
 // Setup
 let rawData = require("../data/processed_sample.json");
 
-const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+// const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
 
 // MODEL
-
 let myModelInstance = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
 // MODEL COLLECTION
-class MyModelCollection extends Unseen.ModelCollection {
-    initialize() {
-        this.baseClass = MyModel;
-    }
-}
-let myModelCollectionInstance = new MyModelCollection(rawData);
+let myModelCollection = new Unseen.ModelCollection(rawData);
 
 // VIEW
 class MyView extends Unseen.View {
@@ -90,11 +84,11 @@ class MyViewCollection extends Unseen.ViewCollection {
         this.classList = ["container"];
     }
 }
-let myViewCollectionInstance = new MyViewCollection(myModelCollectionInstance);
+let myViewCollectionInstance = new MyViewCollection(myModelCollection);
 myViewCollectionInstance.fetch(false);
 
 
-console.log(`Testing with ${myModelCollectionInstance.length} records.`);
+console.log(`Testing with ${myModelCollection.length} records.`);
 
 // Tests
 describe("Class: View", function() {
