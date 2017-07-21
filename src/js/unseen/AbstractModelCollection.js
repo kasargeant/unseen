@@ -29,19 +29,24 @@ class AbstractModelCollection {
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(data = [], datasource = null, parent = null, parentRef = null) {
+    constructor(data = [], options = {}, parent = null, parentRef = null) {
 
         // Args guard
         if(!Array.isArray(data)) {
             throw new Error("Attempt to instantiate AbstractModelCollection without a data array.");
         }
 
+        // Create sensible defaults-based config.
+        this.defaults = {
+            schema: null,
+        };
+        this.config = Object.assign(this.defaults, options);
+
         // Set internally (or by parent).
         this._parent = parent;  // The parent component (if any).
         this._id = parentRef;   // The parent's reference ID for this component (if any).
 
         // Set by user (or default).
-        this.url = datasource;
         this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
         // Set depending on previous internal/user properties.
@@ -95,10 +100,11 @@ class AbstractModelCollection {
         // Instantiate AbstractModelCollection's contents
         for(let id = 0; id < data.length; id++) {
             // Instantiate new model and set private properties.
-            this.models[id] = new Model(data[id], this, id);
-            if(this.url !== null) {
-                this.models[id].url = `${this.url}/${id}`;
-            }
+            // this.models[id] = new Model(data[id], this, id);
+            this.models[id] = new Model(data[id], {
+                schema: null,
+                url: ((this.url !== null) ? `${this.url}/${id}` : null)
+            }, this, id);
         }
     }
 

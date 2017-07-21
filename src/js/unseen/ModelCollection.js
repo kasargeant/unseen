@@ -31,13 +31,14 @@ class ModelCollection extends AbstractModelCollection {
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(data, parent, parentRef) {
-        super(data, parent, parentRef);
+    constructor(data, options, parent, parentRef) {
+        super(data, options, parent, parentRef);
+        this.defaults.url = null;
     }
 
     fetch(callback) {
         // Are we storing data locally - or proxying a backend?
-        if(this.url === null) {
+        if(this.config.url === null) {
             // We're local... we call the callback immediately.
             callback(this);
         } else {
@@ -61,7 +62,7 @@ class ModelCollection extends AbstractModelCollection {
      */
     store(data, callback) {
         // Are we storing data locally - or proxying a backend?
-        if(this.url === null) {
+        if(this.config.url === null) {
             // We're local... so we call the callback immediately.
             return callback(this);
         } else {
@@ -86,16 +87,16 @@ class ModelCollection extends AbstractModelCollection {
         console.log("ModelCollection: FETCHING!!!");
         switch(method) {
             case "GET":
-                fetchival(this.url).get(data).then(success);
+                fetchival(this.config.url).get(data).then(success);
                 break;
             case "POST":
-                fetchival(this.url).post(data).then(success);
+                fetchival(this.config.url).post(data).then(success);
                 break;
             case "PUT":
-                fetchival(this.url).put(data).then(success);
+                fetchival(this.config.url).put(data).then(success);
                 break;
             case "DELETE":
-                fetchival(this.url).delete(data).then(success);
+                fetchival(this.config.url).delete(data).then(success);
                 break;
             default:
 

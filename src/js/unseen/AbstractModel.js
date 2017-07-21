@@ -29,15 +29,14 @@ class AbstractModel {
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(data = {}, datasource = null, parent = null, parentRef = null) {
+    constructor(data = {}, options = {}, parent = null, parentRef = null) {
 
-        // let defaults = {
-        //     data: {},
-        //     datasource: null,
-        //     parent: null,
-        //     parentRef: null
-        // };
-        // this.config = Object.assign(default, options);
+        this.defaults = {
+            schema: null,
+            url: null
+        };
+        this.config = Object.assign(this.defaults, options);
+// console.log("MODEL CONFIG: " + JSON.stringify(this.config));
 
         // Set internally (or by parent).
         this._parent = parent;  // The parent component (if any).
