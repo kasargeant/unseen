@@ -30,12 +30,8 @@ let rawData = require("../data/processed_sample.json");
 const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
 
 // MODEL
-class MyModel extends Unseen.Model {
-    initialize() {
-        this.baseSchema = schema;
-    }
-}
-let myModelInstance = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
+
+let myModelInstance = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
 // MODEL COLLECTION
 class MyModelCollection extends Unseen.ModelCollection {

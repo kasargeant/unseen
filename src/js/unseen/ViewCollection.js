@@ -47,6 +47,7 @@ class ViewCollection {
         // Set depending on previous internal/user properties.
         this.collection = modelCollection;
         this.collection._parent = this;
+        this.fetch();
         this.views = {};
 
         this.el = "";
@@ -65,7 +66,7 @@ class ViewCollection {
         
     }
 
-    fetch(doInsert) {
+    fetch() {
 
         this.collection.fetch(function(models) {
             //console.log("GOT: " + JSON.stringify(Object.keys(models)));
@@ -85,8 +86,6 @@ class ViewCollection {
                 this.views[id] = view;
                 this.length++;
             }
-
-            this._renderMarkup(doInsert);
 
         }.bind(this));
 
