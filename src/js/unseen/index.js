@@ -20,27 +20,21 @@ let rawData = require("../../data/processed_sample.json");
 const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
 
 // MODEL
-class MyModel extends Model {
-    initialize() {
-        this.baseSchema = schema;
-    }
-}
-let myModelInstance = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
+let myModel = new Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"}, {
+    schema: schema
+});
 
 
 // MODEL COLLECTION
-class MyModelCollection extends ModelCollection {
-    initialize() {
-        this.baseClass = MyModel;
-    }
-}
-let myModelCollectionInstance = new MyModelCollection(rawData);
+let myModelCollection = new ModelCollection(rawData, {
+    schema: schema
+});
 
 // VIEW
 class MyView extends View {
 
     initialize() {
-        this.baseModel = myModelInstance;
+        this.baseModel = myModel;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];
@@ -73,7 +67,7 @@ class MyView extends View {
         this.destroy();
     }
 }
-let myViewInstance = new MyView(myModelInstance);
+let myViewInstance = new MyView(myModel);
 
 
 // VIEW COLLECTION
@@ -85,10 +79,6 @@ class MyViewCollection extends ViewCollection {
         this.classList = ["container"];
     }
 }
-
-// DEMO
-
-let myModelCollection = new MyModelCollection(rawData);
 let myViewCollectionInstance = new MyViewCollection(myModelCollection);
 
 // DEMO: CONSOLE

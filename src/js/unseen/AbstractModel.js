@@ -68,7 +68,8 @@ class AbstractModel {
         this._data = data;
 
         // Third, set new keys and accessors.
-        this._keys = Object.keys(this._data);
+        // - If we have a schema - enforce it's keys.
+        this._keys = (this.config.schema === null) ? Object.keys(this._data) : Object.keys(this.config.schema);
         for(let key of this._keys) {
             // Define property
             Object.defineProperty(this, key, {
@@ -82,9 +83,10 @@ class AbstractModel {
                     if(this._parent !== null) {this._parent.emit("model-change", this._id);}
                 }
             });
-            // if(this.schema !== null) {
-            //     this._data[key] = this._data[key] || this.schema[key];
-            // }
+            // - If we have a schema... use it's defaults for any undefined or null data values.
+            if(this.config.schema !== null) {
+                this._data[key] = this._data[key] || this.config.schema[key];
+            }
         }
     }
 

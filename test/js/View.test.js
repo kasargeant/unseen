@@ -27,13 +27,17 @@ if(IS_TRAVIS) {workingDirectory = process.env.TRAVIS_BUILD_DIR;} // Usually: "/h
 // Setup
 let rawData = require("../data/processed_sample.json");
 
-// const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
 
 // MODEL
-let myModelInstance = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
+let myModelInstance = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"}, {
+    schema: schema
+});
 
 // MODEL COLLECTION
-let myModelCollection = new Unseen.ModelCollection(rawData);
+let myModelCollection = new Unseen.ModelCollection(rawData, {
+    schema: schema
+});
 
 // VIEW
 class MyView extends Unseen.View {

@@ -51,6 +51,7 @@ class AbstractModelCollection {
 
         // Set depending on previous internal/user properties.
         this.models = null;
+        this.length = 0;
         this.reset(data);       // Add accessors.
 
         // Adds internal events listener used by the Model to signal this AbstractModelCollection on update.
@@ -102,10 +103,11 @@ class AbstractModelCollection {
             // Instantiate new model and set private properties.
             // this.models[id] = new Model(data[id], this, id);
             this.models[id] = new Model(data[id], {
-                schema: null,
+                schema: this.config.schema,
                 url: ((this.url !== null) ? `${this.url}/${id}` : null)
             }, this, id);
         }
+        this.length = data.length;
     }
 
     get(id) {
