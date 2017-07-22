@@ -7,35 +7,40 @@
 "use strict";
 
 // Imports
-const BaseModel = require("../unseen/BaseModel");
-const BaseModelCollection = require("../unseen/BaseModelCollection");
-const BaseView = require("../unseen/BaseView");
-const BaseViewCollection = require("../unseen/BaseViewCollection");
+const Model = require("./Model");
+const ModelCollection = require("./ModelCollection");
+const View = require("./View");
+const ViewCollection = require("./ViewCollection");
 
 const jQuery = require("jquery");
 
 let rawData = require("../../data/processed_sample.json");
 
+// SCHEMA
+const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+
 // MODEL
-class MyModel extends BaseModel {
-    constructor(record, parent) {
-        let definition = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
-        super(definition, record, parent);
+class MyModel extends Model {
+    initialize() {
+        this.baseSchema = schema;
     }
 }
+let myModel = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
+
 
 // MODEL COLLECTION
-class MyModelCollection extends BaseModelCollection {
-    constructor(data) {
-        super(MyModel, data);
+class MyModelCollection extends ModelCollection {
+    initialize() {
+        this.baseClass = MyModel;
     }
 }
 let myModelCollection = new MyModelCollection(rawData);
 
 // VIEW
-class MyView extends BaseView {
+class MyView extends View {
 
     initialize() {
+        this.baseModel = myModel;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];
@@ -68,25 +73,34 @@ class MyView extends BaseView {
         this.destroy();
     }
 }
+let myView = new MyView(myModel);
+
 
 // VIEW COLLECTION
-class MyViewCollection extends BaseViewCollection {
-    constructor(modelCollection, parent, id) {
-        super(MyView, modelCollection, parent, id);
-
+class MyViewCollection extends ViewCollection {
+    initialize() {
+        this.baseClass = MyView;
         this.id = "my-list";
         this.tag = "div";
         this.classList = ["container"];
     }
 }
-let myViewCollection = new MyViewCollection(myModelCollection);
+let myViewCollectionInstance = new MyViewCollection(myModelCollection);
 
-// DEMO
-console.log(`With ${myModelCollection.length} records.`);
+// DEMO: CONSOLE
+// let markupResult = {html: ""};
+// myView._renderMarkup(false, markupResult);
+// console.log(markupResult.html);
+// let markupResult = {html: ""};
+// myViewCollectionInstance._renderMarkup(false, markupResult);
+// console.log(markupResult.html);
+
+// DEMO: BROWSER
+console.log(`Testing with ${myModelCollection.length} records.`);
 console.time("render");
 
-// myViewCollection._render(true);
-myViewCollection._renderMarkup(true);
+// myViewCollectionInstance._render(true);
+myViewCollectionInstance._renderMarkup(true);
 
 console.timeEnd("render");
 

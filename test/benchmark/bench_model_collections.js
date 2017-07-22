@@ -30,43 +30,6 @@ class MyBaseModelCollection extends UnseenInherited.BaseModelCollection {
 }
 let myBaseModelCollection = new MyBaseModelCollection(rawData);
 
-// VIEW
-class MyBaseView extends UnseenInherited.BaseView {
-
-    initialize() {
-        this.id = "my-item";
-        this.tag = "div";
-        this.classList = ["card"];
-    }
-
-    events() {
-        return {
-            "#button-delete": ["click", "deleteAction"]
-        };
-    }
-
-    template(model, idx) {
-
-        return `
-            <div class="card-header">
-                <h4 class="card-title">${model.id}</h4>
-                <h6 class="card-subtitle">${model.name}</h6>
-            </div>
-            <div class="card-body">
-                ${model.id}: ${model.type} - ${model.name}
-            </div>
-            <div class="card-footer">
-                <button id="button-delete" class="btn btn-primary">Delete</button>
-            </div>
-        `;
-    }
-
-    deleteAction(evt) {
-        console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
-        this.destroy();
-    }
-}
-let myBaseView = new MyBaseView(myBaseModel);
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ES2015 SETUP (INHERITANCE)
@@ -87,45 +50,6 @@ class MyInheritedModelCollection extends UnseenInherited.ModelCollection {
 }
 let myInheritedModelCollection = new MyInheritedModelCollection(rawData);
 
-// VIEW
-class MyInheritedView extends UnseenInherited.View {
-
-    initialize() {
-        this.baseModel = myInheritedModel;
-        this.id = "my-item";
-        this.tag = "div";
-        this.classList = ["card"];
-    }
-
-    events() {
-        return {
-            "#button-delete": ["click", "deleteAction"]
-        };
-    }
-
-    template(model, idx) {
-
-        return `
-            <div class="card-header">
-                <h4 class="card-title">${model.id}</h4>
-                <h6 class="card-subtitle">${model.name}</h6>
-            </div>
-            <div class="card-body">
-                ${model.id}: ${model.type} - ${model.name}
-            </div>
-            <div class="card-footer">
-                <button id="button-delete" class="btn btn-primary">Delete</button>
-            </div>
-        `;
-    }
-
-    deleteAction(evt) {
-        console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
-        this.destroy();
-    }
-}
-let myInheritedView = new MyInheritedView(myInheritedModel);
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ES2015 SETUP (COMPOSITIONAL)
 
@@ -137,45 +61,6 @@ let myModel = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "
 
 // MODEL COLLECTION
 let myModelCollection = new Unseen.ModelCollection(rawData, {schema: schema});
-
-// VIEW
-class MyView extends Unseen.View {
-
-    initialize() {
-        this.baseModel = myModel;
-        this.id = "my-item";
-        this.tag = "div";
-        this.classList = ["card"];
-    }
-
-    events() {
-        return {
-            "#button-delete": ["click", "deleteAction"]
-        };
-    }
-
-    template(model, idx) {
-
-        return `
-            <div class="card-header">
-                <h4 class="card-title">${model.id}</h4>
-                <h6 class="card-subtitle">${model.name}</h6>
-            </div>
-            <div class="card-body">
-                ${model.id}: ${model.type} - ${model.name}
-            </div>
-            <div class="card-footer">
-                <button id="button-delete" class="btn btn-primary">Delete</button>
-            </div>
-        `;
-    }
-
-    deleteAction(evt) {
-        console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
-        this.destroy();
-    }
-}
-let myView = new MyView(myModel);
 
 
 // PRE-BENCH PROOF
@@ -199,19 +84,14 @@ let myView = new MyView(myModel);
 // BENCHMARK
 suite
     .add(`An ES51 Function-based View.`, function() {
-        let result = {html: ""};
-        myBaseView._renderMarkup(false, result);
-        return result.html;
+        return myBaseModelCollection.get(4);
     })
     .add(`An ES2015 Class View (inheritance design).`, function() {
-        let result = {html: ""};
-        myInheritedView._renderMarkup(false, result);
-        return result.html;
+        return myInheritedModelCollection.get(4);
+
     })
     .add(`An ES2015 Class View (compositional design).`, function() {
-        let result = {html: ""};
-        myView._renderMarkup(false, result);
-        return result.html;
+        return myModelCollection.get(4);
     })
     // add listeners
     .on("cycle", function(event) {
