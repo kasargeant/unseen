@@ -9,12 +9,8 @@
 "use strict";
 
 // Imports
-const fetchival = require("fetchival");
-if(typeof window === "undefined") {
-    fetchival.fetch = require("node-fetch");
-}
-
-const AbstractModelCollection = require("./AbstractModelCollection");
+const Component = require("./Component");
+const Model = require("./Model");
 
 /**
  * The ModelCollection class.
@@ -22,19 +18,99 @@ const AbstractModelCollection = require("./AbstractModelCollection");
  * Responsibilities:-
  * * To hold a list of data models - equivalent to a database table.
  * @class
- * @extends AbstractModel
+ * @extends Component
  */
-class ModelCollection extends AbstractModelCollection {
+class ModelCollection extends Component {
 
     /**
      * @param {Array} data - An array of data record objects.
-     * @param {ModelCollection} [parent] - The parent (if any).
+     * @param {Object} [options] - Component configuration options.
+     * @param {Component} [parent] - The parent (if any).
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(data, options, parent, parentRef) {
-        super(data, options, parent, parentRef);
-        this.defaults.url = null;
+    constructor(data = [], options = {}, parent = null, parentRef = null) {
+
+        // Specialized component defaults
+        let defaults = {
+            schema: null,
+            url: null
+        };
+        super(defaults, options, parent, parentRef);
+
+        // Specialized component properties.
+        this.models = null;
+        this.length = 0;
+        this.reset(data);       // Add accessors.
+
+        // Adds internal events listener used by the Model to signal this AbstractModelCollection on update.
+        this.on("change", function(args) {
+            console.log(`AbstractModelCollection #${this._id}: Model #${args} changed.`);
+            this._emit("change"); // Relay the event forward
+        });
+
+        this.on("view-remove", function(args) {
+            console.log(`AbstractModelCollection #${this._id}: View #${args} changed.`);
+            console.log(`AbstractModelCollection #${this._id}: Removing Model #${args}`);
+            console.log("exists? " + (this.models[args] !== undefined));
+            delete this.models[args];
+            console.log("exists? " + (this.models[args] !== undefined));
+            this._emit("change"); // Relay the event forward
+        });
+    }
+
+    /**
+     * Add getters and setters - so that this can be treated 'as if' it were its contained data object.
+     * @private
+     */
+    reset(data) {
+        // Initialise collection's contents.
+        this.models = {};
+
+        // Instantiate AbstractModelCollection's contents
+        for(let id = 0; id < data.length; id++) {
+            // Instantiate new model and set private properties.
+            // this.models[id] = new Model(data[id], this, id);
+            this.models[id] = new Model(data[id], {
+                schema: this.config.schema,
+                url: ((this.url !== null) ? `${this.url}/${id}` : null)
+            }, this, id);
+        }
+        this.length = data.length;
+    }
+
+    get(id) {
+        if(id === undefined) {
+            return this.models;
+        } else {
+            return this.models[id];
+        }
+    }
+
+    set(data) {
+        if(Array.isArray(data)) {
+            this.models = {};
+            let i;
+            for(i = 0; i < data.length; i++) {
+                this.models[i] = new this.baseClass(data[i], this, i);
+            }
+            this.length = i;
+            this._modelCounter = i; // This provides a unique ID for every model.
+        } else {
+            throw new Error("AbstractModelCollection Error: Attempt to set without using a data array.");
+        }
+    }
+
+    add(record) {
+        let id = this._modelCounter++;
+        this.models[id] = new this.baseClass(record, this, id);
+        this.length++;
+    }
+
+    toString() {
+        for(let id in this.models) {
+            console.log(this.models[id]._dump());
+        }
     }
 
     /**
