@@ -18,22 +18,45 @@ const walk = require("./walk");
  * @class
  */
 class View {
-
     /**
+     * @param {Model} model - A model instance.
+     * @param {ViewCollection} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor() {
+    constructor(model = {}, options = {}, parent = null, parentRef = null) {
+
+        this.defaults = {
+            id: "view",
+            target: "main",
+            tag: "div",
+            classList: [],
+            template: null,
+            events: null
+        };
+        this.config = Object.assign(this.defaults, options);
 
         // Set internally (or by parent).
-        this._parent = null;    // The parent component (if any).
-        this._id = 0;           // The parent's reference ID for this component (if any).
+        this._parent = parent;  // The parent component (if any).
+        this._id = parentRef;   // The parent's reference ID for this component (if any).
 
         // Set by user (or default).
-        this.baseModel = null;
-        this.id = "view";       // HTML Element ID
-        this.target = "main";
-        this.tag = "div";
-        this.classList = [];
+        this.baseModel = model;
+        this.id = this.config.id;       // HTML Element ID
+        this.target = this.config.target;
+        this.tag = this.config.tag;
+        this.classList = this.config.classList;
+        if(this.config.template !== null) {
+            this.template = this.config.template;
+        }
+        if(this.config.events !== null) {
+            this.events = function() {return this.config.events;}.bind(this);
+        }
+        if(this.config.methods !== null) {
+            for(let methodKey in this.config.methods) {
+                this[methodKey] = this.config.methods[methodKey].bind(this);
+            }
+        }
         this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
         // Sanity check user initialization.

@@ -21,62 +21,69 @@ let myModel = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "
     schema: schema
 });
 
-
 // MODEL COLLECTION
 let myModelCollection = new Unseen.ModelCollection(rawData, {
     schema: schema
 });
 
+// TEMPLATE
+const template = function(model, idx) {
+
+    return `
+                <div class="card-header">
+                    <h4 class="card-title">${model.id}</h4>
+                    <h6 class="card-subtitle">${model.name}</h6>
+                </div>
+                <div class="card-body">
+                    ${model.id}: ${model.type} - ${model.name}
+                </div>
+                <div class="card-footer">
+                    <button id="button-delete" class="btn btn-primary">Delete</button>
+                </div>
+            `;
+};
+
 // VIEW
-class MyView extends Unseen.View {
-
-    initialize() {
-        this.baseModel = myModel;
-        this.id = "my-item";
-        this.tag = "div";
-        this.classList = ["card"];
+let myView = new Unseen.View(myModel, {
+    id: "view",
+    target: "main",
+    tag: "div",
+    classList: ["card"],
+    template: template,
+    methods: {
+        deleteAction(evt) {
+            console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
+            this.destroy();
+        }
+    },
+    events: {
+        "#button-delete": ["click", "deleteAction"]
     }
-
-    events() {
-        return {
-            "#button-delete": ["click", "deleteAction"]
-        };
-    }
-
-    template(model, idx) {
-
-        return `
-            <div class="card-header">
-                <h4 class="card-title">${model.id}</h4>
-                <h6 class="card-subtitle">${model.name}</h6>
-            </div>
-            <div class="card-body">
-                ${model.id}: ${model.type} - ${model.name}
-            </div>
-            <div class="card-footer">
-                <button id="button-delete" class="btn btn-primary">Delete</button>
-            </div>
-        `;
-    }
-
-    deleteAction(evt) {
-        console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
-        this.destroy();
-    }
-}
-let myViewInstance = new MyView(myModel);
-
+});
 
 // VIEW COLLECTION
-class MyViewCollection extends Unseen.ViewCollection {
-    initialize() {
-        this.baseClass = MyView;
-        this.id = "my-list";
-        this.tag = "div";
-        this.classList = ["container"];
+let myViewCollection = new Unseen.ViewCollection(myModelCollection, {
+    id: "my-list",
+    target: "main",
+    tag: "div",
+    classList: ["container"],
+    view: {
+        id: "my-item",
+        target: "main",
+        tag: "div",
+        classList: ["card"],
+        template: template,
+        methods: {
+            deleteAction(evt) {
+                console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
+                this.destroy();
+            }
+        },
+        events: {
+            "#button-delete": ["click", "deleteAction"]
+        }
     }
-}
-let myViewCollection = new MyViewCollection(myModelCollection);
+});
 
 // DEMO: CONSOLE
 // let markupResult = {html: ""};
