@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Home - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AbstractModel.html">AbstractModel</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AbstractModel.html#finalize">finalize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AbstractModel.html#initialize">initialize</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AbstractModelCollection.html">AbstractModelCollection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AbstractModelCollection.html#finalize">finalize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="AbstractModelCollection.html#initialize">initialize</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Model.html">Model</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Model.html#fetch">fetch</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Model.html#finalize">finalize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Model.html#initialize">initialize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="Model.html#store">store</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ModelCollection.html">ModelCollection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ModelCollection.html#fetch">fetch</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ModelCollection.html#finalize">finalize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ModelCollection.html#initialize">initialize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ModelCollection.html#store">store</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="View.html">View</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="View.html#finalize">finalize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="View.html#initialize">initialize</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ViewCollection.html">ViewCollection</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ViewCollection.html#finalize">finalize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ViewCollection.html#initialize">initialize</a></span></li>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><h1>Unseen API Documentation</h1><p><strong>NOTE: ALL DOCUMENTATION EXPLORATORY AND IN DRAFT FORM.</strong></p>
+<h2>Overview</h2><p><em>Unseen</em> utilises a standard MVC design as its base for delivering SPAs and other web application UIs.  </p>
+<p>It is data-centric or data-driven in it's approach - it attempts to 'wrap' the existing data as-is - rather than force it into a pre-defined format.</p>
+<p>Thus, the base 'component' of Unseen is essentially the record Schema.  </p>
+<p>That and the other class components that make up the full API are detailed below.</p>
+<h2>The Components</h2><p>As already mentioned, Unseen has an MVC design structure.  It believes strongly in separation of layers and concerns - and the entire implementation is an attempt to do this in an easy and unintrusive way.</p>
+<p>Thus we have:-</p>
+<ul>
+<li><p><strong>Data components</strong> - Much more than just a bunch of data objects - they can carry methods for validating and modifying their data as events change.  And also handle all aspects of the retrival, storage and synchonisation of remote datasources.</p>
+</li>
+<li><p><strong>View components</strong> - Template or script-based browser and mobile visual widgets.  Designed to render efficiently - and not block the page - no matter how much data they're given.</p>
+</li>
+<li><p><strong>Control components</strong> - Components to control the application's routing, event-handling and security.</p>
+</li>
+</ul>
+<h3>The Data Components</h3><h4>Schema</h4><p>A record <strong>Schema</strong> to be specific.  In the form of a simple JSON object where <strong>keys</strong> represent <strong>field names</strong> and <strong>values</strong> represent <strong>default values</strong>.</p>
+<p>For example, a person record might have the default schema of:-</p>
+<pre class="prettyprint source"><code>{
+    id: 0,
+    name: &quot;Unknown&quot;,
+    age: 0,
+    isRegistered: false
+}</code></pre><h4>Model</h4><p>A <strong>Model</strong> contains a single data record valid for it's schema.</p>
+<p>Getters and setters are automatically generated for the model data's properties.</p>
+<h4>ModelList</h4><p>A <strong>ModelList</strong> is just that... a list of data Models.  It represents data much the same as a table in a database.</p>
+<h4>ModelCollection</h4><p>A <strong>ModelCollection</strong> contains all the various data Models and ModelLists to be used by an application.</p>
+<p>Data contained may have been sourced remotely from a server, or locally from some store or another JS component.</p>
+<h3>The View Components</h3><h4>View class</h4><p>A <strong>View</strong> presents the data of the Model or Models that back it to the user.  It renders the model data using a defined template to create the final markup or markdown result.</p>
+<h4>The ViewList class</h4><p>A <strong>ViewList</strong> is a View that is backed by a ModelList's data.  It may it's own rendered visuals - but essentially, it manages the subviews that are its list items.</p>
+<h4>ViewCollection class</h4><p>A <strong>ViewCollection</strong> class contains all Views and ViewLists that an application contains.</p>
+<h3>The Control components</h3><h4>Router</h4><p>A <strong>Router</strong> class...
+TODO - Router documentation...</p>
+<p>Additionally, there are a few more minor helpers:-</p>
+<h2>INSTALLATION</h2><pre class="prettyprint source"><code>npm install</code></pre><h2>USAGE</h2><p>I'm still working it out...</p></article>
+    </section>
+
+
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        AbstractModel.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>The AbstractModel class.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Kyle Alexis Sargeant &lt;kasargeant@gmail.com> <a href="https://github.com/kasargeant">https://github.com/kasargeant</a>.</li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>Kyle Alexis Sargeant 2017</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>See LICENSE file included in this distribution.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        AbstractModelCollection.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>The AbstractModelCollection class.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Kyle Alexis Sargeant &lt;kasargeant@gmail.com> <a href="https://github.com/kasargeant">https://github.com/kasargeant</a>.</li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>Kyle Alexis Sargeant 2017</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>See LICENSE file included in this distribution.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Component.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>The Component class.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Kyle Alexis Sargeant &lt;kasargeant@gmail.com> <a href="https://github.com/kasargeant">https://github.com/kasargeant</a>.</li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>Kyle Alexis Sargeant 2017</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>See LICENSE file included in this distribution.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        index.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Module index.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>See LICENSE file included in this distribution.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Model.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>The Model class.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Kyle Alexis Sargeant &lt;kasargeant@gmail.com> <a href="https://github.com/kasargeant">https://github.com/kasargeant</a>.</li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>Kyle Alexis Sargeant 2017</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>See LICENSE file included in this distribution.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        ModelCollection.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>The ModelCollection class.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Kyle Alexis Sargeant &lt;kasargeant@gmail.com> <a href="https://github.com/kasargeant">https://github.com/kasargeant</a>.</li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>Kyle Alexis Sargeant 2017</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>See LICENSE file included in this distribution.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        View.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>The View class.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Kyle Alexis Sargeant &lt;kasargeant@gmail.com> <a href="https://github.com/kasargeant">https://github.com/kasargeant</a>.</li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>Kyle Alexis Sargeant 2017</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>See LICENSE file included in this distribution.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        ViewCollection.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>The ViewCollection class.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Kyle Alexis Sargeant &lt;kasargeant@gmail.com> <a href="https://github.com/kasargeant">https://github.com/kasargeant</a>.</li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>Kyle Alexis Sargeant 2017</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>See LICENSE file included in this distribution.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Sat Jul 22 2017 04:11:31 GMT+0200 (CEST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

@@ -15,7 +15,7 @@ temp/
 
 # REPO FOLDERS NOT FOR GIT VERSIONING
 /dist/
-/docs/api/
+#/docs/api/
 /docs/coverage/
 /docs/tests/
 /docs/index.html

@@ -1,7 +1,7 @@
 {
   "name": "unseen",
   "version": "0.5.1",
-  "description": "An idea for models...",
+  "description": "A lightly-opinionated micro-library for rapidly delivering robust and performant SPAs.",
   "keywords": [
     "javascript",
     "REST",
