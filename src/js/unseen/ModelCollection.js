@@ -20,8 +20,9 @@ const AbstractModelCollection = require("./AbstractModelCollection");
  * The ModelCollection class.
  *
  * Responsibilities:-
- * * TODO...
+ * * To hold a list of data models - equivalent to a database table.
  * @class
+ * @extends AbstractModel
  */
 class ModelCollection extends AbstractModelCollection {
 
@@ -36,6 +37,10 @@ class ModelCollection extends AbstractModelCollection {
         this.defaults.url = null;
     }
 
+    /**
+     * Fetches the collection's data from a local or remote source.
+     * @param {Function} callback
+     */
     fetch(callback) {
         // Are we storing data locally - or proxying a backend?
         if(this.config.url === null) {
@@ -57,8 +62,10 @@ class ModelCollection extends AbstractModelCollection {
     }
 
     /**
-     *
-     * @param {Array} records
+     * Stores the collection's data to a local or remote source.
+     * @param {Array} data
+     * @param {Function} callback
+     * @returns {*}
      */
     store(data, callback) {
         // Are we storing data locally - or proxying a backend?
@@ -83,6 +90,13 @@ class ModelCollection extends AbstractModelCollection {
 
     }
 
+    /**
+     * Strategy: HTTP/HTTPS
+     * @param method
+     * @param data
+     * @param success
+     * @private
+     */
     _rest(method="GET", data=[], success) {
         console.log("ModelCollection: FETCHING!!!");
         switch(method) {

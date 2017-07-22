@@ -13,12 +13,7 @@
 /**
  * The AbstractModel class.
  *
- * Responsibilities:-
- * * To hold a set of data attributes - equivalent to a database record.
- *
- * Characteristics:-
- * * To be accessible 'as if' it were a simple key-value object.
- * * To optionally validate data.
+ * NOTE: ALWAYS USE CLASSES DERIVED FROM THIS ABSTRACT.  IT IS NOT ADVISED TO USE THIS DIRECTLY.
  * @class
  * @abstract
  */
@@ -95,11 +90,13 @@ class AbstractModel {
     }
 
     /**
+     * A lifecycle method - called when the instance is first constructed.
      * @override
      */
     initialize() {}
 
     /**
+     * A lifecycle method - called when the instance is about to be destroyed.
      * @override
      */
     finalize() {}

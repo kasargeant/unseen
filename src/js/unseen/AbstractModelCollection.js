@@ -17,9 +17,9 @@ const EventEmitter = require("event-emitter");
 /**
  * The AbstractModelCollection class.
  *
- * Responsibilities:-
- * * To hold a list of data models - equivalent to a database table.
+ * NOTE: ALWAYS USE CLASSES DERIVED FROM THIS ABSTRACT.  IT IS NOT ADVISED TO USE THIS DIRECTLY.
  * @class
+ * @abstract
  */
 class AbstractModelCollection {
 
@@ -74,11 +74,13 @@ class AbstractModelCollection {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
+     * A lifecycle method - called when the instance is first constructed.
      * @override
      */
     initialize() {}
 
     /**
+     * A lifecycle method - called when the instance is about to be destroyed.
      * @override
      */
     finalize() {}

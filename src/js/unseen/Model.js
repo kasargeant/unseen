@@ -26,6 +26,7 @@ if(typeof window === "undefined") {
  * * To be accessible 'as if' it were a simple key-value object.
  * * To optionally validate data.
  * @class
+ * @extends AbstractModel
  */
 class Model extends AbstractModel {
     /**
@@ -39,6 +40,10 @@ class Model extends AbstractModel {
         this.defaults.url = null;
     }
 
+    /**
+     * Fetches the model's data from a local or remote source.
+     * @param {Function} callback
+     */
     fetch(callback) {
         // Are we storing data locally - or proxying a backend?
         if(this.config.url === null) {
@@ -59,6 +64,12 @@ class Model extends AbstractModel {
         }
     }
 
+    /**
+     * Stores the model's data to a local or remote source.
+     * @param {Object} data
+     * @param {Function} callback
+     * @returns {*}
+     */
     store(data, callback) {
         // Are we storing data locally - or proxying a backend?
         if(this.config.url === null) {
