@@ -11,36 +11,29 @@ const Unseen = require("../../index");
 
 const jQuery = require("jquery");
 
-// let rawData = require("../../data/processed_sample.json");
-let rawData = [];
+let rawData = require("../../data/processed_sample.json");
 
 // SCHEMA
 const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
 
 // MODEL
-class MyModel extends Unseen.Model {
-    initialize() {
-        this.baseSchema = schema;
-        // this.url = "http://localhost:8080/entity/1";
-    }
-}
-let myModelInstance = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
+let myModel = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"}, {
+    schema: schema,
+    // url: "http://localhost:8080/entity/1"
+});
 
 
 // MODEL COLLECTION
-class MyModelCollection extends Unseen.ModelCollection {
-    initialize() {
-        this.baseClass = MyModel;
-        this.url = "http://localhost:8080/entity";
-    }
-}
-let myModelCollectionInstance = new MyModelCollection(rawData);
+let myModelCollection = new Unseen.ModelCollection(rawData, {
+    schema: schema,
+    url: "http://localhost:8080/entity"
+});
 
 // VIEW
 class MyView extends Unseen.View {
 
     initialize() {
-        this.baseModel = myModelInstance;
+        this.baseModel = myModel;
         this.id = "my-item";
         this.tag = "div";
         this.classList = ["card"];
@@ -73,7 +66,7 @@ class MyView extends Unseen.View {
         this.destroy();
     }
 }
-let myViewInstance = new MyView(myModelInstance);
+let myViewInstance = new MyView(myModel);
 
 
 // VIEW COLLECTION
@@ -85,26 +78,22 @@ class MyViewCollection extends Unseen.ViewCollection {
         this.classList = ["container"];
     }
 }
-
-// DEMO
-
-let myModelCollection = new MyModelCollection(rawData);
-let myViewCollectionInstance = new MyViewCollection(myModelCollection);
+let myViewCollection = new MyViewCollection(myModelCollection);
 
 // DEMO: CONSOLE
 // let markupResult = {html: ""};
 // myView._renderMarkup(false, markupResult);
 // console.log(markupResult.html);
 // let markupResult = {html: ""};
-// myViewCollectionInstance._renderMarkup(false, markupResult);
+// myViewCollection._renderMarkup(false, markupResult);
 // console.log(markupResult.html);
 
 // DEMO: BROWSER
 console.log(`Testing with ${myModelCollection.length} records.`);
 console.time("render");
 
-// myViewCollectionInstance._render(true);
-// myViewCollectionInstance._renderMarkup(true);
+// myViewCollection._render(true);
+myViewCollection._renderMarkup(true);
 
 console.timeEnd("render");
 
