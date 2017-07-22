@@ -18,7 +18,7 @@ const path = require("path");
 // const sinon = require("sinon");
 
 // Unit
-const Unseen = require("../../src/index");
+const Unseen = require("../../src/js/unseen_inheritance/unseen");
 
 // Constants
 let workingDirectory = process.cwd();

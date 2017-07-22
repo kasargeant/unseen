@@ -136,7 +136,7 @@ class View {
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
-        let elementBody = this.template(this.baseModel.get(), this._id);
+        let elementBody = this.template(this.baseModel, this._id);
 
         // First we make any element ids in this View - unique.
         // let matches = content.match(/(?:id|class)="([^"]*)"/gi);    // Matches class="sfasdf" or id="dfssf"

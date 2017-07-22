@@ -42,17 +42,16 @@ describe("Class: Unseen", function() {
 
     describe("Models", function() {
 
-        class TestModel extends Unseen.Model {
-            initialize() {
-                this.baseSchema = {a: "hi", b: "ho", c: 3};
-            }
-        }
-        let testModelInstance1 = new TestModel({b: "o"});
-        let testModelInstance2 = new TestModel({a: "hiya", b: "hoho", c: 1});  // We create second instance for binding contamination checks
-        let testModelInstance3 = new TestModel({a: "riii", b: "biii", c: 20});
+        const schema = {a: "hi", b: "ho", c: 3};
+
+        let testModelInstance1 = new Unseen.Model({b: "o"}, {schema: schema});
+        let testModelInstance2 = new Unseen.Model({a: "hiya", b: "hoho", c: 1}, {schema: schema});  // We create second instance for binding contamination checks
+        let testModelInstance3 = new Unseen.Model({a: "riii", b: "biii", c: 20}, {schema: schema});
 
         it("should be able to manufacture a Model class for a given definition", function() {
-            expect(TestModel).toBeDefined();
+            expect(testModelInstance1).toBeDefined();
+            expect(testModelInstance2).toBeDefined();
+            expect(testModelInstance3).toBeDefined();
         });
 
         it("should be able to make instances of the Model using correct defaults", function() {
@@ -76,31 +75,17 @@ describe("Class: Unseen", function() {
 
     describe("Collections", function() {
 
-        class TestModel extends Unseen.Model {
-            initialize() {
-                this.baseSchema = {a: "hi", b: "ho", c: 3};
-            }
-        }
-        class TestCollection extends Unseen.ModelCollection {
-            initialize() {
-                this.baseClass = TestModel;
-            }
-        }
-        let testCollectionInstance1 = new TestCollection();
-        let testCollectionInstance2 = new TestCollection([
+        const schema = {a: "hi", b: "ho", c: 3};
+
+        let testCollectionInstance1 = new Unseen.ModelCollection([], {schema: schema});
+        let testCollectionInstance2 = new Unseen.ModelCollection([
             {b: "o"},
             {a: "hiya", b: "hoho", c: 1},
             {a: "riii", b: "biii", c: 20}
-        ]);
+        ], {schema: schema});
         let testModelInstance1 = testCollectionInstance2.get(0);
         let testModelInstance2 = testCollectionInstance2.get(1);
         let testModelInstance3 = testCollectionInstance2.get(2);
-
-
-
-        it("should be able to manufacture a Collection class for a given Model.", function() {
-            expect(TestCollection).toBeDefined();
-        });
 
         it("should be able to make instances of the Collection without model data.", function() {
             expect(testCollectionInstance1).toBeDefined();

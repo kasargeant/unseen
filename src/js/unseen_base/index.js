@@ -30,6 +30,7 @@ class MyModelCollection extends BaseModelCollection {
         super(MyModel, data);
     }
 }
+let myModelCollection = new MyModelCollection(rawData);
 
 // VIEW
 class MyView extends BaseView {
@@ -78,12 +79,9 @@ class MyViewCollection extends BaseViewCollection {
         this.classList = ["container"];
     }
 }
-
-// DEMO
-
-let myModelCollection = new MyModelCollection(rawData);
 let myViewCollection = new MyViewCollection(myModelCollection);
 
+// DEMO
 console.log(`With ${myModelCollection.length} records.`);
 console.time("render");
 

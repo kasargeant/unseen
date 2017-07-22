@@ -30,20 +30,14 @@ let rawData = require("../data/processed_sample.json");
 const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
 
 // MODEL
-class MyModel extends Unseen.Model {
-    initialize() {
-        this.baseSchema = schema;
-    }
-}
-let myModelInstance = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
+let myModelInstance = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"}, {
+    schema: schema
+});
 
 // MODEL COLLECTION
-class MyModelCollection extends Unseen.ModelCollection {
-    initialize() {
-        this.baseClass = MyModel;
-    }
-}
-let myModelCollectionInstance = new MyModelCollection(rawData);
+let myModelCollection = new Unseen.ModelCollection(rawData, {
+    schema: schema
+});
 
 // VIEW
 class MyView extends Unseen.View {
@@ -94,11 +88,11 @@ class MyViewCollection extends Unseen.ViewCollection {
         this.classList = ["container"];
     }
 }
-let myViewCollectionInstance = new MyViewCollection(myModelCollectionInstance);
+let myViewCollectionInstance = new MyViewCollection(myModelCollection);
 myViewCollectionInstance.fetch(false);
 
 
-console.log(`Testing with ${myModelCollectionInstance.length} records.`);
+console.log(`Testing with ${myModelCollection.length} records.`);
 
 // Tests
 describe("Class: View", function() {

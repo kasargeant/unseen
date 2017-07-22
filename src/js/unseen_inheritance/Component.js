@@ -14,7 +14,6 @@
  * Responsibilities:-
  * * TODO...
  * @class
- * @private
  */
 class Component {
     /**
