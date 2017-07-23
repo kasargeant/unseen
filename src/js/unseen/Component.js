@@ -40,7 +40,28 @@ class Component {
         this._parent = parent;  // The parent component (if any).
         this._id = parentRef;   // The parent's reference ID for this component (if any).
         this.url = (this.config.url === undefined) ? null : this.config.url;
+
+        // Set by user (or default).
+        this.initialize();  // LIFECYCLE CALL: INITIALIZE
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // LIFECYCLE: USER-DEFINED
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     * A lifecycle method - called when the instance is first constructed.
+     * @override
+     */
+    initialize() {
+        console.log("SUPER INIT");
+    }
+
+    /**
+     * A lifecycle method - called when the instance is about to be destroyed.
+     * @override
+     */
+    finalize() {}
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // CROSS-COMPONENT UTILITIES
@@ -87,7 +108,7 @@ class Component {
                 if(callback !== undefined) {
                     return callback(this);
                 }
-            });
+            }.bind(this));
         }
     }
 
@@ -103,16 +124,16 @@ class Component {
         console.log("Model: FETCHING!!!");
         switch(method) {
             case "GET":
-                fetchival(this.config.url).get(data).then(success);
+                fetchival(this.url).get(data).then(success);
                 break;
             case "POST":
-                fetchival(this.config.url).post(data).then(success);
+                fetchival(this.url).post(data).then(success);
                 break;
             case "PUT":
-                fetchival(this.config.url).put(data).then(success);
+                fetchival(this.url).put(data).then(success);
                 break;
             case "DELETE":
-                fetchival(this.config.url).delete(data).then(success);
+                fetchival(this.url).delete(data).then(success);
                 break;
             default:
 
