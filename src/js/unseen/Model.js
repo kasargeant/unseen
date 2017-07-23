@@ -31,7 +31,7 @@ class Model extends Component {
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(data, options, parent, parentRef) {
+    constructor(data={}, options, parent, parentRef) {
 
         // Specialized component defaults
         let defaults = {

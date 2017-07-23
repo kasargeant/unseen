@@ -9,24 +9,31 @@
 "use strict";
 
 // Imports
-const EventEmitter = require("event-emitter");
+const Component = require("./Component");
+
 const jQuery = require("jquery");
 const walk = require("./walk");
 
 /**
  * The View class.
+ *
+ * Responsibilities:-
+ * * To render a model's data attributes in some viewable format.
+ *
  * @class
  */
-class View {
+class View extends Component {
     /**
      * @param {Model} model - A model instance.
-     * @param {ViewCollection} [parent] - The parent (if any).
+     * @param {Object} [options] - Component configuration options.
+     * @param {Component} [parent] - The parent (if any).
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(model = {}, options = {}, parent = null, parentRef = null) {
+    constructor(model={}, options, parent, parentRef) {
 
-        this.defaults = {
+        // Specialized component defaults
+        let defaults = {
             id: "view",
             target: "main",
             tag: "div",
@@ -34,13 +41,9 @@ class View {
             template: null,
             events: null
         };
-        this.config = Object.assign(this.defaults, options);
+        super(defaults, options, parent, parentRef);
 
-        // Set internally (or by parent).
-        this._parent = parent;  // The parent component (if any).
-        this._id = parentRef;   // The parent's reference ID for this component (if any).
-
-        // Set by user (or default).
+        // Specialized component properties.
         this.baseModel = model;
         this.id = this.config.id;       // HTML Element ID
         this.target = this.config.target;
@@ -57,7 +60,9 @@ class View {
                 this[methodKey] = this.config.methods[methodKey].bind(this);
             }
         }
-        this.initialize();      // LIFECYCLE CALL: INITIALIZE
+
+        // Call user-defined lifecycle (to possible override values).
+        this.initialize();  // LIFECYCLE CALL
 
         // Sanity check user initialization.
         if(this.baseModel === null) {
@@ -75,19 +80,26 @@ class View {
         });
     }
 
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // LIFECYCLE METHODS
+    // LIFECYCLE: USER-DEFINED
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
+     * A lifecycle method - called when the instance is first constructed.
      * @override
      */
     initialize() {}
 
     /**
+     * A lifecycle method - called when the instance is about to be destroyed.
      * @override
      */
     finalize() {}
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // LIFECYCLE: INTERNAL
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     destroy() {
         let selector = `#${this.id}-${this._id}`;
@@ -193,8 +205,6 @@ class View {
         return viewEvents;
     }
 }
-
-EventEmitter(View.prototype);
 
 // Exports
 module.exports = View;

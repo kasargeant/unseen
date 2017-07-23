@@ -31,7 +31,7 @@ class Component {
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(defaults = {}, options = {}, parent = null, parentRef = null) {
+    constructor(defaults = {}, options = {}, parent = null, parentRef = 0) {
 
         this.config = Object.assign(defaults, options);
         // console.log("Component config: " + JSON.stringify(this.config));
@@ -40,41 +40,7 @@ class Component {
         this._parent = parent;  // The parent component (if any).
         this._id = parentRef;   // The parent's reference ID for this component (if any).
         this.url = (this.config.url === undefined) ? null : this.config.url;
-
-        // Kick-off internal lifecycle
-        this._init();       // LIFECYCLE CALL
-
-        // Kick-off user-defined lifecycle
-        this.initialize();  // LIFECYCLE CALL
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // LIFECYCLE: INTERNAL
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * Overridden by direct-descendant sub-components.
-     * @private
-     */
-    _init() {}
-
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // LIFECYCLE: USER-DEFINED
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * A lifecycle method - called when the instance is first constructed.
-     * @override
-     */
-    initialize() {}
-
-    /**
-     * A lifecycle method - called when the instance is about to be destroyed.
-     * @override
-     */
-    finalize() {}
-
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // CROSS-COMPONENT UTILITIES
@@ -86,7 +52,7 @@ class Component {
      */
     fetch(callback) {
         // Are we storing data locally - or proxying a backend?
-        if(this.config.url === null) {
+        if(this.url === null) {
             // We're local... so we call the callback immediately.
             if(callback !== undefined) {
                 return callback(this);
@@ -110,7 +76,7 @@ class Component {
      */
     store(data, callback) {
         // Are we storing data locally - or proxying a backend?
-        if(this.config.url === null) {
+        if(this.url === null) {
             // We're local... so we call the callback immediately.
             if(callback !== undefined) {
                 return callback(this);

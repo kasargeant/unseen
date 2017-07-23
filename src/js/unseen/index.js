@@ -98,7 +98,7 @@ console.log(`Testing with ${myModelCollection.length} records.`);
 console.time("render");
 
 // myViewCollection._render(true);
-myViewCollection._renderMarkup(true);
+// myViewCollection._renderMarkup(true);
 
 console.timeEnd("render");
 
