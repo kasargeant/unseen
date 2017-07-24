@@ -12,6 +12,8 @@
 const EventEmitter = require("event-emitter");
 const jQuery = require("jquery");
 
+const View = require("./View");
+
 /**
  * The ViewCollection class.
  *
@@ -20,34 +22,42 @@ const jQuery = require("jquery");
  * @class
  */
 class ViewCollection {
-
     /**
      * @param {ModelCollection} modelCollection - An instantiated ModelCollection object.
+     * @param {ViewCollection} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(modelCollection) {
+    constructor(modelCollection = {}, options = {}, parent = null, parentRef = null) {
+
+        this.defaults = {
+            id: "view",
+            target: "main",
+            tag: "div",
+            classList: [],
+            template: null,
+            events: null
+        };
+        this.config = Object.assign(this.defaults, options);
 
         // Set internally (or by parent).
-        this._parent = null;    // The parent component (if any).
-        this._id = 0;           // The parent's reference ID for this component (if any).
+        this._parent = parent;  // The parent component (if any).
+        this._id = parentRef;   // The parent's reference ID for this component (if any).
 
         // Set by user (or default).
         this.baseClass = null;
-        this.id = "view";       // HTML Element ID
-        this.target = "main";
-        this.tag = "div";
-        this.classList = [];
-        this.initialize();      // LIFECYCLE CALL: INITIALIZE
+        this.id = this.config.id;       // HTML Element ID
+        this.target = this.config.target;
+        this.tag = this.config.tag;
+        this.classList = this.config.classList;
 
-        // Sanity check user initialization.
-        if(this.baseClass === null) {
-            throw new Error("ViewCollection requires a base View class.");
-        }
+        this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
         // Set depending on previous internal/user properties.
         this.collection = modelCollection;
         this.collection._parent = this;
         this.views = {};
+        this.fetch();
 
         this.el = "";
         this.$el = null;
@@ -61,37 +71,54 @@ class ViewCollection {
             // this._renderFragment(true);
         }.bind(this));
 
-        this.collection.on("reset", function(args) {
-            console.log(`ViewCollection #${this._id}: ModelCollection #${args} changed.`);
-            this._emit("reset"); // Relay the event forward
-            // jQuery(this.target).children().first().detach();
-            this.reset(this.collection.models);
-            this._renderMarkup(true);
-        }.bind(this));
-
         // TODO - Add internal events listener used by Views signalling this ViewCollection
-
-        // Now kick everything off
-        this.collection.fetch();
+        
     }
 
-    reset(models) {
-        // Instantiate initial View components from ModelCollection models
-        this.length = 0;
-        for(let id in models) {
-            // Instantiate view and set private properties.
-            let view = new this.baseClass(this, id);
-            view._parent = this;
-            view._id = id;
+    fetch() {
+        if(this.baseClass === null) {
+            this.collection.fetch(function(collection) {
+                //console.log("GOT: " + JSON.stringify(Object.keys(models)));
 
-            // Retrieve associated model from collection and assign to View.
-            view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
+                // Instantiate initial View components from ModelCollection models
+                this.length = 0;
+                for(let id in collection.models) {
+                    // Retrieve associated model from collection and assign to View.
+                    let model = collection.models[id]; // Note if the 'model' IS a single model... it returns itself
 
-            // Now add newly created View to store.
-            this.views[id] = view;
-            this.length++;
+                    // Instantiate view and set private properties.
+                    let view = new View(model, this.config.view, this, id);
+
+                    // Now add newly created View to store.
+                    this.views[id] = view;
+                    this.length++;
+                }
+
+            }.bind(this));
+        } else {
+            this.collection.fetch(function(collection) {
+                //console.log("GOT: " + JSON.stringify(Object.keys(models)));
+
+                // Instantiate initial View components from ModelCollection models
+                this.length = 0;
+                for(let id in collection.models) {
+                    // Instantiate view and set private properties.
+                    let view = new this.baseClass();
+                    view._parent = this;
+                    view._id = id;
+
+                    // Retrieve associated model from collection and assign to View.
+                    view.baseModel = collection.models[id]; // Note if the 'model' IS a single model... it returns itself
+
+                    // Now add newly created View to store.
+                    this.views[id] = view;
+                    this.length++;
+                }
+
+            }.bind(this));
         }
     }
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // LIFECYCLE METHODS
@@ -146,6 +173,7 @@ class ViewCollection {
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view !== undefined) {
+                console.log(`Calling view method: '${elementEvent[1]}'`);
                 view[elementEvent[1]]();
 
                 // DELETE A VIEW
@@ -223,7 +251,12 @@ class ViewCollection {
         let elementChildren = {html: ""};
         for(let id in this.views) {
             let view = this.views[id];
+            // console.log("HANDLING: " + id);
+            // console.log("KEYS: " + Object.keys(viewEvents));
             viewEvents[view._id] = view._renderMarkup(false, elementChildren);
+            // console.log("VIEWEVENT: " + viewEvents[view._id].toString());
+            // console.log("VIEWEVENT: " + JSON.stringify(viewEvents));
+
         }
 
         // Are we a top-level view?

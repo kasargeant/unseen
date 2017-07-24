@@ -87,9 +87,6 @@ class MyViewCollection extends Unseen.ViewCollection {
 }
 let myViewCollection = new MyViewCollection(myModelCollection);
 
-// DEMO
-
-
 // DEMO: CONSOLE
 // let markupResult = {html: ""};
 // myView._renderMarkup(false, markupResult);
@@ -103,7 +100,7 @@ console.log(`Testing with ${myModelCollection.length} records.`);
 console.time("render");
 
 // myViewCollection._render(true);
-myViewCollection._renderMarkup(true);
+// myViewCollection._renderMarkup(true);
 
 console.timeEnd("render");
 

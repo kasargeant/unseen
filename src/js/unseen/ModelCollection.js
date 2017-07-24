@@ -49,17 +49,9 @@ class ModelCollection {
         this.models = {};
         this.length = 0;
 
-        // Instantiate ModelCollection's contents
-        let id;
-        for(id = 0; id < records.length; id++) {
-            // Instantiate new model and set private properties.
-            this.models[id] = new this.baseClass(records[id]);
-            this.models[id]._parent = this;
-            this.models[id]._id = id;
-            this.models[id].url = `${this.url}/${id}`;
+        if(this.url === null) {
+            this.reset(records);
         }
-        this.length = id;
-        this._modelCounter = id; // This provides a unique ID for every model.
 
         // Adds internal events listener used by the Model to signal this ModelCollection on update.
         this.on("change", function(args) {
@@ -97,12 +89,29 @@ class ModelCollection {
         }
     }
 
-    reset() {
+    reset(records) {
         this.models = {};
+        // Instantiate ModelCollection's contents
+        let id;
+        for(id = 0; id < records.length; id++) {
+            // Instantiate new model and set private properties.
+            this.models[id] = new this.baseClass(records[id]);
+            this.models[id]._parent = this;
+            this.models[id]._id = id;
+            this.models[id].url = `${this.url}/${id}`;
+        }
+        this.length = id;
+        this._modelCounter = id; // This provides a unique ID for every model.
+        this.emit("reset", this._id);
     }
 
     get(id) {
-        return this.models[id];
+        if(id === undefined) {
+            return this.models;
+        } else {
+            return this.models[id];
+        }
+
     }
 
     set(records) {
@@ -119,34 +128,12 @@ class ModelCollection {
         }
     }
 
-    fetch(callback) {
-        // Are we storing data locally - or proxying a backend?
-        if(this.url === null) {
-            // We're local... we call the callback immediately.
-            callback(this.models);
-        } else {
-            // We're proxying... we call the callback on data receipt.
-            this._rest("GET", {}, function(responseData, textStatus, jqXHR) {
-                console.log("RESPONSE: " + JSON.stringify(responseData));
-
-                // Prepare data - handling any missing/default values.
-                this.models = {};
-                this.length = 0;
-
-                let records = responseData;
-                let id;
-                for(id = 0; id < records.length; id++) {
-                    // Instantiate new model and set private properties.
-                    this.models[id] = new this.baseClass(records[id]);
-                    this.models[id]._parent = this;
-                    this.models[id]._id = id;
-                }
-                this.length = id;
-
-                // Fire any callback
-                if(callback !== undefined) {
-                    callback(this.models);
-                }
+    fetch() {
+        if(this.url === null) {this.emit("reset", this._id);}
+        else {
+            this._rest("GET", {}, function(resData, textStatus, jqXHR) {
+                console.log("RESPONSE: " + JSON.stringify(resData));
+                this.reset(resData);
             }.bind(this));
         }
     }
