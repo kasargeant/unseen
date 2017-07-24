@@ -9,53 +9,107 @@
 "use strict";
 
 // Imports
-const EventEmitter = require("event-emitter");
+const Component = require("./Component");
+
 const jQuery = require("jquery");
+
+const View = require("./View");
 
 /**
  * The ViewCollection class.
  *
  * Responsibilities:-
  * * Handle all events for self and contained Views.
+ *
  * @class
  */
-class ViewCollection {
-
+class ViewCollection extends Component {
     /**
      * @param {ModelCollection} modelCollection - An instantiated ModelCollection object.
+     * @param {ViewCollection} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(modelCollection) {
+    constructor(modelCollection={}, options, parent, parentRef) {
 
-        // Set internally (or by parent).
-        this._parent = null;    // The parent component (if any).
-        this._id = 0;           // The parent's reference ID for this component (if any).
+        // Specialized component defaults
+        let defaults = {
+            id: "view",
+            target: "main",
+            tag: "div",
+            classList: [],
+            template: null,
+            events: null
+        };
+        super(defaults, options, parent, parentRef);
 
-        // Set by user (or default).
+        // Specialized component properties.
         this.baseClass = null;
-        this.id = "view";       // HTML Element ID
-        this.target = "main";
-        this.tag = "div";
-        this.classList = [];
-        this.initialize();      // LIFECYCLE CALL: INITIALIZE
+        this.id = this.config.id;       // HTML Element ID
+        this.target = this.config.target;
+        this.tag = this.config.tag;
+        this.classList = this.config.classList;
 
-        // Sanity check user initialization.
-        if(this.baseClass === null) {
-            throw new Error("ViewCollection requires a base View class.");
-        }
+        // Call user-defined lifecycle (to possible override values).
+        this.initialize();  // LIFECYCLE CALL
 
         // Set depending on previous internal/user properties.
         this.collection = modelCollection;
         this.collection._parent = this;
         this.views = {};
-        this.fetch();
+
+        if(this.baseClass === null) {
+            console.log(`Without baseClass...`);
+            this.collection.fetch(function(collection) {
+                //console.log("GOT: " + JSON.stringify(Object.keys(models)));
+
+                // Instantiate initial View components from ModelCollection models
+                this.length = 0;
+                for(let id in collection.models) {
+                    // Retrieve associated model from collection and assign to View.
+                    let model = collection.models[id]; // Note if the 'model' IS a single model... it returns itself
+
+                    // Instantiate view and set private properties.
+                    let view = new View(model, this.config.view, this, id);
+
+                    // Now add newly created View to store.
+                    this.views[id] = view;
+                    this.length++;
+                }
+                console.log(`Have ${this.length} views.`);
+                this._renderMarkup(true);
+            }.bind(this));
+        } else {
+            console.log(`With baseClass...`);
+            this.collection.fetch(function(collection) {
+                //console.log("GOT: " + JSON.stringify(Object.keys(models)));
+
+                // Instantiate initial View components from ModelCollection models
+                this.length = 0;
+                for(let id in collection.models) {
+                    // Instantiate view and set private properties.
+                    let view = new this.baseClass();
+                    view._parent = this;
+                    view._id = id;
+
+                    // Retrieve associated model from collection and assign to View.
+                    view.baseModel = collection.models[id]; // Note if the 'model' IS a single model... it returns itself
+
+                    // Now add newly created View to store.
+                    this.views[id] = view;
+                    this.length++;
+                }
+                console.log(`Have ${this.length} views.`);
+                this._renderMarkup(true);
+            }.bind(this));
+        }
 
         this.el = "";
         this.$el = null;
         this.deferred = [];
 
         // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
-        this.on("change", function(args) {
+        this.on("reset", function(args) {
             console.log(`ViewCollection #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
@@ -66,47 +120,26 @@ class ViewCollection {
         
     }
 
-    fetch(doInsert) {
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // LIFECYCLE: INTERNAL
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        this.collection.fetch(function(models) {
-            //console.log("GOT: " + JSON.stringify(Object.keys(models)));
-console.log("GOT... " + models.length);
-            // Instantiate initial View components from ModelCollection models
-            this.length = 0;
-            for(let id in models) {
-                // Instantiate view and set private properties.
-                let view = new this.baseClass(this, id);
-                view._parent = this;
-                view._id = id;
+    reset(models) {
+        // Instantiate initial View components from ModelCollection models
+        this.length = 0;
+        for(let id in models) {
+            // Retrieve associated model from collection and assign to View.
+            let model = models[id]; // Note if the 'model' IS a single model... it returns itself
 
-                // Retrieve associated model from collection and assign to View.
-                view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
+            // Instantiate view and set private properties.
+            let view = new View(model, this.config.view, this, id);
 
-                // Now add newly created View to store.
-                this.views[id] = view;
-                this.length++;
-            }
-
-            this._renderMarkup(doInsert);
-
-        }.bind(this));
-
+            // Now add newly created View to store.
+            this.views[id] = view;
+            this.length++;
+        }
+        console.log(`Have ${this.length} views.`);
     }
-
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // LIFECYCLE METHODS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * @override
-     */
-    initialize() {}
-
-    /**
-     * @override
-     */
-    finalize() {}
 
     destroy() {
         let selector = `#${this.id}-${this._id}`;
@@ -147,6 +180,7 @@ console.log("GOT... " + models.length);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view !== undefined) {
+                console.log(`Calling view method: '${elementEvent[1]}'`);
                 view[elementEvent[1]]();
 
                 // DELETE A VIEW
@@ -224,7 +258,12 @@ console.log("GOT... " + models.length);
         let elementChildren = {html: ""};
         for(let id in this.views) {
             let view = this.views[id];
+            // console.log("HANDLING: " + id);
+            // console.log("KEYS: " + Object.keys(viewEvents));
             viewEvents[view._id] = view._renderMarkup(false, elementChildren);
+            // console.log("VIEWEVENT: " + viewEvents[view._id].toString());
+            // console.log("VIEWEVENT: " + JSON.stringify(viewEvents));
+
         }
 
         // Are we a top-level view?
@@ -340,10 +379,6 @@ console.log("GOT... " + models.length);
 
 }
 
-EventEmitter(ViewCollection.prototype);
-
 // Exports
 module.exports = ViewCollection;
-
-
 

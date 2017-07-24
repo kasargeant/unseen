@@ -9,97 +9,211 @@
 "use strict";
 
 // Imports
-const Component = require("./Component");
-const Model = require("./Model");
+const EventEmitter = require("event-emitter");
+const fetchival = require("fetchival");
+if(typeof window === "undefined") {
+    fetchival.fetch = require("node-fetch");
+}
 
 /**
  * The ModelCollection class.
  *
  * Responsibilities:-
- * * To hold a list of data models - equivalent to a database table.
+ * * TODO...
  * @class
- * @extends Component
  */
-class ModelCollection extends Component {
+class ModelCollection {
 
     /**
-     * @param {Array} data - An array of data record objects.
-     * @param {Object} [options] - Component configuration options.
-     * @param {Component} [parent] - The parent (if any).
-     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
+     * @param {Array} records - A data array to initially populate this ModelCollection.
      * @constructor
      */
-    constructor(data = [], options = {}, parent = null, parentRef = null) {
+    constructor(records = []) {
 
-        // Specialized component defaults
-        let defaults = {
-            schema: null,
-            url: null
-        };
-        super(defaults, options, parent, parentRef);
+        // Set internally (or by parent).
+        this._parent = null;    // The parent component (if any).
+        this._id = 0;           // The parent's reference ID for this component (if any).
 
-        // Specialized component properties.
-        this.models = null;
+        // Set by user (or default).
+        this.baseClass = null;
+        this.url = null;
+        this.lastUpdated = 0;
+        this.initialize();      // LIFECYCLE CALL: INITIALIZE
+
+        // Sanity check user initialization.
+        if(this.baseClass === null) {
+            throw new Error("ModelCollection requires a base Model class.");
+        }
+
+        // Set depending on previous internal/user properties.
+        this.models = {};
         this.length = 0;
-        this.reset(data);       // Add accessors.
 
-        // Adds internal events listener used by the Model to signal this AbstractModelCollection on update.
+        // Instantiate ModelCollection's contents
+        let id;
+        for(id = 0; id < records.length; id++) {
+            // Instantiate new model and set private properties.
+            this.models[id] = new this.baseClass(records[id]);
+            this.models[id]._parent = this;
+            this.models[id]._id = id;
+            this.models[id].url = `${this.url}/${id}`;
+        }
+        this.length = id;
+        this._modelCounter = id; // This provides a unique ID for every model.
+
+        // Adds internal events listener used by the Model to signal this ModelCollection on update.
         this.on("change", function(args) {
-            console.log(`AbstractModelCollection #${this._id}: Model #${args} changed.`);
+            console.log(`ModelCollection #${this._id}: Model #${args} changed.`);
             this._emit("change"); // Relay the event forward
         });
 
         this.on("view-remove", function(args) {
-            console.log(`AbstractModelCollection #${this._id}: View #${args} changed.`);
-            console.log(`AbstractModelCollection #${this._id}: Removing Model #${args}`);
+            console.log(`ModelCollection #${this._id}: View #${args} changed.`);
+            console.log(`ModelCollection #${this._id}: Removing Model #${args}`);
             console.log("exists? " + (this.models[args] !== undefined));
             delete this.models[args];
             console.log("exists? " + (this.models[args] !== undefined));
             this._emit("change"); // Relay the event forward
         });
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // LIFECYCLE METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     * Add getters and setters - so that this can be treated 'as if' it were its contained data object.
-     * @private
+     * @override
      */
-    reset(data) {
-        // Initialise collection's contents.
-        this.models = {};
+    initialize() {}
 
-        // Instantiate AbstractModelCollection's contents
-        for(let id = 0; id < data.length; id++) {
-            // Instantiate new model and set private properties.
-            // this.models[id] = new Model(data[id], this, id);
-            this.models[id] = new Model(data[id], {
-                schema: this.config.schema,
-                url: ((this.url !== null) ? `${this.url}/${id}` : null)
-            }, this, id);
+    /**
+     * @override
+     */
+    finalize() {}
+
+    _emit(eventType) {
+        if(this._parent !== null) {
+            // this._parent.dispatchEvent(eventType);
+            this._parent.emit(eventType, this._id);
         }
-        this.length = data.length;
+    }
+
+    reset() {
+        this.models = {};
     }
 
     get(id) {
-        if(id === undefined) {
-            return this.models;
-        } else {
-            return this.models[id];
-        }
+        return this.models[id];
     }
 
-    set(data) {
-        if(Array.isArray(data)) {
+    set(records) {
+        if(Array.isArray(records)) {
             this.models = {};
             let i;
-            for(i = 0; i < data.length; i++) {
-                this.models[i] = new this.baseClass(data[i], this, i);
+            for(i = 0; i < records.length; i++) {
+                this.models[i] = new this.baseClass(records[i], this, i);
             }
             this.length = i;
             this._modelCounter = i; // This provides a unique ID for every model.
         } else {
-            throw new Error("AbstractModelCollection Error: Attempt to set without using a data array.");
+            throw new Error("ModelCollection Error: Attempt to set without using a data array.");
         }
     }
+
+    fetch(callback) {
+        // Are we storing data locally - or proxying a backend?
+        if(this.url === null) {
+            // We're local... we call the callback immediately.
+            callback(this.models);
+        } else {
+            // We're proxying... we call the callback on data receipt.
+            this._rest("GET", {}, function(responseData, textStatus, jqXHR) {
+                console.log("RESPONSE: " + JSON.stringify(responseData));
+
+                // Prepare data - handling any missing/default values.
+                this.models = {};
+                this.length = 0;
+
+                let records = responseData;
+                let id;
+                for(id = 0; id < records.length; id++) {
+                    // Instantiate new model and set private properties.
+                    this.models[id] = new this.baseClass(records[id]);
+                    this.models[id]._parent = this;
+                    this.models[id]._id = id;
+                }
+                this.length = id;
+
+                // Fire any callback
+                if(callback !== undefined) {
+                    callback(this.models);
+                }
+            }.bind(this));
+        }
+    }
+
+    /**
+     *
+     * @param {Array} records
+     */
+    store(records) {
+
+        // Prepare data - handling any missing/default values.
+        let data = {};
+        let i;
+        for(i = 0; i < records.length; i++) {
+            data[i] = new this.baseClass(records[i], this, i);
+        }
+        this.length = i;
+        this._modelCounter = i; // This provides a unique ID for every model.
+
+        // Are we storing data locally - or proxying a backend?
+        if(this.url === null) {
+            // We're local...
+            this.models = data;
+        } else {
+            // We're proxying...
+            this._rest("POST", data, function(responseData, textStatus, jqXHR) {
+                this.models = responseData;
+            });
+        }
+    }
+
+    _restFailure(jqXHR, textStatus, errorThrown) {
+        console.error(`Model Error: Failure to sync data with backend.  \n${errorThrown}`);
+    }
+
+    _restSuccess() {
+
+    }
+
+    _rest(method="GET", data=[], success) {
+        console.log("ModelCollection: FETCHING!!!");
+        switch(method) {
+            case "GET":
+                fetchival(this.url).get(data).then(success);
+                break;
+            case "POST":
+                fetchival(this.url).post(data).then(success);
+                break;
+            case "PUT":
+                fetchival(this.url).put(data).then(success);
+                break;
+            case "DELETE":
+                fetchival(this.url).delete(data).then(success);
+                break;
+            default:
+
+        }
+        // jQuery.ajax({
+        //     type: method,
+        //     url: this.url,
+        //     data: data,
+        //     error: this._restFailure,
+        //     success: success,
+        //     dataType: "json"
+        // });
+    }
+
 
     add(record) {
         let id = this._modelCounter++;
@@ -113,96 +227,9 @@ class ModelCollection extends Component {
         }
     }
 
-    /**
-     * Fetches the collection's data from a local or remote source.
-     * @param {Function} callback
-     */
-    fetch(callback) {
-        // Are we storing data locally - or proxying a backend?
-        if(this.config.url === null) {
-            // We're local... we call the callback immediately.
-            callback(this);
-        } else {
-            // We're proxying... we call the callback on data receipt.
-            this._rest("GET", {}, function(resData, textStatus, jqXHR) {
-                console.log("RESPONSE: " + JSON.stringify(resData));
-                // Load fresh data.
-                this._reset(resData);
-
-                // Fire any callback
-                if(callback !== undefined) {
-                    return callback(this);
-                }
-            }.bind(this));
-        }
-    }
-
-    /**
-     * Stores the collection's data to a local or remote source.
-     * @param {Array} data
-     * @param {Function} callback
-     * @returns {*}
-     */
-    store(data, callback) {
-        // Are we storing data locally - or proxying a backend?
-        if(this.config.url === null) {
-            // We're local... so we call the callback immediately.
-            return callback(this);
-        } else {
-            // We're proxying...
-            this._rest("POST", data, function(resData, textStatus, jqXHR) {
-                // Load fresh data.
-                this._reset(resData);
-                return callback(this);
-            });
-        }
-    }
-
-    _restFailure(jqXHR, textStatus, errorThrown) {
-        console.error(`Model Error: Failure to sync data with backend.  \n${errorThrown}`);
-    }
-
-    _restSuccess() {
-
-    }
-
-    /**
-     * Strategy: HTTP/HTTPS
-     * @param method
-     * @param data
-     * @param success
-     * @private
-     */
-    _rest(method="GET", data=[], success) {
-        console.log("ModelCollection: FETCHING!!!");
-        switch(method) {
-            case "GET":
-                fetchival(this.config.url).get(data).then(success);
-                break;
-            case "POST":
-                fetchival(this.config.url).post(data).then(success);
-                break;
-            case "PUT":
-                fetchival(this.config.url).put(data).then(success);
-                break;
-            case "DELETE":
-                fetchival(this.config.url).delete(data).then(success);
-                break;
-            default:
-
-        }
-    }
-
 }
+
+EventEmitter(ModelCollection.prototype);
 
 // Exports
 module.exports = ModelCollection;
-
-
-// let myModelCollection = new ModelCollection([
-//     {"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"},
-//     {"id": 124, "idn": "040430544", "type": "test", "name": "Test Avenue"},
-//     {"id": 125, "idn": "384894398", "type": "test", "name": "Test Lane"},
-// ]);
-// let myModel = myModelCollection.get(1);
-// console.log(myModel.toString());

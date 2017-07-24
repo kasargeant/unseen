@@ -9,32 +9,60 @@
 "use strict";
 
 // Imports
-const EventEmitter = require("event-emitter");
+const Component = require("./Component");
+
 const jQuery = require("jquery");
 const walk = require("./walk");
 
 /**
  * The View class.
+ *
+ * Responsibilities:-
+ * * To render a model's data attributes in some viewable format.
+ *
  * @class
  */
-class View {
-
+class View extends Component {
     /**
+     * @param {Model} model - A model instance.
+     * @param {Object} [options] - Component configuration options.
+     * @param {Component} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor() {
+    constructor(model={}, options, parent, parentRef) {
 
-        // Set internally (or by parent).
-        this._parent = null;    // The parent component (if any).
-        this._id = 0;           // The parent's reference ID for this component (if any).
+        // Specialized component defaults
+        let defaults = {
+            id: "view",
+            target: "main",
+            tag: "div",
+            classList: [],
+            template: null,
+            events: null
+        };
+        super(defaults, options, parent, parentRef);
 
-        // Set by user (or default).
-        this.baseModel = null;
-        this.id = "view";       // HTML Element ID
-        this.target = "main";
-        this.tag = "div";
-        this.classList = [];
-        this.initialize();      // LIFECYCLE CALL: INITIALIZE
+        // Specialized component properties.
+        this.baseModel = model;
+        this.id = this.config.id;       // HTML Element ID
+        this.target = this.config.target;
+        this.tag = this.config.tag;
+        this.classList = this.config.classList;
+        if(this.config.template !== null) {
+            this.template = this.config.template;
+        }
+        if(this.config.events !== null) {
+            this.events = function() {return this.config.events;}.bind(this);
+        }
+        if(this.config.methods !== null) {
+            for(let methodKey in this.config.methods) {
+                this[methodKey] = this.config.methods[methodKey].bind(this);
+            }
+        }
+
+        // Call user-defined lifecycle (to possible override values).
+        this.initialize();  // LIFECYCLE CALL
 
         // Sanity check user initialization.
         if(this.baseModel === null) {
@@ -53,18 +81,8 @@ class View {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // LIFECYCLE METHODS
+    // LIFECYCLE: INTERNAL
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * @override
-     */
-    initialize() {}
-
-    /**
-     * @override
-     */
-    finalize() {}
 
     destroy() {
         let selector = `#${this.id}-${this._id}`;
@@ -136,7 +154,7 @@ class View {
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
-        let elementBody = this.template(this.baseModel, this._id);
+        let elementBody = this.template(this.baseModel.get(), this._id);
 
         // First we make any element ids in this View - unique.
         // let matches = content.match(/(?:id|class)="([^"]*)"/gi);    // Matches class="sfasdf" or id="dfssf"
@@ -170,8 +188,6 @@ class View {
         return viewEvents;
     }
 }
-
-EventEmitter(View.prototype);
 
 // Exports
 module.exports = View;
