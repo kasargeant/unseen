@@ -42,7 +42,6 @@ class View {
         }
 
         // Set depending on previous internal/user properties.
-        this.views = null;
         this.el = "";
 
         // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
@@ -147,21 +146,12 @@ class View {
         // Collect events
         let viewEvents = this.events();
 
-        // Now we add any sub-views
-        let elementChildren = {html: ""};
-        if(this.views !== null) {
-            for(let id in this.views) {
-                let view = this.views[id];
-                viewEvents[view._id] = view._renderMarkup(false, elementChildren);
-            }
-        }
-
         // Are we a top-level view?
         if(markup === null) {
             // YES - without passed fragment or parent
             markup = {html: ""};
         }
-        markup.html += elementOpen + elementBody + elementChildren.html + elementClose;
+        markup.html += elementOpen + elementBody + elementClose;
         // console.log("MARKUP: " + JSON.stringify(markup.html));
 
         if(doInsert === true) {

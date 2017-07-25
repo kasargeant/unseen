@@ -77,6 +77,7 @@ class ViewCollection {
 
     reset(models) {
         // Instantiate initial View components from ModelCollection models
+        this.views = {};
         this.length = 0;
         for(let id in models) {
             // Instantiate view and set private properties.
