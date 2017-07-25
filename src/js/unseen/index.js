@@ -17,15 +17,21 @@ let rawData = require("../../data/processed_sample.json");
 const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
 
 // MODEL
-let myModel = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"}, {
-    schema: schema
-});
+class MyModel extends Unseen.Model {
+    initialize() {
+        this.baseSchema = schema;
+    }
+}
+let myModel = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
 
 // MODEL COLLECTION
-let myModelCollection = new Unseen.ModelCollection(rawData, {
-    schema: schema
-});
+class MyModelCollection extends Unseen.ModelCollection {
+    initialize() {
+        this.baseClass = MyModel;
+    }
+}
+let myModelCollection = new MyModelCollection(rawData);
 
 // VIEW
 class MyView extends Unseen.View {
@@ -64,7 +70,7 @@ class MyView extends Unseen.View {
         this.destroy();
     }
 }
-let myViewInstance = new MyView(myModel);
+let myView = new MyView(myModel);
 
 
 // VIEW COLLECTION
@@ -91,7 +97,7 @@ console.log(`Testing with ${myModelCollection.length} records.`);
 console.time("render");
 
 // myViewCollection._render(true);
-myViewCollection._renderMarkup(true);
+// myViewCollection._renderMarkup(true);
 
 console.timeEnd("render");
 

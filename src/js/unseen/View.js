@@ -20,6 +20,9 @@ const walk = require("./walk");
 class View {
 
     /**
+     * @param {Model} model - A model instance.
+     * @param {ViewCollection} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
     constructor() {
@@ -42,7 +45,6 @@ class View {
         }
 
         // Set depending on previous internal/user properties.
-        this.views = null;
         this.el = "";
 
         // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
@@ -136,7 +138,7 @@ class View {
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
-        let elementBody = this.template(this.baseModel.get(), this._id);
+        let elementBody = this.template(this.baseModel, this._id);
 
         // First we make any element ids in this View - unique.
         // let matches = content.match(/(?:id|class)="([^"]*)"/gi);    // Matches class="sfasdf" or id="dfssf"
@@ -147,21 +149,12 @@ class View {
         // Collect events
         let viewEvents = this.events();
 
-        // Now we add any sub-views
-        let elementChildren = {html: ""};
-        if(this.views !== null) {
-            for(let id in this.views) {
-                let view = this.views[id];
-                viewEvents[view._id] = view._renderMarkup(false, elementChildren);
-            }
-        }
-
         // Are we a top-level view?
         if(markup === null) {
             // YES - without passed fragment or parent
             markup = {html: ""};
         }
-        markup.html += elementOpen + elementBody + elementChildren.html + elementClose;
+        markup.html += elementOpen + elementBody + elementClose;
         // console.log("MARKUP: " + JSON.stringify(markup.html));
 
         if(doInsert === true) {
