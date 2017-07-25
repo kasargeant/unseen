@@ -9,6 +9,7 @@
 "use strict";
 
 // Imports
+const EventEmitter = require("event-emitter");
 const fetchival = require("fetchival");
 if(typeof window === "undefined") {
     fetchival.fetch = require("node-fetch");
@@ -18,12 +19,18 @@ if(typeof window === "undefined") {
  * The Model class.
  *
  * Responsibilities:-
- * * TODO...
+ * * To hold a set of data attributes - equivalent to a database record.
+ *
+ * Characteristics:-
+ * * To be accessible 'as if' it were a simple key-value object.
+ * * To optionally validate data.
  * @class
  */
 class Model {
     /**
-     * @param {Object} [record] - A data record object.
+     * @param {Object} data - A data record object.
+     * @param {ModelCollection} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
     constructor(record = {}) {
@@ -66,20 +73,92 @@ class Model {
         }
     }
 
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // USER LIFECYCLE METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     /**
+     * A lifecycle method - called when the instance is first constructed.
      * @override
      */
     initialize() {}
 
     /**
+     * A lifecycle method - called when the instance is about to be destroyed.
      * @override
      */
     finalize() {}
 
-    reset() {
-        this._data = JSON.parse(JSON.stringify(this.baseSchema)); // Clone the base schema.
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // DATA METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     * Add getters and setters - so that this can be treated 'as if' it were its contained data object.
+     * @private
+     */
+    reset(data) {
+
+        // First we delete any previously defined key accessors (if any).
+        if(this._keys !== null) {
+            for(let key of this._keys) {
+                delete this[key];
+            }
+        }
+
+        // Second, assign the new data
+        this._data = data;
+
+        // Third, set new keys and accessors.
+        // - If we have a schema - enforce it's keys.
+        this._keys = (this.baseSchema === null) ? Object.keys(this._data) : Object.keys(this.baseSchema);
+        for(let key of this._keys) {
+            // Define property
+            Object.defineProperty(this, key, {
+                get: function() {
+                    return this._data[key];
+                },
+                set: function(value) {
+                    // Assign new value - or default value if none given.
+                    this._data[key] = value;
+                    // Inform parent
+                    if(this._parent !== null) {this._parent.emit("model-change", this._id);}
+                }
+            });
+            // - If we have a schema... use it's defaults for any undefined or null data values.
+            if(this.baseSchema !== null) {
+                this._data[key] = this._data[key] || this.baseSchema[key];
+            }
+        }
     }
 
+    get() {
+        return this._data;
+    }
+
+
+    toString() {
+        return JSON.stringify(this._data);
+    }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // UTILITY METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+    _emit(eventType) {
+        if(this._parent !== null) {
+            // this._parent.dispatchEvent(eventType);
+            this._parent.emit(eventType, this._id);
+        }
+    }
+
+    /**
+     * Fetches the model's data from a local or remote source.
+     * @param {Function} callback
+     */
     fetch(callback) {
         // Are we storing data locally - or proxying a backend?
         if(this.url === null) {
@@ -103,6 +182,12 @@ class Model {
         }
     }
 
+    /**
+     * Stores the model's data to a local or remote source.
+     * @param {Object} data
+     * @param {Function} callback
+     * @returns {*}
+     */
     store(record) {
 
         // Prepare data - handling any missing/default values.
@@ -160,11 +245,10 @@ class Model {
         // });
     }
 
-    toString() {
-        return JSON.stringify(this._data);
-    }
 
 }
+
+EventEmitter(Model.prototype);
 
 // Exports
 module.exports = Model;

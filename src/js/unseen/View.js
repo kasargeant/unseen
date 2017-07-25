@@ -20,6 +20,9 @@ const walk = require("./walk");
 class View {
 
     /**
+     * @param {Model} model - A model instance.
+     * @param {ViewCollection} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
     constructor() {

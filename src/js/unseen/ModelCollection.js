@@ -19,13 +19,15 @@ if(typeof window === "undefined") {
  * The ModelCollection class.
  *
  * Responsibilities:-
- * * TODO...
+ * * To hold a list of data models - equivalent to a database table.
  * @class
  */
 class ModelCollection {
 
     /**
-     * @param {Array} records - A data array to initially populate this ModelCollection.
+     * @param {Array} data - An array of data record objects.
+     * @param {ModelCollection} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
     constructor(records = []) {
@@ -68,26 +70,26 @@ class ModelCollection {
             this._emit("change"); // Relay the event forward
         });
     }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // LIFECYCLE METHODS
+    // USER LIFECYCLE METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
+     * A lifecycle method - called when the instance is first constructed.
      * @override
      */
     initialize() {}
 
     /**
+     * A lifecycle method - called when the instance is about to be destroyed.
      * @override
      */
     finalize() {}
 
-    _emit(eventType) {
-        if(this._parent !== null) {
-            // this._parent.dispatchEvent(eventType);
-            this._parent.emit(eventType, this._id);
-        }
-    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // DATA METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     reset(records) {
         this.models = {};
@@ -128,6 +130,35 @@ class ModelCollection {
         }
     }
 
+
+    add(record) {
+        let id = this._modelCounter++;
+        this.models[id] = new this.baseClass(record, this, id);
+        this.length++;
+    }
+
+    toString() {
+        for(let id in this.models) {
+            console.log(this.models[id]._dump());
+        }
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // UTILITY METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+    _emit(eventType) {
+        if(this._parent !== null) {
+            // this._parent.dispatchEvent(eventType);
+            this._parent.emit(eventType, this._id);
+        }
+    }
+
+    /**
+     * Fetches the collection's data from a local or remote source.
+     * @param {Function} callback
+     */
     fetch() {
         if(this.url === null) {this.emit("reset", this._id);}
         else {
@@ -139,8 +170,10 @@ class ModelCollection {
     }
 
     /**
-     *
-     * @param {Array} records
+     * Stores the collection's data to a local or remote source.
+     * @param {Array} data
+     * @param {Function} callback
+     * @returns {*}
      */
     store(records) {
 
@@ -220,3 +253,12 @@ EventEmitter(ModelCollection.prototype);
 
 // Exports
 module.exports = ModelCollection;
+
+
+// let myModelCollection = new ModelCollection([
+//     {"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"},
+//     {"id": 124, "idn": "040430544", "type": "test", "name": "Test Avenue"},
+//     {"id": 125, "idn": "384894398", "type": "test", "name": "Test Lane"},
+// ]);
+// let myModel = myModelCollection.get(1);
+// console.log(myModel.toString());
