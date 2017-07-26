@@ -39,11 +39,6 @@ class View {
         this.classList = [];
         this.initialize();      // LIFECYCLE CALL: INITIALIZE
 
-        // Sanity check user initialization.
-        if(this.baseModel === null) {
-            throw new Error("View requires a base model instance.");
-        }
-
         // Set depending on previous internal/user properties.
         this.el = "";
 
