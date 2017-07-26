@@ -15,6 +15,8 @@ if(typeof window === "undefined") {
     fetchival.fetch = require("node-fetch");
 }
 
+const Model = require("./Model");
+
 /**
  * The ModelCollection class.
  *
@@ -51,10 +53,12 @@ class ModelCollection {
 
         this.lastUpdated = 0;
 
-        // // Sanity check user initialization.
-        // if(this.baseClass === null) {
-        //     throw new Error("ModelCollection requires a base Model class.");
-        // }
+        // Sanity check user initialization.
+        if(this.baseClass === null) {
+            // throw new Error("ModelCollection requires a base Model class.");
+            console.warn("Warning: ModelCollection given no base Model class - so creating default Model instead.")
+            this.baseClass = new Model();
+        }
 
         // Set depending on previous internal/user properties.
         this.models = {};

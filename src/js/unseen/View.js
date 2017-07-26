@@ -37,8 +37,8 @@ class View {
             baseModel: null,
             target: "main",
             tag: "div",
-            id: "view",      // HTML Element ID
-            classList: []
+            id: null,      // HTML Element ID
+            classList: null
         };
 
         // Set internally (or by parent).
@@ -48,12 +48,19 @@ class View {
         // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
         this.initialize();      // Custom initialization.
-        this.baseModel = options.baseModel || this.baseModel || this.defaults.baseModel;
+        this.baseModel = model || options.baseModel || this.baseModel || this.defaults.baseModel;
         this.target = options.target || this.target || this.defaults.target;
         this.tag = options.tag || this.tag || this.defaults.tag;
         this.id = options.id || this.id || this.defaults.id;
         this.classList = options.classList || this.classList || this.defaults.baseModel;
 
+        // console.log(JSON.stringify({
+        //     baseModel: this.baseModel,
+        //     target: this.target,
+        //     tag: this.tag,
+        //     id: this.id,      // HTML Element ID
+        //     classList: this.classList
+        // }, null, 2));
 
         // // Sanity check user initialization.
         // if(this.baseClass === null) {
@@ -68,6 +75,11 @@ class View {
             console.log(`View #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
         });
+
+        // // If we have no model... then we already have all we need to render!
+        // if(this.baseModel === null) {
+        //     this._renderMarkup(true);
+        // }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,7 +114,43 @@ class View {
         }
     }
 
-    template(model, params) {return "";}
+    _handleEvents(evt) {
+        console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+
+        let eventTargetId = evt.target.id;
+        let splitPoint = eventTargetId.lastIndexOf("-");
+        let elementId = "#" + eventTargetId.slice(0, splitPoint);
+        if(elementId === "#") {
+            throw new Error("Missing event target.");
+        }
+        let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
+        // console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
+        //
+        //console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
+
+        let events = this.viewEvents[viewId];
+        let elementEvent = events[elementId];
+        if(elementEvent !== undefined && elementEvent[0] === evt.type) {
+            console.log(`ViewCollection '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
+            let view = this.views[viewId];
+            if(view !== undefined) {
+                view[elementEvent[1]]();
+
+                // DELETE A VIEW
+                // this.views[viewId]._destroy(); // Always call private life-cycle method first.
+                // delete this.views[viewId];
+                // this.collection.emit("view-remove", viewId);
+            }
+        }
+
+        // let modelId = this.views[viewId].model._id;
+        // console.log("Have model id: " + modelId);
+
+
+    }
+
+    template(model, idx=0, params={}) {return "";}
 
     style() {
         return "";
@@ -170,11 +218,31 @@ class View {
             // YES - without passed fragment or parent
             markup = {html: ""};
         }
-        markup.html += elementOpen + elementBody + elementClose;
+
+        // Do we create a markup container with id and/or classes?
+        if(this.id === null && this.classList === null) {
+            // NO: Just return template result.
+            markup.html += elementBody;
+        } else {
+            // YES: Then template result with wrapping tag.
+            markup.html += elementOpen + elementBody + elementClose;
+        }
         // console.log("MARKUP: " + JSON.stringify(markup.html));
 
         if(doInsert === true) {
-            jQuery(this.target).append(markup.html);
+            // jQuery(this.target).append(markup);
+            console.log(`Appending to ${this.target}`);
+            this.$el = jQuery(markup.html).appendTo(this.target).get(0);
+            if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+            // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+            if(this._parent === null) {
+
+                // We set the viewEvents lookup
+                this.viewEvents = viewEvents;
+
+                // Add top-level event listener
+                this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+            }
         }
         return viewEvents;
     }

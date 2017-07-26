@@ -34,10 +34,11 @@ class ViewCollection {
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(modelCollection = {}, options = {}, parent = null, parentRef = null) {
+    constructor(collection = {}, options = {}, parent = null, parentRef = null) {
 
         // Component defaults
         this.defaults = {
+            collection: null,
             baseClass: null,
             target: "main",
             tag: "div",
@@ -64,8 +65,9 @@ class ViewCollection {
         // }
 
         // Set depending on previous internal/user properties.
-        this.collection = modelCollection;
-        this.collection._parent = this;
+        this.collection = collection || options.collection || this.collection || this.defaults.collection;
+        if(this.collection !== null) {this.collection._parent = this;}
+
         this.views = {};
 
         this.el = "";
@@ -99,13 +101,12 @@ class ViewCollection {
         this.views = {};
         this.length = 0;
         for(let id in models) {
-            // Instantiate view and set private properties.
-            let view = new this.baseClass(this, id);
-            view._parent = this;
-            view._id = id;
 
-            // Retrieve associated model from collection and assign to View.
-            view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
+            // Retrieve associated model from collection.
+            let model = models[id]; // Note if the 'model' IS a single model... it returns itself
+
+            // Instantiate view and set private properties.
+            let view = new this.baseClass(model, {}, this, id);
 
             // Now add newly created View to store.
             this.views[id] = view;
@@ -256,8 +257,9 @@ class ViewCollection {
 
         if(doInsert === true) {
             // jQuery(this.target).append(markup);
-
+            console.log(`Appending to ${this.target}`);
             this.$el = jQuery(markup.html).appendTo(this.target).get(0);
+            if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
 
             // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
             if(this._parent === null) {
