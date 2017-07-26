@@ -16,7 +16,9 @@ const jQuery = require("jquery");
  * The ViewCollection class.
  *
  * Responsibilities:-
- * * Handle all events for self and contained Views.
+ * * To store Views,
+ * * To collect the rendering of all contained Views,
+ * * To handle all related events.
  * @class
  */
 class ViewCollection {
@@ -25,24 +27,41 @@ class ViewCollection {
      * @param {ModelCollection} modelCollection - An instantiated ModelCollection object.
      * @constructor
      */
-    constructor(modelCollection) {
+    /**
+     * @param {Object} data - A data record object.
+     * @param {Object} [options={}] - Instance options to override class/custom defaults.
+     * @param {ViewCollection} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
+     * @constructor
+     */
+    constructor(modelCollection = {}, options = {}, parent = null, parentRef = null) {
+
+        // Component defaults
+        this.defaults = {
+            baseClass: null,
+            target: "main",
+            tag: "div",
+            id: "view",      // HTML Element ID
+            classList: []
+        };
 
         // Set internally (or by parent).
-        this._parent = null;    // The parent component (if any).
-        this._id = 0;           // The parent's reference ID for this component (if any).
+        this._parent = parent;  // The parent component (if any).
+        this._id = parentRef;   // The parent's reference ID for this component (if any).
 
         // Set by user (or default).
-        this.baseClass = null;
-        this.id = "view";       // HTML Element ID
-        this.target = "main";
-        this.tag = "div";
-        this.classList = [];
-        this.initialize();      // LIFECYCLE CALL: INITIALIZE
+        // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
+        this.initialize();      // Custom initialization.
+        this.baseClass = options.baseClass || this.baseClass || this.defaults.baseClass;
+        this.target = options.target || this.target || this.defaults.target;
+        this.tag = options.tag || this.tag || this.defaults.tag;
+        this.id = options.id || this.id || this.defaults.id;
+        this.classList = options.classList || this.classList || this.defaults.baseModel;
 
-        // Sanity check user initialization.
-        if(this.baseClass === null) {
-            throw new Error("ViewCollection requires a base View class.");
-        }
+        // // Sanity check user initialization.
+        // if(this.baseClass === null) {
+        //     throw new Error("ViewCollection requires a base View class.");
+        // }
 
         // Set depending on previous internal/user properties.
         this.collection = modelCollection;

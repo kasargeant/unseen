@@ -26,26 +26,35 @@ class ModelCollection {
 
     /**
      * @param {Array} data - An array of data record objects.
+     * @param {Object} [options={}] - Instance options to override class/custom defaults.
      * @param {ModelCollection} [parent] - The parent (if any).
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(records = []) {
+    constructor(records = [], options = {}, parent = null, parentRef = 0) {
+
+        // Component defaults
+        this.defaults = {
+            baseClass: {},
+            url: null
+        };
 
         // Set internally (or by parent).
-        this._parent = null;    // The parent component (if any).
-        this._id = 0;           // The parent's reference ID for this component (if any).
+        this._parent = parent;  // The parent component (if any).
+        this._id = parentRef;   // The parent's reference ID for this component (if any).
 
         // Set by user (or default).
-        this.baseClass = null;
-        this.url = null;
-        this.lastUpdated = 0;
-        this.initialize();      // LIFECYCLE CALL: INITIALIZE
+        // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
+        this.initialize();      // Custom initialization.
+        this.baseClass = options.baseClass || this.baseClass || this.defaults.baseClass;
+        this.url = options.url || this.url || this.defaults.url;
 
-        // Sanity check user initialization.
-        if(this.baseClass === null) {
-            throw new Error("ModelCollection requires a base Model class.");
-        }
+        this.lastUpdated = 0;
+
+        // // Sanity check user initialization.
+        // if(this.baseClass === null) {
+        //     throw new Error("ModelCollection requires a base Model class.");
+        // }
 
         // Set depending on previous internal/user properties.
         this.models = {};

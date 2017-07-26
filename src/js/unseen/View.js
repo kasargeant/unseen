@@ -15,29 +15,50 @@ const walk = require("./walk");
 
 /**
  * The View class.
+ *
+ * Responsibilities:-
+ * * To render a particular model with a particular template.
+ * * To be able to attach events to the resultant markup.
  * @class
  */
 class View {
 
     /**
      * @param {Model} model - A model instance.
-     * @param {ViewCollection} [parent] - The parent (if any).
-     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
+     * @param {Object} [options={}] - Instance options to override class/custom defaults.
+     * @param {ViewCollection} [parent=null] - The parent (if any).
+     * @param {number} [parentRef=0] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor() {
+    constructor(model = {}, options = {}, parent = null, parentRef = 0) {
+
+        // Component defaults
+        this.defaults = {
+            baseModel: null,
+            target: "main",
+            tag: "div",
+            id: "view",      // HTML Element ID
+            classList: []
+        };
 
         // Set internally (or by parent).
-        this._parent = null;    // The parent component (if any).
-        this._id = 0;           // The parent's reference ID for this component (if any).
+        this._parent = parent;  // The parent component (if any).
+        this._id = parentRef;   // The parent's reference ID for this component (if any).
 
         // Set by user (or default).
-        this.baseModel = null;
-        this.id = "view";       // HTML Element ID
-        this.target = "main";
-        this.tag = "div";
-        this.classList = [];
-        this.initialize();      // LIFECYCLE CALL: INITIALIZE
+        // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
+        this.initialize();      // Custom initialization.
+        this.baseModel = options.baseModel || this.baseModel || this.defaults.baseModel;
+        this.target = options.target || this.target || this.defaults.target;
+        this.tag = options.tag || this.tag || this.defaults.tag;
+        this.id = options.id || this.id || this.defaults.id;
+        this.classList = options.classList || this.classList || this.defaults.baseModel;
+
+
+        // // Sanity check user initialization.
+        // if(this.baseClass === null) {
+        //     throw new Error("View requires a base model instance.");
+        // }
 
         // Set depending on previous internal/user properties.
         this.el = "";
