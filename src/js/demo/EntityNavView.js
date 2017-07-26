@@ -13,49 +13,53 @@ const Unseen = require("../../index");
 class EntityNavView extends Unseen.View {
 
     initialize() {
-        // this.baseModel = myModel;
-        this.id = "my-nav";
+        this.baseModel = {
+            title: "Unseen.js",
+            items: {
+                "About": "#",
+                "Docs": "https://kasargeant.github.io/unseen/api/",
+                "GitHub": "https://github.com/kasargeant/unseen"
+            }
+        };
+        this.target = "body";
         this.tag = "header";
+        this.id = "my-nav";
         this.classList = ["navbar"];
+
+        // Self-render on construction
+        this._renderMarkup(true);
     }
 
     events() {
         return {
-            "#button-delete": ["click", "deleteAction"]
+            "#button-search": ["click", "searchAction"]
         };
     }
 
     template(model, idx) {
 
+        let itemsMarkup = "";
+        for(let item in model.items) {
+            itemsMarkup += `<a href="${model.items[item]}" class="btn btn-link">${item}</a>`;
+        }
+
         return `
             <section class="navbar-section">
-                <a href="#" class="navbar-brand mr-10">Unseen.js</a>
-                <a href="#" class="btn btn-link">Docs</a>
-                <a href="https://github.com/kasargeant/unseen" class="btn btn-link">GitHub</a>
+                <a href="/" class="navbar-brand mr-10">${model.title}</a>
+                ${itemsMarkup}
             </section>
             <section class="navbar-section">
                 <div class="input-group input-inline">
                     <input class="form-input" type="text" placeholder="search" />
-                    <button class="btn btn-primary input-group-btn">Search</button>
+                    <button id="button-search" class="btn btn-primary input-group-btn">Search</button>
                 </div>
             </section>
         `;
-        // return `
-        //     <div class="card-header">
-        //         <h4 class="card-title">${model.id}</h4>
-        //         <h6 class="card-subtitle">${model.name}</h6>
-        //     </div>
-        //     <div class="card-body">
-        //         ${model.id}: ${model.type} - ${model.name}
-        //     </div>
-        //     <div class="card-footer">
-        //         <button id="button-delete" class="btn btn-primary">Delete</button>
-        //     </div>
-        // `;
+
     }
 
-    deleteAction(evt) {
-        console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
+    searchAction(evt) {
+        console.log(`'searchAction' called with value: ${JSON.stringify(evt)}.`);
         this.destroy();
     }
 }
