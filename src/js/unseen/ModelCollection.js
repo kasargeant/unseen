@@ -37,7 +37,7 @@ class ModelCollection {
 
         // Component defaults
         this.defaults = {
-            baseClass: {},
+            baseClass: null,
             url: null
         };
 
@@ -57,7 +57,7 @@ class ModelCollection {
         if(this.baseClass === null) {
             // throw new Error("ModelCollection requires a base Model class.");
             console.warn("Warning: ModelCollection given no base Model class - so creating default Model instead.")
-            this.baseClass = new Model();
+            this.baseClass = Model;
         }
 
         // Set depending on previous internal/user properties.
