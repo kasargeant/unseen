@@ -28,17 +28,19 @@ if(typeof window === "undefined") {
  */
 class Model {
     /**
-     * @param {Object} data - A data record object.
+     * @param {Object} baseSchema - An object representing the schema and default values of a data record.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
+     * @param {Object} [options.record={}] - A data record object.
      * @param {ModelList} [parent] - The parent (if any).
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(record = {}, options = {}, parent = null, parentRef = 0) {
+    constructor(baseSchema = null, options = {}, parent = null, parentRef = 0) {
 
         // Component defaults
         this.defaults = {
-            baseSchema: {},
+            baseSchema: null,
+            record: {},
             url: null
         };
 
@@ -49,39 +51,20 @@ class Model {
         // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
         this.initialize();      // Custom initialization.
-        this.baseSchema = options.baseSchema || this.baseSchema || this.defaults.baseSchema;
+        this.baseSchema = baseSchema || options.baseSchema || this.baseSchema || this.defaults.baseSchema;
         this.url = options.url || this.url || this.defaults.url;
 
         this.lastUpdated = 0;
 
-        // // Sanity check user initialization.
-        // if(this.baseSchema === null) {
-        //     throw new Error("Model requires a base Schema object.");
-        // }
-
         // Set depending on previous internal/user properties.
-        this._keys = Object.keys(this.baseSchema);
-
-        // Add getters and setters - so that this can be treated 'as if' it were its contained data object.
+        this._keys = null;
         this._data = {};
-        for(let key of this._keys) {
-            // Define property
-            Object.defineProperty(this, key, {
-                get: function() {
-                    return this._data[key];
-                },
-                set: function(value) {
-                    // Assign new value - or default value if none given.
-                    this._data[key] = value || this.baseSchema[key];
-                    // Inform parent
-                    if(this._parent !== null) {this._parent.emit("model-change", this._id);}
-                }
-            });
-            // Then assign the property a value - or default value if none given.
-            this._data[key] = record[key] || this.baseSchema[key];
+        if(this.baseSchema === null) {
+            this._data = options.record || this.defaults.record;
+        } else {
+            this.reset(this.baseSchema, options.record || this.defaults.record);
         }
     }
-
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // USER LIFECYCLE METHODS
@@ -107,7 +90,7 @@ class Model {
      * Add getters and setters - so that this can be treated 'as if' it were its contained data object.
      * @private
      */
-    reset(data) {
+    reset(baseSchema = null, data = {}) {
 
         // First we delete any previously defined key accessors (if any).
         if(this._keys !== null) {
@@ -116,36 +99,69 @@ class Model {
             }
         }
 
-        // Second, assign the new data
-        this._data = data;
+        // Do we have a schema?
+        if(baseSchema === null) {
+            // NO: then simply assign the data.
+            this._data = data;
+        } else {
+            // YES: Then...
+            // Set the new schema.
+            this.baseSchema = baseSchema;
 
-        // Third, set new keys and accessors.
-        // - If we have a schema - enforce it's keys.
-        this._keys = (this.baseSchema === null) ? Object.keys(this._data) : Object.keys(this.baseSchema);
-        for(let key of this._keys) {
-            // Define property
-            Object.defineProperty(this, key, {
-                get: function() {
-                    return this._data[key];
-                },
-                set: function(value) {
-                    // Assign new value - or default value if none given.
-                    this._data[key] = value;
-                    // Inform parent
-                    if(this._parent !== null) {this._parent.emit("model-change", this._id);}
-                }
-            });
-            // - If we have a schema... use it's defaults for any undefined or null data values.
-            if(this.baseSchema !== null) {
-                this._data[key] = this._data[key] || this.baseSchema[key];
+            // Set the new keys
+            this._keys = Object.keys(this.baseSchema);
+
+            // Set new key accessors on model...
+            // ...allow only schema keys and enforce defaults for any undefined or null data values.
+            for(let key of this._keys) {
+                // Define getters and setters for each schema property
+                Object.defineProperty(this, key, {
+                    /**
+                     * Getter for an individual model data property. e.g. console.log(myModel.myProp);
+                     */
+                    get: function() {
+                        return this._data[key];
+                    },
+                    /**
+                     * Setter for an individual model data property. e.g. myModel.myProp = 10;
+                     * @param {Object} value - The value to set this data property
+                     */
+                    set: function(value) {
+                        // Assign new value - or default value if none given.
+                        this._data[key] = value;
+                        this.emit("set", this._id);
+                    }
+                });
+                // Assign the property a value - or default value if none given.
+                this._data[key] = data[key] || this.baseSchema[key];
             }
         }
     }
 
+    /**
+     * Gets the model's data properties.
+     */
     get() {
         return this._data;
     }
 
+    /**
+     * Sets one or more of a model's data properties. e.g. set({a: 10, b: "hi"});
+     * @param {Object} data - The data properties to set.
+     */
+    set(data) {
+        if(this.baseSchema === null) {
+            this.data = data;
+        } else {
+            for(let key of this._keys) {
+                if(this._baseSchema[key] !== undefined) {
+                    // Then assign the property a value - or default value if none given.
+                    this._data[key] = data[key] || this.baseSchema[key];
+                }
+                this.emit("set", this._id);
+            }
+        }
+    }
 
     toString() {
         return JSON.stringify(this._data);
