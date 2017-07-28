@@ -1,6 +1,6 @@
 /**
- * @file ViewCollection.js
- * @description The ViewCollection class.
+ * @file ViewList.js
+ * @description The ViewList class.
  * @author Kyle Alexis Sargeant <kasargeant@gmail.com> {@link https://github.com/kasargeant https://github.com/kasargeant}.
  * @copyright Kyle Alexis Sargeant 2017
  * @license See LICENSE file included in this distribution.
@@ -13,7 +13,7 @@ const EventEmitter = require("event-emitter");
 const jQuery = require("jquery");
 
 /**
- * The ViewCollection class.
+ * The ViewList class.
  *
  * Responsibilities:-
  * * To store Views,
@@ -21,24 +21,25 @@ const jQuery = require("jquery");
  * * To handle all related events.
  * @class
  */
-class ViewCollection {
+class ViewList {
 
     /**
      * @param {ModelList} modelCollection - An instantiated ModelList object.
      * @constructor
      */
     /**
-     * @param {Array} views - An array of View and/or ViewList instances.
+     * @param {Object} collection - A ModelCollection instance.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
-     * @param {ViewCollection} [parent] - The parent (if any).
+     * @param {ViewList} [parent] - The parent (if any).
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(views = {}, options = {}, parent = null, parentRef = null) {
+    constructor(collection = {}, options = {}, parent = null, parentRef = null) {
 
         // Component defaults
         this.defaults = {
-            views: {},
+            collection: null,
+            baseClass: null,
             target: "main",
             tag: "div",
             id: "view",      // HTML Element ID
@@ -52,7 +53,7 @@ class ViewCollection {
         // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
         this.initialize();      // Custom initialization.
-        this.views = views || options.views || this.views || this.defaults.views;
+        this.baseClass = options.baseClass || this.baseClass || this.defaults.baseClass;
         this.target = options.target || this.target || this.defaults.target;
         this.tag = options.tag || this.tag || this.defaults.tag;
         this.id = options.id || this.id || this.defaults.id;
@@ -60,36 +61,59 @@ class ViewCollection {
 
         // // Sanity check user initialization.
         // if(this.baseClass === null) {
-        //     throw new Error("ViewCollection requires a base View class.");
+        //     throw new Error("ViewList requires a base View class.");
         // }
 
         // Set depending on previous internal/user properties.
+        this.collection = collection || options.collection || this.collection || this.defaults.collection;
+        if(this.collection !== null) {this.collection._parent = this;}
+
+        this.views = {};
+
         this.el = "";
         this.$el = null;
         this.deferred = [];
 
-        // Adds events listener(s).
-        // this.collection.on("reset", function(args) {
-        //     console.log(`ViewCollection #${this._id}: ModelList #${args} changed.`);
-        //     this._emit("reset"); // Relay the event forward
-        //     // jQuery(this.target).children().first().detach();
-        //     this.reset(this.collection.models);
-        //     this._renderMarkup(true);
-        // }.bind(this));
+        // Adds internal events listener used by the ModelList to signal this ViewList on update.
+        this.on("change", function(args) {
+            console.log(`ViewList #${this._id}: Model/Collection #${args} changed.`);
+            this._emit("change"); // Relay the event forward
+            // jQuery(this.target).children().first().detach();
+            // this._renderFragment(true);
+        }.bind(this));
+
+        this.collection.on("reset", function(args) {
+            console.log(`ViewList #${this._id}: ModelList #${args} changed.`);
+            this._emit("reset"); // Relay the event forward
+            // jQuery(this.target).children().first().detach();
+            this.reset(this.collection.models);
+            this._renderMarkup(true);
+        }.bind(this));
+
+        // TODO - Add internal events listener used by Views signalling this ViewList
+
+        // Now kick everything off
+        this.collection.fetch();
     }
 
-    reset(views) {
-        this.views = views;
+    reset(models) {
+        // Instantiate initial View components from ModelList models
+        this.views = {};
+        this.length = 0;
+        for(let id in models) {
+
+            // Retrieve associated model from collection.
+            let model = models[id]; // Note if the 'model' IS a single model... it returns itself
+
+            // Instantiate view and set private properties.
+            let view = new this.baseClass(model, {}, this, id);
+
+            // Now add newly created View to store.
+            this.views[id] = view;
+            this.length++;
+        }
     }
 
-    add(id, view) {
-        this.views[id] = view;
-    }
-
-    remove(id) {
-        this.views[id].finalize();
-        delete this.views[id];
-    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // USER LIFECYCLE METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -125,7 +149,7 @@ class ViewCollection {
     }
 
     _handleEvents(evt) {
-        console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+        console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
         let eventTargetId = evt.target.id;
         let splitPoint = eventTargetId.lastIndexOf("-");
@@ -134,14 +158,14 @@ class ViewCollection {
             throw new Error("Missing event target.");
         }
         let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-        // console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
+        // console.log(`ViewList event matched: View component '${viewId}', element ${elementId}`);
         //
         //console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
         let events = this.viewEvents[viewId];
         let elementEvent = events[elementId];
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-            console.log(`ViewCollection '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            console.log(`ViewList '${evt.type}' event for component '${viewId}' element ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view !== undefined) {
@@ -339,10 +363,10 @@ class ViewCollection {
 
 }
 
-EventEmitter(ViewCollection.prototype);
+EventEmitter(ViewList.prototype);
 
 // Exports
-module.exports = ViewCollection;
+module.exports = ViewList;
 
 
 

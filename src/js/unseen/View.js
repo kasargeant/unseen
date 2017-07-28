@@ -26,7 +26,7 @@ class View {
     /**
      * @param {Model} model - A model instance.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
-     * @param {ViewCollection} [parent=null] - The parent (if any).
+     * @param {ViewList} [parent=null] - The parent (if any).
      * @param {number} [parentRef=0] - The parent's reference ID for this component (if any).
      * @constructor
      */
@@ -54,14 +54,6 @@ class View {
         this.id = options.id || this.id || this.defaults.id;
         this.classList = options.classList || this.classList || this.defaults.baseModel;
 
-        // console.log(JSON.stringify({
-        //     baseModel: this.baseModel,
-        //     target: this.target,
-        //     tag: this.tag,
-        //     id: this.id,      // HTML Element ID
-        //     classList: this.classList
-        // }, null, 2));
-
         // // Sanity check user initialization.
         // if(this.baseClass === null) {
         //     throw new Error("View requires a base model instance.");
@@ -70,7 +62,7 @@ class View {
         // Set depending on previous internal/user properties.
         this.el = "";
 
-        // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
+        // Adds internal events listener used by the ModelList to signal this ViewList on update.
         this.on("change", function(args) {
             console.log(`View #${this._id}: Model/Collection #${args} changed.`);
             this._emit("change"); // Relay the event forward
@@ -83,15 +75,17 @@ class View {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // LIFECYCLE METHODS
+    // USER LIFECYCLE METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
+     * A lifecycle method - called when the instance is first constructed.
      * @override
      */
     initialize() {}
 
     /**
+     * A lifecycle method - called when the instance is about to be destroyed.
      * @override
      */
     finalize() {}
@@ -115,7 +109,7 @@ class View {
     }
 
     _handleEvents(evt) {
-        console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+        console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
         let eventTargetId = evt.target.id;
         let splitPoint = eventTargetId.lastIndexOf("-");
@@ -124,14 +118,14 @@ class View {
             throw new Error("Missing event target.");
         }
         let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-        // console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
+        // console.log(`ViewList event matched: View component '${viewId}', element ${elementId}`);
         //
         //console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
         let events = this.viewEvents[viewId];
         let elementEvent = events[elementId];
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-            console.log(`ViewCollection '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            console.log(`ViewList '${evt.type}' event for component '${viewId}' element ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view !== undefined) {

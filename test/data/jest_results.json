@@ -1027,8 +1027,8 @@
       "_coverageSchema": "332fd63041d2c1bcb487cc26dd0d5f7d97098a6c",
       "hash": "6e5ffd250e525c392ec4509b6167d21c77bb8048"
     },
-    "/Users/kasargeant/dev/projects/unseen/src/js/unseen/BaseModelCollection.js": {
-      "path": "/Users/kasargeant/dev/projects/unseen/src/js/unseen/BaseModelCollection.js",
+    "/Users/kasargeant/dev/projects/unseen/src/js/unseen/BaseModelList.js": {
+      "path": "/Users/kasargeant/dev/projects/unseen/src/js/unseen/BaseModelList.js",
       "statementMap": {
         "0": {
           "start": {
@@ -1483,7 +1483,7 @@
       },
       "fnMap": {
         "0": {
-          "name": "BaseModelCollection",
+          "name": "BaseModelList",
           "decl": {
             "start": {
               "line": 20,
@@ -3882,8 +3882,8 @@
       "_coverageSchema": "332fd63041d2c1bcb487cc26dd0d5f7d97098a6c",
       "hash": "baa41a5fe2023faded5ed64b8f1c1b3514b13a38"
     },
-    "/Users/kasargeant/dev/projects/unseen/src/js/unseen/BaseViewCollection.js": {
-      "path": "/Users/kasargeant/dev/projects/unseen/src/js/unseen/BaseViewCollection.js",
+    "/Users/kasargeant/dev/projects/unseen/src/js/unseen/BaseViewList.js": {
+      "path": "/Users/kasargeant/dev/projects/unseen/src/js/unseen/BaseViewList.js",
       "statementMap": {
         "0": {
           "start": {
@@ -7558,8 +7558,8 @@
       "_coverageSchema": "332fd63041d2c1bcb487cc26dd0d5f7d97098a6c",
       "hash": "4c0dca6936e9b4b1b8aa68a4310ab6108ddb08b1"
     },
-    "/Users/kasargeant/dev/projects/unseen/src/js/unseen/ModelCollection.js": {
-      "path": "/Users/kasargeant/dev/projects/unseen/src/js/unseen/ModelCollection.js",
+    "/Users/kasargeant/dev/projects/unseen/src/js/unseen/ModelList.js": {
+      "path": "/Users/kasargeant/dev/projects/unseen/src/js/unseen/ModelList.js",
       "statementMap": {
         "0": {
           "start": {
@@ -9968,8 +9968,8 @@
       "_coverageSchema": "332fd63041d2c1bcb487cc26dd0d5f7d97098a6c",
       "hash": "80f30f35e8a6e823173320afc9d7cbba56429380"
     },
-    "/Users/kasargeant/dev/projects/unseen/src/js/unseen/ViewCollection.js": {
-      "path": "/Users/kasargeant/dev/projects/unseen/src/js/unseen/ViewCollection.js",
+    "/Users/kasargeant/dev/projects/unseen/src/js/unseen/ViewList.js": {
+      "path": "/Users/kasargeant/dev/projects/unseen/src/js/unseen/ViewList.js",
       "statementMap": {
         "0": {
           "start": {

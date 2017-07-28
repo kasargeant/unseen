@@ -30,7 +30,7 @@ class Model {
     /**
      * @param {Object} data - A data record object.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
-     * @param {ModelCollection} [parent] - The parent (if any).
+     * @param {ModelList} [parent] - The parent (if any).
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
@@ -93,11 +93,11 @@ class Model {
      */
     initialize() {}
 
-    /**
-     * A lifecycle method - called when the instance is about to be destroyed.
-     * @override
-     */
-    finalize() {}
+    // /**
+    //  * A lifecycle method - called when the instance is about to be destroyed.
+    //  * @override
+    //  */
+    // finalize() {}
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // DATA METHODS

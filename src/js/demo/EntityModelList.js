@@ -1,6 +1,6 @@
 /**
- * @file EntityModelCollection.js
- * @description EntityModelCollection component.
+ * @file EntityModelList.js
+ * @description EntityModelList component.
  * @license See LICENSE file included in this distribution.
  */
 
@@ -12,11 +12,11 @@ const Unseen = require("../../index");
 const EntityModel = require("./EntityModel");
 
 // MODEL COLLECTION
-class EntityModelCollection extends Unseen.ModelCollection {
+class EntityModelList extends Unseen.ModelList {
     initialize() {
         this.baseClass = EntityModel;
     }
 }
 
 // Exports
-module.exports = EntityModelCollection;
+module.exports = EntityModelList;

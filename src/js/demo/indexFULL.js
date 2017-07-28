@@ -26,12 +26,12 @@ let myModel = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name"
 
 
 // MODEL COLLECTION
-class MyModelCollection extends Unseen.ModelCollection {
+class MyModelList extends Unseen.ModelList {
     initialize() {
         this.baseClass = MyModel;
     }
 }
-let myModelCollection = new MyModelCollection(rawData);
+let myModelList = new MyModelList(rawData);
 
 // VIEW
 class MyView extends Unseen.View {
@@ -74,7 +74,7 @@ let myView = new MyView(myModel);
 
 
 // VIEW COLLECTION
-class MyViewCollection extends Unseen.ViewCollection {
+class MyViewList extends Unseen.ViewList {
     initialize() {
         this.baseClass = MyView;
         this.id = "my-list";
@@ -82,22 +82,22 @@ class MyViewCollection extends Unseen.ViewCollection {
         this.classList = ["container"];
     }
 }
-let myViewCollection = new MyViewCollection(myModelCollection);
+let myViewList = new MyViewList(myModelList);
 
 // DEMO: CONSOLE
 // let markupResult = {html: ""};
 // myView._renderMarkup(false, markupResult);
 // console.log(markupResult.html);
 // let markupResult = {html: ""};
-// myViewCollection._renderMarkup(false, markupResult);
+// myViewList._renderMarkup(false, markupResult);
 // console.log(markupResult.html);
 
 // DEMO: BROWSER
-console.log(`Testing with ${myModelCollection.length} records.`);
+console.log(`Testing with ${myModelList.length} records.`);
 console.time("render");
 
-// myViewCollection._render(true);
-// myViewCollection._renderMarkup(true);
+// myViewList._render(true);
+// myViewList._renderMarkup(true);
 
 console.timeEnd("render");
 

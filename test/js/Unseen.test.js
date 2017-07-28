@@ -81,7 +81,7 @@ describe("Class: Unseen", function() {
                 this.baseSchema = {a: "hi", b: "ho", c: 3};
             }
         }
-        class TestCollection extends Unseen.ModelCollection {
+        class TestCollection extends Unseen.ModelList {
             initialize() {
                 this.baseClass = TestModel;
             }

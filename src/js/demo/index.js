@@ -7,8 +7,8 @@
 "use strict";
 
 // Imports
-const EntityModelCollection = require("./EntityModelCollection");
-const EntityListViewCollection = require("./EntityListViewCollection");
+const EntityModelList = require("./EntityModelList");
+const EntityListViewList = require("./EntityViewList");
 const EntityNavView = require("./EntityNavView");
 
 // const jQuery = require("jquery");
@@ -16,25 +16,25 @@ const EntityNavView = require("./EntityNavView");
 let rawData = require("../../data/processed_sample.json");
 
 // MODEL COLLECTION
-let myModelCollection = new EntityModelCollection(rawData);
+let myModelList = new EntityModelList(rawData);
 
 // VIEW
 let myNavView = new EntityNavView();
 
 // VIEW COLLECTION
-let myViewCollection = new EntityListViewCollection(myModelCollection);
+let myViewList = new EntityListViewList(myModelList);
 
 // DEMO: CONSOLE
 // let markupResult = {html: ""};
-// myViewCollection._renderMarkup(false, markupResult);
+// myViewList._renderMarkup(false, markupResult);
 // console.log(markupResult.html);
 //
 // // DEMO: BROWSER
-// console.log(`Testing with ${myModelCollection.length} records.`);
+// console.log(`Testing with ${myModelList.length} records.`);
 // console.time("render");
 //
-// // myViewCollection._render(true);
-// // myViewCollection._renderMarkup(true);
+// // myViewList._render(true);
+// // myViewList._renderMarkup(true);
 //
 // console.timeEnd("render");
 //

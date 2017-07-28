@@ -1,6 +1,6 @@
 /**
- * @file EntityListViewCollection.js
- * @description EntityListViewCollection component.
+ * @file EntityListViewList.js
+ * @description EntityListViewList component.
  * @license See LICENSE file included in this distribution.
  */
 
@@ -12,7 +12,7 @@ const Unseen = require("../../index");
 const EntityListItemView = require("./EntityListItemView");
 
 // MODEL
-class EntityListViewCollection extends Unseen.ViewCollection {
+class EntityListViewList extends Unseen.ViewList {
     initialize() {
         this.baseClass = EntityListItemView;
         this.target = "body";
@@ -23,4 +23,4 @@ class EntityListViewCollection extends Unseen.ViewCollection {
 }
 
 // Exports
-module.exports = EntityListViewCollection;
+module.exports = EntityListViewList;
