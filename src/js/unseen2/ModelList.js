@@ -33,7 +33,7 @@ class ModelList {
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(records = [], options = {}, parent = null, parentRef = 0) {
+    constructor(records = null, options = {}, parent = null, parentRef = 0) {
 
         // Component defaults
         this.defaults = {
@@ -72,7 +72,7 @@ class ModelList {
         // Adds internal events listener used by the Model to signal this ModelList on update.
         this.on("change", function(args) {
             console.log(`ModelList #${this._id}: Model #${args} changed.`);
-            this._emit("change"); // Relay the event forward
+            this.emit("change"); // Relay the event forward
         });
 
         this.on("view-remove", function(args) {
@@ -81,7 +81,7 @@ class ModelList {
             console.log("exists? " + (this.models[args] !== undefined));
             delete this.models[args];
             console.log("exists? " + (this.models[args] !== undefined));
-            this._emit("change"); // Relay the event forward
+            this.emit("change"); // Relay the event forward
         });
     }
 
@@ -161,13 +161,6 @@ class ModelList {
             json += this.models[id].toJSON() + ", ";
         }
         json[json.length - 1] = "]";
-    }
-
-    _emit(eventType) {
-        if(this._parent !== null) {
-            // this._parent.dispatchEvent(eventType);
-            this._parent.emit(eventType, this._id);
-        }
     }
 
     /**

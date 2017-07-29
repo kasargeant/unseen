@@ -68,7 +68,7 @@ class View {
         // Adds internal events listener used by the ModelList to signal this ViewList on update.
         this.on("change", function(args) {
             console.log(`View #${this._id}: Model/Collection #${args} changed.`);
-            this._emit("change"); // Relay the event forward
+            this.emit("change"); // Relay the event forward
         });
 
         // // If we have no model... then we already have all we need to render!
@@ -104,12 +104,6 @@ class View {
     //    ["#button-delete", "click", "deleteAction"]
     // ];
     events() {return null;}
-
-    _emit(eventType) {
-        if(this._parent !== null) {
-            this._parent.emit(eventType, this._id);
-        }
-    }
 
     _handleEvents(evt) {
         console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);

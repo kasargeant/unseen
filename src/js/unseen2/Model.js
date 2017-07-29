@@ -172,13 +172,6 @@ class Model {
         return JSON.stringify(this._data);
     }
 
-    _emit(eventType) {
-        if(this._parent !== null) {
-            // this._parent.dispatchEvent(eventType);
-            this._parent.emit(eventType, this._id);
-        }
-    }
-
     /**
      * Fetches the model's data from a local or remote source.
      * @param {Function} callback

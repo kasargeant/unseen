@@ -72,7 +72,7 @@ class ModelList {
         // Adds internal events listener used by the Model to signal this ModelList on update.
         this.on("change", function(args) {
             console.log(`ModelList #${this._id}: Model #${args} changed.`);
-            this._emit("change"); // Relay the event forward
+            this.emit("change"); // Relay the event forward
         });
 
         this.on("view-remove", function(args) {
@@ -81,7 +81,7 @@ class ModelList {
             console.log("exists? " + (this.models[args] !== undefined));
             delete this.models[args];
             console.log("exists? " + (this.models[args] !== undefined));
-            this._emit("change"); // Relay the event forward
+            this.emit("change"); // Relay the event forward
         });
     }
 
@@ -144,11 +144,19 @@ class ModelList {
         }
     }
 
-
     add(record) {
         let id = this._modelCounter++;
         this.models[id] = new this.baseClass(record, this, id);
         this.length++;
+        return id;
+    }
+
+    remove(id) {
+        let removed = this.models[id];
+        if(removed !== undefined) {
+            delete this.models[id];
+            this.length--;
+        }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,13 +169,6 @@ class ModelList {
             json += this.models[id].toJSON() + ", ";
         }
         json[json.length - 1] = "]";
-    }
-
-    _emit(eventType) {
-        if(this._parent !== null) {
-            // this._parent.dispatchEvent(eventType);
-            this._parent.emit(eventType, this._id);
-        }
     }
 
     /**
@@ -239,22 +240,8 @@ class ModelList {
             default:
 
         }
-        // jQuery.ajax({
-        //     type: method,
-        //     url: this.url,
-        //     data: data,
-        //     error: this._restFailure,
-        //     success: success,
-        //     dataType: "json"
-        // });
     }
 
-
-    add(record) {
-        let id = this._modelCounter++;
-        this.models[id] = new this.baseClass(record, this, id);
-        this.length++;
-    }
 }
 
 EventEmitter(ModelList.prototype);

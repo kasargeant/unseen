@@ -28,14 +28,14 @@ if(typeof window === "undefined") {
  */
 class Model {
     /**
-     * @param {Object} baseSchema - An object representing the schema and default values of a data record.
+     * @param {Object} [record=null] - A data record object.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
-     * @param {Object} [options.record={}] - A data record object.
+     * @param {Object} [options.baseSchema={}] - An object representing the schema and default values of a data record.
      * @param {ModelList} [parent] - The parent (if any).
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(baseSchema = null, options = {}, parent = null, parentRef = 0) {
+    constructor(record = null, options = {}, parent = null, parentRef = 0) {
 
         // Component defaults
         this.defaults = {
@@ -51,7 +51,7 @@ class Model {
         // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
         this.initialize();      // Custom initialization.
-        this.baseSchema = baseSchema || options.baseSchema || this.baseSchema || this.defaults.baseSchema;
+        this.baseSchema = options.baseSchema || this.baseSchema || this.defaults.baseSchema;
         this.url = options.url || this.url || this.defaults.url;
 
         this.lastUpdated = 0;
@@ -59,10 +59,11 @@ class Model {
         // Set depending on previous internal/user properties.
         this._keys = null;
         this._data = {};
+        let data = record || options.record || this.defaults.record;
         if(this.baseSchema === null) {
-            this._data = options.record || this.defaults.record;
+            this._data = data;
         } else {
-            this.reset(this.baseSchema, options.record || this.defaults.record);
+            this.reset(this.baseSchema, data);
         }
     }
 
@@ -170,13 +171,6 @@ class Model {
 
     toJSON() {
         return JSON.stringify(this._data);
-    }
-
-    _emit(eventType) {
-        if(this._parent !== null) {
-            // this._parent.dispatchEvent(eventType);
-            this._parent.emit(eventType, this._id);
-        }
     }
 
     /**

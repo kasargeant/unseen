@@ -41,7 +41,7 @@ class ViewList {
             baseClass: null,
             collection: null,
             views: null,
-            useDOM: false,
+            useDOM: true,
             target: "main",
             tag: "div",
             id: "view",      // HTML Element ID
@@ -78,14 +78,14 @@ class ViewList {
         // Adds internal events listener used by the ModelList to signal this ViewList on update.
         this.on("change", function(args) {
             console.log(`ViewList #${this._id}: Model/Collection #${args} changed.`);
-            this._emit("change"); // Relay the event forward
+            this.emit("change"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
             // this._renderFragment(true);
         }.bind(this));
 
         this.collection.on("reset", function(args) {
             console.log(`ViewList #${this._id}: ModelList #${args} changed.`);
-            this._emit("reset"); // Relay the event forward
+            this.emit("reset"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
             this.reset(this.collection.models);
             if(this.useDOM === true) {
@@ -146,12 +146,6 @@ class ViewList {
     //    ["#button-delete", "click", "deleteAction"]
     // ];
     events() {return null;}
-
-    _emit(eventType) {
-        if(this._parent !== null) {
-            this._parent.emit(eventType, this._id);
-        }
-    }
 
     _handleEvents(evt) {
         console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
