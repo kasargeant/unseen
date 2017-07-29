@@ -34,7 +34,7 @@ class MyModelList extends Unseen.ModelList {
         this.url = "http://localhost:8080/entity";
     }
 }
-let myModelList = new MyModelList(rawData);
+let myModelList = new MyModelList();
 
 // VIEW
 class MyView extends Unseen.View {

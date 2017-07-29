@@ -249,11 +249,45 @@ EventEmitter(ModelList.prototype);
 // Exports
 module.exports = ModelList;
 
-
-// let myModelList = new ModelList([
+// LOCAL TEST
+// const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+//
+// class MyModel extends Model {
+//     initialize() {
+//         this.baseSchema = schema;
+//     }
+// }
+// class MyModelList extends ModelList {
+//     initialize() {
+//         this.baseClass = MyModel;
+//     }
+// }
+// let myModelList = new MyModelList([
 //     {"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"},
 //     {"id": 124, "idn": "040430544", "type": "test", "name": "Test Avenue"},
 //     {"id": 125, "idn": "384894398", "type": "test", "name": "Test Lane"},
 // ]);
 // let myModel = myModelList.get(1);
-// console.log(myModel.toString());
+// console.log(myModel.toJSON());
+
+// REST TEST
+// const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+//
+// class MyModel extends Model {
+//     initialize() {
+//         this.baseSchema = schema;
+//         // this.url = "http://localhost:8080/entity/1";
+//     }
+// }
+// class MyModelList extends ModelList {
+//     initialize() {
+//         this.baseClass = MyModel;
+//         this.url = "http://localhost:8080/entity";
+//     }
+// }
+//
+// let myModelList = new MyModelList();
+// myModelList.on("reset", function() {
+//     console.log(this.length);
+// }.bind(myModelList));
+// myModelList.fetch();
