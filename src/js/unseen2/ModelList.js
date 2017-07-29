@@ -33,7 +33,7 @@ class ModelList {
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(records = null, options = {}, parent = null, parentRef = 0) {
+    constructor(records = [], options = {}, parent = null, parentRef = 0) {
 
         // Component defaults
         this.defaults = {

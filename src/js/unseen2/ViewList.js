@@ -41,7 +41,7 @@ class ViewList {
             baseClass: null,
             collection: null,
             views: null,
-            useDOM: true,
+            useDOM: false,
             target: "main",
             tag: "div",
             id: "view",      // HTML Element ID

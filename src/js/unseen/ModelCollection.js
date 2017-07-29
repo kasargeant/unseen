@@ -173,8 +173,9 @@ class ModelList {
      * @param {Function} callback
      */
     fetch() {
-        if(this.url === null) {this.emit("reset", this._id);}
-        else {
+        if(this.url === null) {
+            this.emit("reset", this._id);
+        } else {
             this._rest("GET", {}, function(resData, textStatus, jqXHR) {
                 console.log("RESPONSE: " + JSON.stringify(resData));
                 this.reset(resData);

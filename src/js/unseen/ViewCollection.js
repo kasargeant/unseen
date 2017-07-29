@@ -162,6 +162,12 @@ class ViewCollection {
 
     // template(model, params) {return JSON.stringify(model);}
 
+
+    render(doInsert=false, markup=null, throttle=false) {
+        this._renderMarkup(doInsert, markup);
+    }
+
+
     _renderFragment(doInsert=false, fragment=null) {
 
         let element = document.createElement(this.tag);

@@ -24,6 +24,8 @@ let myNavView = new EntityNavView();
 // VIEW COLLECTION
 let myViewList = new EntityListViewList(myModelList);
 
+myViewList.collection.fetch();
+
 // DEMO: CONSOLE
 // let markupResult = {html: ""};
 // myViewList._renderMarkup(false, markupResult);
@@ -33,8 +35,7 @@ let myViewList = new EntityListViewList(myModelList);
 // console.log(`Testing with ${myModelList.length} records.`);
 // console.time("render");
 //
-// // myViewList._render(true);
-// // myViewList._renderMarkup(true);
+// myViewCollection.render(true);
 //
 // console.timeEnd("render");
 //

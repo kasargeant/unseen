@@ -22,8 +22,9 @@ let myModel = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "
 });
 
 // MODEL COLLECTION
-let myModelList = new Unseen.ModelList(rawData, {
-    schema: schema
+let myModelList = new Unseen.ModelList(Unseen.Model, {
+    schema: schema,
+    records: rawData,
 });
 
 // TEMPLATE
