@@ -19,6 +19,7 @@
     },
     "requireSemicolons": true,
     "requireSpaceAfterKeywords": false,
+    "disallowKeywordsOnNewLine": false,
     "disallowMultipleVarDecl": false,
     "disallowSpaceAfterKeywords": [
         "if",

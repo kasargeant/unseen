@@ -57,7 +57,7 @@ class ModelList {
         // Sanity check user initialization.
         if(this.baseClass === null) {
             // throw new Error("ModelList requires a base Model class.");
-            console.warn("Warning: ModelList given no base Model class - so creating default Model instead.")
+            console.warn("Warning: ModelList given no base Model class - so creating default Model instead.");
             this.baseClass = Model;
         }
 
