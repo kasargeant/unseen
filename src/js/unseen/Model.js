@@ -9,7 +9,7 @@
 "use strict";
 
 // Imports
-const EventEmitter = require("event-emitter");
+const Component = require("./Component");
 const Util = require("./Util");
 
 /**
@@ -23,8 +23,9 @@ const Util = require("./Util");
  * * To optionally validate data.
  * @class
  */
-class Model {
+class Model extends Component {
     /**
+     * @param {string} idn - The id name of the component.
      * @param {Object} [record=null] - A data record object.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
      * @param {Object} [options.baseSchema={}] - An object representing the schema and default values of a data record.
@@ -32,133 +33,109 @@ class Model {
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(record = null, options = {}, parent = null, parentRef = 0) {
+    constructor(idn, record = null, options = {}, parent = null, parentRef = 0) {
 
-        // Component defaults
+        // Call Component constructor
+        super(idn, parent, parentRef);
+
+        // Set by user (or default).
         this.defaults = {
             baseSchema: null,
             record: {},
             url: null
         };
+        this.config = Object.assign(this.defaults, options);
 
-        // Set internally (or by parent).
-        this._parent = parent;  // The parent component (if any).
-        this._id = parentRef;   // The parent's reference ID for this component (if any).
-
-        // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
-        this.initialize();      // Custom initialization.
-        this.baseSchema = options.baseSchema || this.baseSchema || this.defaults.baseSchema;
-        this.url = options.url || this.url || this.defaults.url;
+        this.baseSchema =  this.config.baseSchema || this.baseSchema;
+        this.url = this.config.url || this.url;
 
-        this.lastUpdated = 0;
+        // Sanity check component requirements.
+        if(this.baseSchema === null) {
+            throw new Error("Model requires a base Schema for structure and default values.");
+        }
 
         // Set depending on previous internal/user properties.
         this._keys = null;
         this._data = {};
-        let data = record || options.record || this.defaults.record;
-        if(this.baseSchema === null) {
-            this._data = data;
-        } else {
-            this.reset(this.baseSchema, data);
+        this.urlLastUpdated = 0;
+
+        // Initialise Model with Schema settings and assign data record values (if any).
+        this._init(record || this.config.record);
+    }
+
+    /**
+     * Add getters and setters - so that this can be treated 'as if' it were its contained data object.
+     * @private
+     */
+    _init(data={}) {
+        // Set the new keys
+        this._keys = Object.keys(this.baseSchema);
+
+        // Set new key accessors on model...
+        // ...allow only schema keys and enforce defaults for any undefined or null data values.
+        for(let key of this._keys) {
+            // Define getters and setters for each schema property
+            Object.defineProperty(this, key, {
+                /**
+                 * Getter for an individual model data property. e.g. console.log(myModel.myProp);
+                 */
+                get: function() {
+                    return this._data[key];
+                },
+                /**
+                 * Setter for an individual model data property. e.g. myModel.myProp = 10;
+                 * @param {Object} value - The value to set this data property
+                 */
+                set: function(value) {
+                    // Assign new value - or default value if none given.
+                    this._data[key] = value || this.baseSchema[key];
+                    this.emit("set", this._id);
+                }
+            });
+            // Assign the property a value - or default value if none given.
+            this._data[key] = data[key] || this.baseSchema[key];
         }
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // USER LIFECYCLE METHODS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * A lifecycle method - called when the instance is first constructed.
-     * @override
-     */
-    initialize() {}
-
-    // /**
-    //  * A lifecycle method - called when the instance is about to be destroyed.
-    //  * @override
-    //  */
-    // finalize() {}
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // DATA METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     * Add getters and setters - so that this can be treated 'as if' it were its contained data object.
+     * Sets (resets) all valid key properties with the given value(s) - or defaults if no value(s) given.
      * @private
      */
-    reset(baseSchema = null, data = {}) {
-
-        // First we delete any previously defined key accessors (if any).
-        if(this._keys !== null) {
-            for(let key of this._keys) {
-                delete this[key];
-            }
+    reset(data = {}) {
+        // Set only schema keys and enforce defaults for any undefined or null data values.
+        for(let key of this._keys) {
+            // Assign the property a value - or default value if none given.
+            this._data[key] = data[key] || this.baseSchema[key];
         }
-
-        // Do we have a schema?
-        if(baseSchema === null) {
-            // NO: then simply assign the data.
-            this._data = data;
-        } else {
-            // YES: Then...
-            // Set the new schema.
-            this.baseSchema = baseSchema;
-
-            // Set the new keys
-            this._keys = Object.keys(this.baseSchema);
-
-            // Set new key accessors on model...
-            // ...allow only schema keys and enforce defaults for any undefined or null data values.
-            for(let key of this._keys) {
-                // Define getters and setters for each schema property
-                Object.defineProperty(this, key, {
-                    /**
-                     * Getter for an individual model data property. e.g. console.log(myModel.myProp);
-                     */
-                    get: function() {
-                        return this._data[key];
-                    },
-                    /**
-                     * Setter for an individual model data property. e.g. myModel.myProp = 10;
-                     * @param {Object} value - The value to set this data property
-                     */
-                    set: function(value) {
-                        // Assign new value - or default value if none given.
-                        this._data[key] = value;
-                        this.emit("set", this._id);
-                    }
-                });
-                // Assign the property a value - or default value if none given.
-                this._data[key] = data[key] || this.baseSchema[key];
-            }
-        }
+        this.emit("reset");
     }
 
     /**
-     * Gets the model's data properties.
+     * Gets all of the model's data properties or just a single property value - if a key is provided.
+     * @param {string} [key] - Optional key.
+     * @returns {*}
      */
-    get() {
-        return this._data;
+    get(key) {
+        if(key !== undefined) {
+            return this._data[key];
+        } else {
+            return this._data;
+        }
     }
 
     /**
      * Sets one or more of a model's data properties. e.g. set({a: 10, b: "hi"});
      * @param {Object} data - The data properties to set.
      */
-    set(data) {
-        if(this.baseSchema === null) {
-            this.data = data;
-        } else {
-            for(let key of this._keys) {
-                if(this.baseSchema[key] !== undefined) {
-                    // Then assign the property a value - or default value if none given.
-                    this._data[key] = data[key] || this.baseSchema[key];
-                }
-                this.emit("set", this._id);
-            }
-        }
+    set(key, value) {
+        this._data[key] = value || this.baseSchema[key];
+        this.emit("set", this._id);
     }
 
 
@@ -219,8 +196,6 @@ class Model {
     }
 
 }
-
-EventEmitter(Model.prototype);
 
 // Exports
 module.exports = Model;

@@ -54,9 +54,7 @@ class ModelList {
 
         // Sanity check user initialization.
         if(this.baseClass === null) {
-            // throw new Error("ModelList requires a base Model class.");
-            console.warn("Warning: ModelList given no base Model class - so creating default Model instead.");
-            this.baseClass = Model;
+            throw new Error("ModelList requires a base Model class.");
         }
 
         // Set depending on previous internal/user properties.
@@ -109,7 +107,7 @@ class ModelList {
         let id;
         for(id = 0; id < records.length; id++) {
             // Instantiate new model and set private properties.
-            this.models[id] = new this.baseClass(records[id]);
+            this.models[id] = new this.baseClass("Model_" + id, records[id]);
             this.models[id]._parent = this;
             this.models[id]._id = id;
             this.models[id].url = `${this.url}/${id}`;
@@ -131,20 +129,20 @@ class ModelList {
     set(records) {
         if(Array.isArray(records)) {
             this.models = {};
-            let i;
-            for(i = 0; i < records.length; i++) {
-                this.models[i] = new this.baseClass(records[i], this, i);
+            let id;
+            for(id = 0; id < records.length; id++) {
+                this.models[id] = new this.baseClass("Model_" + id, records[id], this, id);
             }
-            this.length = i;
-            this._modelCounter = i; // This provides a unique ID for every model.
+            this.length = id;
+            this._modelCounter = id; // This provides a unique ID for every model.
         } else {
             throw new Error("ModelList Error: Attempt to set without using a data array.");
         }
     }
 
-    add(record) {
+    add(key, value) {
         let id = this._modelCounter++;
-        this.models[id] = new this.baseClass(record, this, id);
+        this.models[id] = new this.baseClass(key, value, this, id);
         this.length++;
         return id;
     }
@@ -196,7 +194,7 @@ class ModelList {
         let data = {};
         let i;
         for(i = 0; i < records.length; i++) {
-            data[i] = new this.baseClass(records[i], this, i);
+            data[i] = new this.baseClass("Model_" + i, records[i], this, i);
         }
         this.length = i;
         this._modelCounter = i; // This provides a unique ID for every model.

@@ -61,69 +61,69 @@ describe("Class: Unseen", function() {
 
     describe("Instance defaults", function() {
 
-        let testCollection;
+        let testModelList;
 
         beforeEach(function() {
-            testCollection = new TestCollection();
+            testModelList = new TestCollection();
         });
 
         it("should be able to make instances of the Collection without model data.", function() {
-            expect(testCollection).toBeDefined();
-            expect(testCollection.length).toBe(0);
+            expect(testModelList).toBeDefined();
+            expect(testModelList.length).toBe(0);
         });
 
         it("should return undefined for non-existant models.", function() {
-            expect(testCollection.get(0)).not.toBeDefined();
-            expect(testCollection.get(1)).not.toBeDefined();
+            expect(testModelList.get(0)).not.toBeDefined();
+            expect(testModelList.get(1)).not.toBeDefined();
         });
 
         it("should be able to be reset for a new model type.", function() {
 
-            testCollection.reset([
+            testModelList.reset([
                 {b: "o"},
                 {a: "hiya", b: "hoho", c: 1},
                 {a: "riii", b: "biii", c: 20}
             ]);
 
-            let testModel = testCollection.get(1);
+            let testModel = testModelList.get(1);
 
-            expect(testCollection.length).toBe(3);
+            expect(testModelList.length).toBe(3);
             expect(testModel.a).toBe("hiya");
             expect(testModel.b).toBe("hoho");
             expect(testModel.c).toBe(1);
         });
 
         it("should be add new model instances.", function() {
-            let id = testCollection.add({a: "hiya", b: "hoho", c: 1});
+            let id = testModelList.add("test", {a: "hiya", b: "hoho", c: 1});
             expect(id).toBe(0);
-            expect(testCollection.length).toBe(1);
-            expect(testCollection.get(0).b).toBe("hoho");
+            expect(testModelList.length).toBe(1);
+            expect(testModelList.get(0).b).toBe("hoho");
         });
 
         it("should be able to remove model instances", function() {
-            let id = testCollection.add({a: "hiya", b: "hoho", c: 1});
+            let id = testModelList.add({a: "hiya", b: "hoho", c: 1});
             expect(id).toBe(0);
-            expect(testCollection.length).toBe(1);
-            testCollection.remove(id);
-            expect(testCollection.length).toBe(0);
-            expect(testCollection.get(0)).not.toBeDefined();
+            expect(testModelList.length).toBe(1);
+            testModelList.remove(id);
+            expect(testModelList.length).toBe(0);
+            expect(testModelList.get(0)).not.toBeDefined();
         });
     });
 
     describe("Populating", function() {
 
-        let testCollection = new TestCollection([
+        let testModelList = new TestCollection([
             {b: "o"},
             {a: "hiya", b: "hoho", c: 1},
             {a: "riii", b: "biii", c: 20}
         ]);
-        let testModel1 = testCollection.get(0);
-        let testModel2 = testCollection.get(1);
-        let testModel3 = testCollection.get(2);
+        let testModel1 = testModelList.get(0);
+        let testModel2 = testModelList.get(1);
+        let testModel3 = testModelList.get(2);
 
         it("should be able to make instances of the Collection with initial model data.", function() {
-            expect(testCollection).toBeDefined();
-            expect(testCollection.length).toBe(3);
+            expect(testModelList).toBeDefined();
+            expect(testModelList.length).toBe(3);
         });
 
         it("should be able to make instances of the Model with the Model's defaults", function() {
