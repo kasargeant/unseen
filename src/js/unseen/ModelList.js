@@ -10,10 +10,8 @@
 
 // Imports
 const EventEmitter = require("event-emitter");
-const fetchival = require("fetchival");
-if(typeof window === "undefined") {
-    fetchival.fetch = require("node-fetch");
-}
+const Util = require("./Util");
+
 
 const Model = require("./Model");
 
@@ -176,9 +174,10 @@ class ModelList {
      * @param {Function} callback
      */
     fetch() {
-        if(this.url === null) {this.emit("reset", this._id);}
-        else {
-            this._rest("GET", {}, function(resData, textStatus, jqXHR) {
+        if(this.url === null) {
+            this.emit("reset", this._id);
+        } else {
+            Util.fetch("GET", this.url, {}, function(resData) {
                 console.log("RESPONSE: " + JSON.stringify(resData));
                 this.reset(resData);
             }.bind(this));
@@ -208,40 +207,11 @@ class ModelList {
             this.models = data;
         } else {
             // We're proxying...
-            this._rest("POST", data, function(responseData, textStatus, jqXHR) {
+            Util.fetch("POST", this.url, data, function(responseData) {
                 this.models = responseData;
             });
         }
     }
-
-    _restFailure(jqXHR, textStatus, errorThrown) {
-        console.error(`Model Error: Failure to sync data with backend.  \n${errorThrown}`);
-    }
-
-    _restSuccess() {
-
-    }
-
-    _rest(method="GET", data=[], success) {
-        console.log("ModelList: FETCHING!!!");
-        switch(method) {
-            case "GET":
-                fetchival(this.url).get(data).then(success);
-                break;
-            case "POST":
-                fetchival(this.url).post(data).then(success);
-                break;
-            case "PUT":
-                fetchival(this.url).put(data).then(success);
-                break;
-            case "DELETE":
-                fetchival(this.url).delete(data).then(success);
-                break;
-            default:
-
-        }
-    }
-
 }
 
 EventEmitter(ModelList.prototype);
@@ -270,7 +240,7 @@ module.exports = ModelList;
 // let myModel = myModelList.get(1);
 // console.log(myModel.toJSON());
 
-// REST TEST
+// // REST TEST
 // const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
 //
 // class MyModel extends Model {

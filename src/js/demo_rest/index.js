@@ -87,6 +87,8 @@ class MyViewList extends Unseen.ViewList {
 }
 let myViewList = new MyViewList(myModelList);
 
+myViewList.collection.fetch();
+
 // DEMO: CONSOLE
 // let markupResult = {html: ""};
 // myView._renderMarkup(false, markupResult);

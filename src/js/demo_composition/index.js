@@ -74,7 +74,7 @@ let myViewCollection = new Unseen.ViewCollection({"myView": myView}, {
 
 // DEMO: CONSOLE
 let markupResult = {html: ""};
-myView._renderMarkup(false, markupResult);
+myView._render(false, markupResult);
 console.log(markupResult.html);
 // let markupResult = {html: ""};
 // myViewList._renderMarkup(false, markupResult);

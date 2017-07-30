@@ -19,7 +19,14 @@ let rawData = require("../../data/processed_sample.json");
 let myModelList = new EntityModelList(rawData);
 
 // VIEW
-let myNavView = new EntityNavView();
+let myNavView = new EntityNavView(new Model({
+    title: "Unseen.js",
+    items: {
+        "About": "#",
+        "Docs": "https://kasargeant.github.io/unseen/api/",
+        "GitHub": "https://github.com/kasargeant/unseen"
+    }
+}));
 
 // VIEW COLLECTION
 let myViewList = new EntityListViewList(myModelList);

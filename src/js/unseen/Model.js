@@ -10,10 +10,7 @@
 
 // Imports
 const EventEmitter = require("event-emitter");
-const fetchival = require("fetchival");
-if(typeof window === "undefined") {
-    fetchival.fetch = require("node-fetch");
-}
+const Util = require("./Util");
 
 /**
  * The Model class.
@@ -155,7 +152,7 @@ class Model {
             this.data = data;
         } else {
             for(let key of this._keys) {
-                if(this._baseSchema[key] !== undefined) {
+                if(this.baseSchema[key] !== undefined) {
                     // Then assign the property a value - or default value if none given.
                     this._data[key] = data[key] || this.baseSchema[key];
                 }
@@ -177,25 +174,19 @@ class Model {
      * Fetches the model's data from a local or remote source.
      * @param {Function} callback
      */
-    fetch(callback) {
+    fetch() {
         // Are we storing data locally - or proxying a backend?
         if(this.url === null) {
             // We're local... we call the callback immediately.
-            return this._data;
+            this.emit("change", this._id); // Faux event.
         } else {
             // We're proxying... we call the callback on data receipt.
-            this._rest("GET", {}, function(responseData, textStatus, jqXHR) {
-                console.log("RESPONSE: " + JSON.stringify(responseData));
-                // Prepare data - handling any missing/default values.
-                let data = {};
+            Util.fetch("GET", this.url, {}, function(resData) {
                 for(let key of this._keys) {
                     // Then assign the property a value - or reassign if none given. // TODO optimise this!
-                    this._data[key] = responseData[key] || this.baseSchema[key];
+                    this._data[key] = resData[key] || this.baseSchema[key];
                 }
-                // Fire any callback
-                if(callback !== undefined) {
-                    callback(this._data);
-                }
+                this.emit("change", this._id);
             }.bind(this));
         }
     }
@@ -221,42 +212,33 @@ class Model {
             this._data = data;
         } else {
             // We're proxying...
-            this._rest("PUT", data, function(responseData, textStatus, jqXHR) {
+            Util.fetch("PUT", data, function(resData) {
                 this._data = data;
             });
         }
     }
 
-    _restFailure(jqXHR, textStatus, errorThrown) {
-        console.error(`Model Error: Failure to sync data with backend.  \n${errorThrown}`);
-    }
-
-    _restSuccess() {
-
-    }
-
-    _rest(method="GET", data=[], success) {
-        console.log("Model: FETCHING!!!");
-        switch(method) {
-            case "GET":
-                fetchival(this.url).get(data).then(success);
-                break;
-            case "POST":
-                fetchival(this.url).post(data).then(success);
-                break;
-            case "PUT":
-                fetchival(this.url).put(data).then(success);
-                break;
-            case "DELETE":
-                fetchival(this.url).delete(data).then(success);
-                break;
-            default:
-
-        }
-    }
 }
 
 EventEmitter(Model.prototype);
 
 // Exports
 module.exports = Model;
+
+
+// // REST TEST
+// const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+//
+// class MyModel extends Model {
+//     initialize() {
+//         this.baseSchema = schema;
+//         this.url = "http://localhost:8080/entity/1";
+//     }
+// }
+//
+//
+// let myModel = new MyModel();
+// myModel.on("change", function() {
+//     console.log(this.toJSON());
+// }.bind(myModel));
+// myModel.fetch();
