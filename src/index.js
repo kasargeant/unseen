@@ -5,15 +5,21 @@
  */
 
 // Imports
+// const Controller = require("./js/unseen/Controller");
 const Model = require("./js/unseen/Model");
-const ModelCollection = require("./js/unseen/ModelCollection");
+const ModelList = require("./js/unseen/ModelList");
+// const ModelCollection = require("./js/unseen/ModelCollection");
 const View = require("./js/unseen/View");
-const ViewCollection = require("./js/unseen/ViewCollection");
+const ViewList = require("./js/unseen/ViewList");
+// const ViewCollection = require("./js/unseen/ViewCollection");
 
 // Exports
 module.exports = {
+    // Controller: Controller,
     Model: Model,
-    ModelCollection: ModelCollection,
+    ModelList: ModelList,
+    // ModelCollection: ModelCollection,
     View: View,
-    ViewCollection: ViewCollection
+    ViewList: ViewList,
+    // ViewCollection: ViewCollection
 };

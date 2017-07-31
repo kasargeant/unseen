@@ -11,8 +11,7 @@ const Unseen = require("../../index");
 
 const jQuery = require("jquery");
 
-// let rawData = require("../../data/processed_sample.json");
-let rawData = [];
+let rawData = require("../../data/processed_sample.json");
 
 // SCHEMA
 const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
@@ -21,7 +20,6 @@ const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown"
 class MyModel extends Unseen.Model {
     initialize() {
         this.baseSchema = schema;
-        // this.url = "http://localhost:8080/entity/1";
     }
 }
 let myModel = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
@@ -31,10 +29,9 @@ let myModel = new MyModel({"id": 123, "idn": "015695954", "type": "test", "name"
 class MyModelList extends Unseen.ModelList {
     initialize() {
         this.baseClass = MyModel;
-        this.url = "http://localhost:8080/entity";
     }
 }
-let myModelList = new MyModelList();
+let myModelList = new MyModelList(rawData);
 
 // VIEW
 class MyView extends Unseen.View {
@@ -86,8 +83,6 @@ class MyViewList extends Unseen.ViewList {
     }
 }
 let myViewList = new MyViewList(myModelList);
-
-myViewList.collection.fetch();
 
 // DEMO: CONSOLE
 // let markupResult = {html: ""};

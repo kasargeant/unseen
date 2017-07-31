@@ -1,6 +1,6 @@
 /**
- * @file View.js
- * @description The ViewCollection class.
+ * @file ViewList.js
+ * @description The ViewList class.
  * @author Kyle Alexis Sargeant <kasargeant@gmail.com> {@link https://github.com/kasargeant https://github.com/kasargeant}.
  * @copyright Kyle Alexis Sargeant 2017
  * @license See LICENSE file included in this distribution.
@@ -13,80 +13,105 @@ const EventEmitter = require("event-emitter");
 const jQuery = require("jquery");
 
 /**
- * The ViewCollection class.
+ * The ViewList class.
  *
  * Responsibilities:-
- * * Handle all events for self and contained Views.
+ * * To store Views,
+ * * To collect the rendering of all contained Views,
+ * * To handle all related events.
  * @class
  */
-class ViewCollection {
+class ViewList {
 
     /**
-     * @param {ModelCollection} modelCollection - An instantiated ModelCollection object.
+     * @param {ModelList} modelCollection - An instantiated ModelList object.
      * @constructor
      */
-    constructor(modelCollection) {
+    /**
+     * @param {Object} collection - A ModelCollection instance.
+     * @param {Object} [options={}] - Instance options to override class/custom defaults.
+     * @param {ViewList} [parent] - The parent (if any).
+     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
+     * @constructor
+     */
+    constructor(collection = {}, options = {}, parent = null, parentRef = null) {
+
+        // Component defaults
+        this.defaults = {
+            baseClass: null,
+            collection: null,
+            views: null,
+            useDOM: true,
+            target: "main",
+            tag: "div",
+            id: "view",      // HTML Element ID
+            classList: []
+        };
 
         // Set internally (or by parent).
-        this._parent = null;    // The parent component (if any).
-        this._id = 0;           // The parent's reference ID for this component (if any).
+        this._parent = parent;  // The parent component (if any).
+        this._id = parentRef;   // The parent's reference ID for this component (if any).
 
         // Set by user (or default).
-        this.baseClass = null;
-        this.id = "view";       // HTML Element ID
-        this.target = "main";
-        this.tag = "div";
-        this.classList = [];
-        this.initialize();      // LIFECYCLE CALL: INITIALIZE
+        // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
+        this.initialize();      // Custom initialization.
+        this.baseClass = options.baseClass || this.baseClass || this.defaults.baseClass;
+        this.collection = collection || options.collection || this.collection || this.defaults.collection;
+        if(this.collection !== null) {this.collection._parent = this;}
+        this.views = options.views || this.views || this.defaults.views;
+        this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
+        this.target = options.target || this.target || this.defaults.target;
+        this.tag = options.tag || this.tag || this.defaults.tag;
+        this.id = options.id || this.id || this.defaults.id;
+        this.classList = options.classList || this.classList || this.defaults.baseModel;
 
-        // Sanity check user initialization.
-        if(this.baseClass === null) {
-            throw new Error("ViewCollection requires a base View class.");
-        }
+        // // Sanity check user initialization.
+        // if(this.baseClass === null) {
+        //     throw new Error("ViewList requires a base View class.");
+        // }
 
         // Set depending on previous internal/user properties.
-        this.collection = modelCollection;
-        this.collection._parent = this;
-        this.views = {};
-
         this.el = "";
         this.$el = null;
         this.deferred = [];
 
-        // Adds internal events listener used by the ModelCollection to signal this ViewCollection on update.
+        // Adds internal events listener used by the ModelList to signal this ViewList on update.
         this.on("change", function(args) {
-            console.log(`ViewCollection #${this._id}: Model/Collection #${args} changed.`);
-            this._emit("change"); // Relay the event forward
+            console.log(`ViewList #${this._id}: Model/Collection #${args} changed.`);
+            this.emit("change"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
             // this._renderFragment(true);
         }.bind(this));
 
         this.collection.on("reset", function(args) {
-            console.log(`ViewCollection #${this._id}: ModelCollection #${args} changed.`);
-            this._emit("reset"); // Relay the event forward
+            console.log(`ViewList #${this._id}: ModelList #${args} changed.`);
+            this.emit("reset"); // Relay the event forward
             // jQuery(this.target).children().first().detach();
             this.reset(this.collection.models);
-            this._renderMarkup(true);
+            if(this.useDOM === true) {
+                this._renderMarkup(true);
+            } else {
+                let markup = {html: ""};
+                this._renderMarkup(false, markup);
+                console.log(markup.html);
+            }
+
         }.bind(this));
 
-        // TODO - Add internal events listener used by Views signalling this ViewCollection
-
-        // Now kick everything off
-        this.collection.fetch();
+        // TODO - Add internal events listener used by Views signalling this ViewList
     }
 
     reset(models) {
-        // Instantiate initial View components from ModelCollection models
+        // Instantiate initial View components from ModelList models
         this.views = {};
         this.length = 0;
         for(let id in models) {
-            // Instantiate view and set private properties.
-            let view = new this.baseClass(this, id);
-            view._parent = this;
-            view._id = id;
 
-            // Retrieve associated model from collection and assign to View.
-            view.baseModel = models[id]; // Note if the 'model' IS a single model... it returns itself
+            // Retrieve associated model from collection.
+            let model = models[id]; // Note if the 'model' IS a single model... it returns itself
+
+            // Instantiate view and set private properties.
+            let view = new this.baseClass(model, {}, this, id);
 
             // Now add newly created View to store.
             this.views[id] = view;
@@ -95,15 +120,17 @@ class ViewCollection {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // LIFECYCLE METHODS
+    // USER LIFECYCLE METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
+     * A lifecycle method - called when the instance is first constructed.
      * @override
      */
     initialize() {}
 
     /**
+     * A lifecycle method - called when the instance is about to be destroyed.
      * @override
      */
     finalize() {}
@@ -120,14 +147,8 @@ class ViewCollection {
     // ];
     events() {return null;}
 
-    _emit(eventType) {
-        if(this._parent !== null) {
-            this._parent.emit(eventType, this._id);
-        }
-    }
-
     _handleEvents(evt) {
-        console.log(`ViewCollection Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+        console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
         let eventTargetId = evt.target.id;
         let splitPoint = eventTargetId.lastIndexOf("-");
@@ -136,14 +157,14 @@ class ViewCollection {
             throw new Error("Missing event target.");
         }
         let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-        // console.log(`ViewCollection event matched: View component '${viewId}', element ${elementId}`);
+        // console.log(`ViewList event matched: View component '${viewId}', element ${elementId}`);
         //
         //console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
         let events = this.viewEvents[viewId];
         let elementEvent = events[elementId];
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-            console.log(`ViewCollection '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            console.log(`ViewList '${evt.type}' event for component '${viewId}' element ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view !== undefined) {
@@ -237,8 +258,9 @@ class ViewCollection {
 
         if(doInsert === true) {
             // jQuery(this.target).append(markup);
-
+            console.log(`Appending to ${this.target}`);
             this.$el = jQuery(markup.html).appendTo(this.target).get(0);
+            if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
 
             // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
             if(this._parent === null) {
@@ -340,10 +362,10 @@ class ViewCollection {
 
 }
 
-EventEmitter(ViewCollection.prototype);
+EventEmitter(ViewList.prototype);
 
 // Exports
-module.exports = ViewCollection;
+module.exports = ViewList;
 
 
 

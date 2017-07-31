@@ -23,12 +23,12 @@ class MyBaseModel extends UnseenInherited.BaseModel {
 let myBaseModel = new MyBaseModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
 // MODEL COLLECTION
-class MyBaseModelCollection extends UnseenInherited.BaseModelCollection {
+class MyBaseModelList extends UnseenInherited.BaseModelList {
     constructor(data) {
         super(MyBaseModel, data);
     }
 }
-let myBaseModelCollection = new MyBaseModelCollection(rawData);
+let myBaseModelList = new MyBaseModelList(rawData);
 
 // VIEW
 class MyBaseView extends UnseenInherited.BaseView {
@@ -80,12 +80,12 @@ class MyInheritedModel extends UnseenInherited.Model {
 let myInheritedModel = new MyInheritedModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
 // MODEL COLLECTION
-class MyInheritedModelCollection extends UnseenInherited.ModelCollection {
+class MyInheritedModelList extends UnseenInherited.ModelList {
     initialize() {
         this.baseClass = MyInheritedModel;
     }
 }
-let myInheritedModelCollection = new MyInheritedModelCollection(rawData);
+let myInheritedModelList = new MyInheritedModelList(rawData);
 
 // VIEW
 class MyInheritedView extends UnseenInherited.View {
@@ -136,7 +136,7 @@ const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown"
 let myModel = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"}, {schema: schema});
 
 // MODEL COLLECTION
-let myModelCollection = new Unseen.ModelCollection(rawData, {schema: schema});
+let myModelList = new Unseen.ModelList(rawData, {schema: schema});
 
 // VIEW
 class MyView extends Unseen.View {

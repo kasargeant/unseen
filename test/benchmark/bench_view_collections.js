@@ -23,12 +23,12 @@ class MyBaseModel extends UnseenInherited.BaseModel {
 let myBaseModel = new MyBaseModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
 // MODEL COLLECTION
-class MyBaseModelCollection extends UnseenInherited.BaseModelCollection {
+class MyBaseModelList extends UnseenInherited.BaseModelList {
     constructor(data) {
         super(MyBaseModel, data);
     }
 }
-let myBaseModelCollection = new MyBaseModelCollection(rawData);
+let myBaseModelList = new MyBaseModelList(rawData);
 
 // VIEW
 class MyBaseView extends UnseenInherited.BaseView {
@@ -69,7 +69,7 @@ class MyBaseView extends UnseenInherited.BaseView {
 let myBaseView = new MyBaseView(myBaseModel);
 
 // VIEW COLLECTION
-class MyBaseViewCollection extends UnseenInherited.BaseViewCollection {
+class MyBaseViewList extends UnseenInherited.BaseViewList {
     constructor(modelCollection, parent, id) {
         super(MyBaseView, modelCollection, parent, id);
 
@@ -78,7 +78,7 @@ class MyBaseViewCollection extends UnseenInherited.BaseViewCollection {
         this.classList = ["container"];
     }
 }
-let myBaseViewCollection = new MyBaseViewCollection(myBaseModelCollection);
+let myBaseViewList = new MyBaseViewList(myBaseModelList);
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ES2015 SETUP (INHERITANCE)
@@ -92,12 +92,12 @@ class MyInheritedModel extends UnseenInherited.Model {
 let myInheritedModel = new MyInheritedModel({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"});
 
 // MODEL COLLECTION
-class MyInheritedModelCollection extends UnseenInherited.ModelCollection {
+class MyInheritedModelList extends UnseenInherited.ModelList {
     initialize() {
         this.baseClass = MyInheritedModel;
     }
 }
-let myInheritedModelCollection = new MyInheritedModelCollection(rawData);
+let myInheritedModelList = new MyInheritedModelList(rawData);
 
 // VIEW
 class MyInheritedView extends UnseenInherited.View {
@@ -139,7 +139,7 @@ class MyInheritedView extends UnseenInherited.View {
 let myInheritedView = new MyInheritedView(myInheritedModel);
 
 // VIEW COLLECTION
-class MyInheritedViewCollection extends UnseenInherited.ViewCollection {
+class MyInheritedViewList extends UnseenInherited.ViewList {
     initialize() {
         this.baseClass = MyInheritedView;
         this.id = "my-list";
@@ -147,7 +147,7 @@ class MyInheritedViewCollection extends UnseenInherited.ViewCollection {
         this.classList = ["container"];
     }
 }
-let myInheritedViewCollection = new MyInheritedViewCollection(myInheritedModelCollection);
+let myInheritedViewList = new MyInheritedViewList(myInheritedModelList);
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ES2015 SETUP (COMPOSITIONAL)
@@ -159,7 +159,7 @@ const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown"
 let myModel = new Unseen.Model({"id": 123, "idn": "015695954", "type": "test", "name": "Test Street"}, {schema: schema});
 
 // MODEL COLLECTION
-let myModelCollection = new Unseen.ModelCollection(rawData, {schema: schema});
+let myModelList = new Unseen.ModelList(rawData, {schema: schema});
 
 // VIEW
 class MyView extends Unseen.View {
@@ -201,7 +201,7 @@ class MyView extends Unseen.View {
 let myView = new MyView(myModel);
 
 // VIEW COLLECTION
-class MyViewCollection extends Unseen.ViewCollection {
+class MyViewList extends Unseen.ViewList {
     initialize() {
         this.baseClass = MyView;
         this.id = "my-list";
@@ -209,20 +209,20 @@ class MyViewCollection extends Unseen.ViewCollection {
         this.classList = ["container"];
     }
 }
-let myViewCollection = new MyViewCollection(myModelCollection);
+let myViewList = new MyViewList(myModelList);
 
 // PRE-BENCH PROOF
 // let markupResultES51 = {html: ""};
-// myBaseViewCollection._renderMarkup(false, markupResultES51);
+// myBaseViewList._renderMarkup(false, markupResultES51);
 // console.log(markupResultES51.html);
 
 
 // let markupResultES2015_inheritance = {html: ""};
-// myInheritedViewCollection._renderMarkup(false, markupResultES2015_inheritance);
+// myInheritedViewList._renderMarkup(false, markupResultES2015_inheritance);
 // console.log(markupResultES2015_inheritance.html);
 
 // let markupResultES2015_compositional = {html: ""};
-// myViewCollection._renderMarkup(false, markupResultES2015_compositional);
+// myViewList._renderMarkup(false, markupResultES2015_compositional);
 // console.log(markupResultES2015_compositional.html);
 
 // console.log("MATCHED RESULTS? " + (markupResultES51.html === markupResultES2015_inheritance.html));
@@ -233,17 +233,17 @@ let myViewCollection = new MyViewCollection(myModelCollection);
 suite
     .add(`An ES51 Function-based View.`, function() {
         let result = {html: ""};
-        myBaseViewCollection._renderMarkup(false, result);
+        myBaseViewList._renderMarkup(false, result);
         return result.html;
     })
     .add(`An ES2015 Class View (inheritance design).`, function() {
         let result = {html: ""};
-        myInheritedViewCollection._renderMarkup(false, result);
+        myInheritedViewList._renderMarkup(false, result);
         return result.html;
     })
     .add(`An ES2015 Class View (compositional design).`, function() {
         let result = {html: ""};
-        myViewCollection._renderMarkup(false, result);
+        myViewList._renderMarkup(false, result);
         return result.html;
     })
     // add listeners

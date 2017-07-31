@@ -9,11 +9,8 @@
 "use strict";
 
 // Imports
-const EventEmitter = require("event-emitter");
-const fetchival = require("fetchival");
-if(typeof window === "undefined") {
-    fetchival.fetch = require("node-fetch");
-}
+const Component = require("./Component");
+const Util = require("./Util");
 
 /**
  * The Model class.
@@ -26,120 +23,119 @@ if(typeof window === "undefined") {
  * * To optionally validate data.
  * @class
  */
-class Model {
+class Model extends Component {
     /**
-     * @param {Object} data - A data record object.
-     * @param {ModelCollection} [parent] - The parent (if any).
+     * @param {string} idn - The id name of the component.
+     * @param {Object} [record=null] - A data record object.
+     * @param {Object} [options={}] - Instance options to override class/custom defaults.
+     * @param {Object} [options.baseSchema={}] - An object representing the schema and default values of a data record.
+     * @param {ModelList} [parent] - The parent (if any).
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(record = {}) {
+    constructor(idn, record = null, options = {}, parent = null, parentRef = 0) {
 
-        // Set internally (or by parent).
-        this._parent = null;    // The parent component (if any).
-        this._id = 0;           // The parent's reference ID for this component (if any).
+        // Call Component constructor
+        super(idn, parent, parentRef);
 
         // Set by user (or default).
-        this.baseSchema = null;
-        this.url = null;
-        this.lastUpdated = 0;
-        this.initialize();      // LIFECYCLE CALL: INITIALIZE
+        this.defaults = {
+            baseSchema: null,
+            record: {},
+            url: null
+        };
+        this.config = Object.assign(this.defaults, options);
 
-        // Sanity check user initialization.
-        if(this.baseSchema === null) {
-            throw new Error("Model requires a base Schema.");
+        // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
+        this.baseSchema =  this.config.baseSchema || this.baseSchema;
+        this.url = this.config.url || this.url;
+
+        // Sanity check component construction requirements.
+        if(!this.baseSchema) {
+            throw new Error("Model requires a base Schema for structure and default values.");
         }
 
         // Set depending on previous internal/user properties.
+        this._keys = null;
+        this._data = {};
+        this.urlLastUpdated = 0;
+
+        // Initialise Model with Schema settings and assign data record values (if any).
+        this._init(record || this.config.record);
+    }
+
+    /**
+     * Add getters and setters - so that this can be treated 'as if' it were its contained data object.
+     * @private
+     */
+    _init(data={}) {
+        // Set the new keys
         this._keys = Object.keys(this.baseSchema);
 
-        // Add getters and setters - so that this can be treated 'as if' it were its contained data object.
-        this._data = {};
+        // Set new key accessors on model...
+        // ...allow only schema keys and enforce defaults for any undefined or null data values.
         for(let key of this._keys) {
-            // Define property
+            // Define getters and setters for each schema property
             Object.defineProperty(this, key, {
+                /**
+                 * Getter for an individual model data property. e.g. console.log(myModel.myProp);
+                 */
                 get: function() {
                     return this._data[key];
                 },
+                /**
+                 * Setter for an individual model data property. e.g. myModel.myProp = 10;
+                 * @param {Object} value - The value to set this data property
+                 */
                 set: function(value) {
                     // Assign new value - or default value if none given.
                     this._data[key] = value || this.baseSchema[key];
-                    // Inform parent
-                    if(this._parent !== null) {this._parent.emit("model-change", this._id);}
+                    this.emit("set", this._id);
                 }
             });
-            // Then assign the property a value - or default value if none given.
-            this._data[key] = record[key] || this.baseSchema[key];
+            // Assign the property a value - or default value if none given.
+            this._data[key] = data[key] || this.baseSchema[key];
         }
     }
 
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // USER LIFECYCLE METHODS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * A lifecycle method - called when the instance is first constructed.
-     * @override
-     */
-    initialize() {}
-
-    /**
-     * A lifecycle method - called when the instance is about to be destroyed.
-     * @override
-     */
-    finalize() {}
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // DATA METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     * Add getters and setters - so that this can be treated 'as if' it were its contained data object.
+     * Sets (resets) all valid key properties with the given value(s) - or defaults if no value(s) given.
      * @private
      */
-    reset(data) {
-
-        // First we delete any previously defined key accessors (if any).
-        if(this._keys !== null) {
-            for(let key of this._keys) {
-                delete this[key];
-            }
-        }
-
-        // Second, assign the new data
-        this._data = data;
-
-        // Third, set new keys and accessors.
-        // - If we have a schema - enforce it's keys.
-        this._keys = (this.baseSchema === null) ? Object.keys(this._data) : Object.keys(this.baseSchema);
+    reset(data = {}) {
+        // Set only schema keys and enforce defaults for any undefined or null data values.
         for(let key of this._keys) {
-            // Define property
-            Object.defineProperty(this, key, {
-                get: function() {
-                    return this._data[key];
-                },
-                set: function(value) {
-                    // Assign new value - or default value if none given.
-                    this._data[key] = value;
-                    // Inform parent
-                    if(this._parent !== null) {this._parent.emit("model-change", this._id);}
-                }
-            });
-            // - If we have a schema... use it's defaults for any undefined or null data values.
-            if(this.baseSchema !== null) {
-                this._data[key] = this._data[key] || this.baseSchema[key];
-            }
+            // Assign the property a value - or default value if none given.
+            this._data[key] = data[key] || this.baseSchema[key];
+        }
+        this.emit("reset");
+    }
+
+    /**
+     * Gets all of the model's data properties or just a single property value - if a key is provided.
+     * @param {string} [key] - Optional key.
+     * @returns {*}
+     */
+    get(key) {
+        if(key !== undefined) {
+            return this._data[key];
+        } else {
+            return this._data;
         }
     }
 
-    get() {
-        return this._data;
-    }
-
-
-    toString() {
-        return JSON.stringify(this._data);
+    /**
+     * Sets one or more of a model's data properties. e.g. set({a: 10, b: "hi"});
+     * @param {Object} data - The data properties to set.
+     */
+    set(key, value) {
+        this._data[key] = value || this.baseSchema[key];
+        this.emit("set", this._id);
     }
 
 
@@ -147,37 +143,27 @@ class Model {
     // UTILITY METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-    _emit(eventType) {
-        if(this._parent !== null) {
-            // this._parent.dispatchEvent(eventType);
-            this._parent.emit(eventType, this._id);
-        }
+    toJSON() {
+        return JSON.stringify(this._data);
     }
 
     /**
      * Fetches the model's data from a local or remote source.
      * @param {Function} callback
      */
-    fetch(callback) {
+    fetch() {
         // Are we storing data locally - or proxying a backend?
         if(this.url === null) {
             // We're local... we call the callback immediately.
-            return this._data;
+            this.emit("change", this._id); // Faux event.
         } else {
             // We're proxying... we call the callback on data receipt.
-            this._rest("GET", {}, function(responseData, textStatus, jqXHR) {
-                console.log("RESPONSE: " + JSON.stringify(responseData));
-                // Prepare data - handling any missing/default values.
-                let data = {};
+            Util.fetch("GET", this.url, {}, function(resData) {
                 for(let key of this._keys) {
                     // Then assign the property a value - or reassign if none given. // TODO optimise this!
-                    this._data[key] = responseData[key] || this.baseSchema[key];
+                    this._data[key] = resData[key] || this.baseSchema[key];
                 }
-                // Fire any callback
-                if(callback !== undefined) {
-                    callback(this._data);
-                }
+                this.emit("change", this._id);
             }.bind(this));
         }
     }
@@ -203,52 +189,31 @@ class Model {
             this._data = data;
         } else {
             // We're proxying...
-            this._rest("PUT", data, function(responseData, textStatus, jqXHR) {
+            Util.fetch("PUT", data, function(resData) {
                 this._data = data;
             });
         }
     }
 
-    _restFailure(jqXHR, textStatus, errorThrown) {
-        console.error(`Model Error: Failure to sync data with backend.  \n${errorThrown}`);
-    }
-
-    _restSuccess() {
-
-    }
-
-    _rest(method="GET", data=[], success) {
-        console.log("Model: FETCHING!!!");
-        switch(method) {
-            case "GET":
-                fetchival(this.url).get(data).then(success);
-                break;
-            case "POST":
-                fetchival(this.url).post(data).then(success);
-                break;
-            case "PUT":
-                fetchival(this.url).put(data).then(success);
-                break;
-            case "DELETE":
-                fetchival(this.url).delete(data).then(success);
-                break;
-            default:
-
-        }
-        // jQuery.ajax({
-        //     type: method,
-        //     url: this.url,
-        //     data: data,
-        //     error: this._restFailure,
-        //     success: success,
-        //     dataType: "json"
-        // });
-    }
-
-
 }
-
-EventEmitter(Model.prototype);
 
 // Exports
 module.exports = Model;
+
+
+// // REST TEST
+// const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+//
+// class MyModel extends Model {
+//     initialize() {
+//         this.baseSchema = schema;
+//         this.url = "http://localhost:8080/entity/1";
+//     }
+// }
+//
+//
+// let myModel = new MyModel();
+// myModel.on("change", function() {
+//     console.log(this.toJSON());
+// }.bind(myModel));
+// myModel.fetch();

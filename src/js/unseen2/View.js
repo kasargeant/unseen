@@ -24,19 +24,18 @@ const walk = require("./walk");
 class View {
 
     /**
-     * @param {Model} baseModel - A model instance.
+     * @param {Model} model - A model instance.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
      * @param {ViewList} [parent=null] - The parent (if any).
      * @param {number} [parentRef=0] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(baseModel = null, options = {}, parent = null, parentRef = 0) {
+    constructor(model = null, options = {}, parent = null, parentRef = 0) {
 
         // Component defaults
         this.defaults = {
             baseClass: null,
             baseModel: null,
-            useDOM: true,
             target: "main",
             tag: "div",
             id: null,      // HTML Element ID
@@ -50,31 +49,32 @@ class View {
         // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
         this.initialize();      // Custom initialization.
-        this.baseModel = baseModel || options.baseModel || this.baseModel || this.defaults.baseModel;
-        this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
+        this.baseModel = model || options.baseModel || this.baseModel || this.defaults.baseModel;
         this.target = options.target || this.target || this.defaults.target;
         this.tag = options.tag || this.tag || this.defaults.tag;
         this.id = options.id || this.id || this.defaults.id;
         this.classList = options.classList || this.classList || this.defaults.baseModel;
 
-        // // Sanity check user initialization.
-        // if(this.baseModel === null) {
-        //     if(this.baseModel === null && this.baseClass !== null) {
-        //         this.baseModel = new this.baseClass();
-        //     } else {
-        //         this.baseModel = new Model();
-        //     }
-        // }
+        // Sanity check user initialization.
+        if(this.baseModel === null && this.baseClass !== null) {
+            this.baseModel = new this.baseClass();
+        } else {
+            this.baseModel = {};
+        }
 
         // Set depending on previous internal/user properties.
-        this.$el = null;
-        this.markup = "";
+        this.el = "";
 
         // Adds internal events listener used by the ModelList to signal this ViewList on update.
-        this.baseModel.on("change", function(args) {
-            console.log(`View #${this._id}: Model #${args} changed.`);
-            this.reset(this.baseModel);
-        }.bind(this));
+        this.on("change", function(args) {
+            console.log(`View #${this._id}: Model/Collection #${args} changed.`);
+            this.emit("change"); // Relay the event forward
+        });
+
+        // // If we have no model... then we already have all we need to render!
+        // if(this.baseModel === null) {
+        //     this._renderMarkup(true);
+        // }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,19 +93,6 @@ class View {
      */
     finalize() {}
 
-    /**
-     *
-     */
-    reset() {
-        this._render(true);
-        if(this.useDOM === true) {
-            this._insert();
-        }
-    }
-
-    /**
-     * Destroys the View.
-     */
     destroy() {
         let selector = `#${this.id}-${this._id}`;
         console.log("SELECTOR" + selector);
@@ -113,18 +100,11 @@ class View {
         jQuery(selector).remove();
     }
 
-    /**
-     * Returns an event lookup object for this View.
-     * @returns {Object}
-     * @override
-     */
-    events() {return {};}
+    // return [
+    //    ["#button-delete", "click", "deleteAction"]
+    // ];
+    events() {return null;}
 
-    /**
-     *
-     * @param evt
-     * @private
-     */
     _handleEvents(evt) {
         console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
@@ -161,27 +141,52 @@ class View {
 
     }
 
-    /**
-     * Returns this View's built template.
-     * @returns {string}
-     * @override
-     */
     template(model, idx=0, params={}) {return "";}
 
-    /**
-     * [UNIMPLEMENTED] Returns this View's scoped stylesheet.
-     * @returns {string}
-     * @override
-     */
-    style() {return "";}
+    style() {
+        return "";
+    }
 
-    /**
-     *
-     * @param doInsert
-     * @returns {{}|*}
-     * @private
-     */
-    _render(doInsert=false) {
+    _renderFragment(doInsert=false, fragment=null) {
+
+        let element = document.createElement(this.tag);
+        element.id = this.id;
+        element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
+        element.classList.add(...this.classList); // We add any remaining classes.
+        element.innerHTML = this.template(this.baseModel, 0);
+        // First we make any element ids in this View - unique.
+        walk(element, function(node) {
+            // console.log("node", node); // DEBUG ONLY
+            if(node.id !== null) {
+                node.id = node.id + "-" + this._id;
+            }
+        }.bind(this));
+
+        // Collect events
+        let viewEvents = this.events();
+
+        // Now we add any sub-views
+        if(this.views !== null) {
+            for(let id in this.views) {
+                let view = this.views[id];
+                viewEvents[view._id] = view._renderFragment(false, element);
+            }
+        }
+
+        // Are we a top-level view?
+        if(this._parent === null && fragment === null) {
+            // YES - without passed fragment or parent
+            fragment = document.createDocumentFragment();
+        }
+        fragment.appendChild(element);
+
+        if(doInsert === true) {
+            jQuery(this.target).append(fragment);
+        }
+        return viewEvents;
+    }
+
+    _renderMarkup(doInsert=false, markup=null) {
 
         let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
         classList.push(...this.classList); // We add any remaining classes.
@@ -196,53 +201,41 @@ class View {
         elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
         // console.log("CONTENT: " + JSON.stringify(element));
 
-        // Are we a top-level view?
         // Collect events
-        // let viewEvents = this.events();
+        let viewEvents = this.events();
+
+        // Are we a top-level view?
+        if(markup === null) {
+            // YES - without passed fragment or parent
+            markup = {html: ""};
+        }
 
         // Do we create a markup container with id and/or classes?
         if(this.id === null && this.classList === null) {
             // NO: Just return template result.
-            this.markup = elementBody;
+            markup.html += elementBody;
         } else {
             // YES: Then template result with wrapping tag.
-            this.markup = elementOpen + elementBody + elementClose;
+            markup.html += elementOpen + elementBody + elementClose;
         }
         // console.log("MARKUP: " + JSON.stringify(markup.html));
 
-        // if(doInsert === true) {
-        //     // jQuery(this.target).append(markup);
-        //     console.log(`Appending to ${this.target}`);
-        //     this.$el = jQuery(markup.html).appendTo(this.target).get(0);
-        //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-        //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-        //     if(this._parent === null) {
-        //
-        //         // We set the viewEvents lookup
-        //         this.viewEvents = viewEvents;
-        //
-        //         // Add top-level event listener
-        //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
-        //     }
-        // }
+        if(doInsert === true) {
+            // jQuery(this.target).append(markup);
+            console.log(`Appending to ${this.target}`);
+            this.$el = jQuery(markup.html).appendTo(this.target).get(0);
+            if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+            // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+            if(this._parent === null) {
 
-        return this.markup;
-    }
+                // We set the viewEvents lookup
+                this.viewEvents = viewEvents;
 
-    _insert() {
-        // jQuery(this.target).append(markup);
-        console.log(`Appending to ${this.target}`);
-        this.$el = jQuery(this.markup).appendTo(this.target).get(0);
-        if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-        if(this._parent === null) {
-
-            // We set the viewEvents lookup
-            this.viewEvents = this.events();
-
-            // Add top-level event listener
-            this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+                // Add top-level event listener
+                this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+            }
         }
+        return viewEvents;
     }
 }
 
@@ -253,61 +246,3 @@ module.exports = View;
 
 
 
-// // REST TEST
-// const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
-//
-// const Model = require("./Model");
-// class MyModel extends Model {
-//     initialize() {
-//         this.baseSchema = schema;
-//         this.url = "http://localhost:8080/entity/1";
-//     }
-// }
-// let myModel = new MyModel();
-//
-//
-// class EntityView extends View {
-//
-//     initialize() {
-//         this.baseClass = MyModel;
-//         this.useDOM = false;
-//         this.id = "my-item";
-//         this.tag = "div";
-//         this.classList = ["card"];
-//     }
-//
-//     template(model, idx) {
-//
-//         return `
-//             <div class="card-header">
-//                 <h4 class="card-title">${model.id}</h4>
-//                 <h6 class="card-subtitle">${model.name}</h6>
-//             </div>
-//             <div class="card-body">
-//                 ${model.id}: ${model.type} - ${model.name}
-//             </div>
-//             <div class="card-footer">
-//                 <button id="button-delete" class="btn btn-primary">Delete</button>
-//             </div>
-//         `;
-//     }
-//
-//     events() {
-//         return {
-//             "#button-delete": ["click", "actionDelete"]
-//         };
-//     }
-//
-//     actionDelete(evt) {
-//         console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
-//         this.destroy();
-//     }
-// }
-//
-// let myView = new EntityView(myModel);
-//
-// myModel.on("change", function() {
-//     console.log(myView.markup);
-// });
-//
-// myModel.fetch();
