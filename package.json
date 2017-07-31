@@ -1,6 +1,6 @@
 {
   "name": "unseen",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "A lightly-opinionated micro-library for rapidly delivering robust and performant SPAs.",
   "keywords": [
     "javascript",
