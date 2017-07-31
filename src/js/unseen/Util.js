@@ -51,16 +51,28 @@ class Util {
 
         switch(method) {
             case "GET":
-                fetchival(url).get(data).then(success);
+                fetchival(url).get(data).then(success).catch(function(err) {
+                    console.error("During fetch to: " + url);
+                    console.error(err);
+                });
                 break;
             case "POST":
-                fetchival(url).post(data).then(success);
+                fetchival(url).post(data).then(success).catch(function(err) {
+                    console.error("During fetch to: " + url);
+                    console.error(err);
+                });
                 break;
             case "PUT":
-                fetchival(url).put(data).then(success);
+                fetchival(url).put(data).then(success).catch(function(err) {
+                    console.error("During fetch to: " + url);
+                    console.error(err);
+                });
                 break;
             case "DELETE":
-                fetchival(url).delete(data).then(success);
+                fetchival(url).delete(data).then(success).catch(function(err) {
+                    console.error("During fetch to: " + url);
+                    console.error(err);
+                });
                 break;
             default:
         }
@@ -82,7 +94,7 @@ class Util {
         }
 
         // Are we storing data locally - or proxying a backend?
-        if(this.url === null) {
+        if(!this.url) {
             // We're local...
             this._data = data;
         } else {

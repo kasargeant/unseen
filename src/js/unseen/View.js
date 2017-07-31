@@ -58,8 +58,8 @@ class View {
         this.classList = options.classList || this.classList || this.defaults.baseModel;
 
         // // Sanity check user initialization.
-        // if(this.baseModel === null) {
-        //     if(this.baseModel === null && this.baseClass !== null) {
+        // if(!this.baseModel) {
+        //     if(!this.baseModel && this.baseClass) {
         //         this.baseModel = new this.baseClass();
         //     } else {
         //         this.baseModel = new Model();
@@ -73,7 +73,7 @@ class View {
         // Adds internal events listener used by the ModelList to signal this ViewList on update.
         this.baseModel.on("change", function(args) {
             console.log(`View #${this._id}: Model #${args} changed.`);
-            this.reset(this.baseModel);
+            this.reset();
         }.bind(this));
     }
 
@@ -201,7 +201,7 @@ class View {
         // let viewEvents = this.events();
 
         // Do we create a markup container with id and/or classes?
-        if(this.id === null && this.classList === null) {
+        if(!this.id && !this.classList) {
             // NO: Just return template result.
             this.markup = elementBody;
         } else {
@@ -216,7 +216,7 @@ class View {
         //     this.$el = jQuery(markup.html).appendTo(this.target).get(0);
         //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
         //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-        //     if(this._parent === null) {
+        //     if(!this._parent) {
         //
         //         // We set the viewEvents lookup
         //         this.viewEvents = viewEvents;
@@ -235,7 +235,7 @@ class View {
         this.$el = jQuery(this.markup).appendTo(this.target).get(0);
         if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
         // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-        if(this._parent === null) {
+        if(!this._parent) {
 
             // We set the viewEvents lookup
             this.viewEvents = this.events();

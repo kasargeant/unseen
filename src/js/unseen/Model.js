@@ -122,11 +122,7 @@ class Model extends Component {
      * @returns {*}
      */
     get(key) {
-        if(key !== undefined) {
-            return this._data[key];
-        } else {
-            return this._data;
-        }
+        return (key) ? this._data[key] : this._data;
     }
 
     /**
@@ -153,7 +149,7 @@ class Model extends Component {
      */
     fetch() {
         // Are we storing data locally - or proxying a backend?
-        if(this.url === null) {
+        if(!this.url) {
             // We're local... we call the callback immediately.
             this.emit("change", this._id); // Faux event.
         } else {
@@ -184,7 +180,7 @@ class Model extends Component {
         }
 
         // Are we storing data locally - or proxying a backend?
-        if(this.url === null) {
+        if(!this.url) {
             // We're local...
             this._data = data;
         } else {

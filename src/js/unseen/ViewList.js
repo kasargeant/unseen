@@ -66,7 +66,7 @@ class ViewList {
         this.classList = options.classList || this.classList || this.defaults.baseModel;
 
         // // Sanity check user initialization.
-        // if(this.baseClass === null) {
+        // if(!this.baseClass) {
         //     throw new Error("ViewList requires a base View class.");
         // }
 
@@ -207,7 +207,7 @@ class ViewList {
     //     }
     //
     //     // Are we a top-level view?
-    //     if(this._parent === null && fragment === null) {
+    //     if(!this._parent && !fragment) {
     //         // YES - without passed fragment or parent
     //         fragment = document.createDocumentFragment();
     //     }
@@ -217,7 +217,7 @@ class ViewList {
     //         jQuery(this.target).append(fragment);
     //
     //         // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-    //         if(this._parent === null) {
+    //         if(!this._parent) {
     //
     //             // We set the viewEvents lookup
     //             this.viewEvents = viewEvents;
@@ -278,7 +278,7 @@ class ViewList {
         this.$el = jQuery(this.markup).appendTo(this.target).get(0);
         if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
         // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-        if(this._parent === null) {
+        if(!this._parent) {
             // Add top-level event listener
             this.$el.addEventListener("click", this._handleEvents.bind(this), false);
         }
@@ -346,7 +346,7 @@ class ViewList {
         }
 
         // Are we a top-level view?
-        if(this._parent === null && markup === null) {
+        if(!this._parent && !markup) {
             // YES - without passed fragment or parent
             markup = {html: ""};
         }
@@ -354,7 +354,7 @@ class ViewList {
         if(doInsert === true) {
 
             // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-            if(this._parent === null) {
+            if(!this._parent) {
 
                 // We set the viewEvents lookup
                 this.viewEvents = viewEvents;
