@@ -135,24 +135,16 @@ class View {
             throw new Error("Missing event target.");
         }
         let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-        // console.log(`ViewList event matched: View component '${viewId}', element ${elementId}`);
-        //
-        //console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
+        console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
+        console.log(`ViewList event matched: View component '${viewId}', element ${elementId}`);
 
-        let events = this.viewEvents[viewId];
-        let elementEvent = events[elementId];
+
+        let elementEvent = this.viewEvents[elementId];
+        console.log("EE: " + JSON.stringify(elementEvent));
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
             console.log(`ViewList '${evt.type}' event for component '${viewId}' element ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
-            let view = this.views[viewId];
-            if(view !== undefined) {
-                view[elementEvent[1]]();
-
-                // DELETE A VIEW
-                // this.views[viewId]._destroy(); // Always call private life-cycle method first.
-                // delete this.views[viewId];
-                // this.collection.emit("view-remove", viewId);
-            }
+            this[elementEvent[1]](evt);
         }
 
         // let modelId = this.views[viewId].model._id;
@@ -238,7 +230,7 @@ class View {
         if(!this._parent) {
 
             // We set the viewEvents lookup
-            this.viewEvents = this.events();
+            this.viewEvents = this.events(); // Note: Single object NOT array!
 
             // Add top-level event listener
             this.$el.addEventListener("click", this._handleEvents.bind(this), false);

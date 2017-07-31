@@ -173,7 +173,7 @@ class ViewList {
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view !== undefined) {
-                view[elementEvent[1]]();
+                view[elementEvent[1]](evt);
 
                 // DELETE A VIEW
                 // this.views[viewId]._destroy(); // Always call private life-cycle method first.
@@ -357,7 +357,7 @@ class ViewList {
             if(!this._parent) {
 
                 // We set the viewEvents lookup
-                this.viewEvents = viewEvents;
+                this.viewEvents = viewEvents; // Note: Array NOT just a single object!
 
                 // Add top-level event listener
                 this.$el.addEventListener("click", this._handleEvents.bind(this), false);
