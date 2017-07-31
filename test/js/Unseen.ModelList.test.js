@@ -94,25 +94,24 @@ describe("Class: Unseen", function() {
         });
 
         it("should be add new model instances.", function() {
-            let id = testModelList.add("test", {a: "hiya", b: "hoho", c: 1});
-            expect(id).toBe(0);
+            let key = testModelList.add("test-model", {a: "hiya", b: "hoho", c: 1});
+            expect(key).toBe("test-model");
             expect(testModelList.length).toBe(1);
-            expect(testModelList.get(0).b).toBe("hoho");
+            expect(testModelList.get(key).b).toBe("hoho");
         });
 
         it("should be able to remove model instances", function() {
-            let id = testModelList.add({a: "hiya", b: "hoho", c: 1});
-            expect(id).toBe(0);
+            let key = testModelList.add("test-model", {a: "hiya", b: "hoho", c: 1});
             expect(testModelList.length).toBe(1);
-            testModelList.remove(id);
+            testModelList.remove(key);
             expect(testModelList.length).toBe(0);
-            expect(testModelList.get(0)).not.toBeDefined();
+            expect(testModelList.get(key)).not.toBeDefined();
         });
     });
 
     describe("Populating", function() {
 
-        let testModelList = new TestCollection([
+        let testModelList = new TestCollection("test-collection", [
             {b: "o"},
             {a: "hiya", b: "hoho", c: 1},
             {a: "riii", b: "biii", c: 20}

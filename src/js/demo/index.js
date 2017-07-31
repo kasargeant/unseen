@@ -7,8 +7,10 @@
 "use strict";
 
 // Imports
+const Unseen = require("../../index");
 const EntityModelList = require("./EntityModelList");
 const EntityListViewList = require("./EntityViewList");
+const EntityNavModel = require("./EntityNavModel");
 const EntityNavView = require("./EntityNavView");
 
 // const jQuery = require("jquery");
@@ -16,17 +18,19 @@ const EntityNavView = require("./EntityNavView");
 let rawData = require("../../data/processed_sample.json");
 
 // MODEL COLLECTION
-let myModelList = new EntityModelList(rawData);
+let myModelList = new EntityModelList("", rawData);
 
-// VIEW
-let myNavView = new EntityNavView(new Model({
+let myNavModel = new EntityNavModel("nav-model-overide", {}, {
     title: "Unseen.js",
     items: {
         "About": "#",
         "Docs": "https://kasargeant.github.io/unseen/api/",
         "GitHub": "https://github.com/kasargeant/unseen"
     }
-}));
+});
+
+// VIEW
+let myNavView = new EntityNavView(myNavModel);
 
 // VIEW COLLECTION
 let myViewList = new EntityListViewList(myModelList);

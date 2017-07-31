@@ -13,14 +13,14 @@ const Unseen = require("../../index");
 class EntityNavView extends Unseen.View {
 
     initialize() {
-        // this.baseModel = new Unseen.Model({
+        // this.baseModel = new Unseen.Model("nav-model", {baseSchema: {
         //     title: "Unseen.js",
         //     items: {
         //         "About": "#",
         //         "Docs": "https://kasargeant.github.io/unseen/api/",
         //         "GitHub": "https://github.com/kasargeant/unseen"
         //     }
-        // });
+        // }});
         this.target = "body";
         this.tag = "header";
         this.id = "my-nav";
@@ -63,16 +63,3 @@ class EntityNavView extends Unseen.View {
 
 // Exports
 module.exports = EntityNavView;
-
-
-let myNav = new EntityNavView(new Unseen.Model({
-    title: "Unseen.js",
-    items: {
-        "About": "#",
-        "Docs": "https://kasargeant.github.io/unseen/api/",
-        "GitHub": "https://github.com/kasargeant/unseen"
-    }
-}));
-myNav.useDOM = false;
-myNav.reset();
-console.log(myNav.markup);

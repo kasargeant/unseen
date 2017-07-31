@@ -9,12 +9,12 @@
 // Imports
 const Unseen = require("../../index");
 
-const EntityListItemView = require("./EntityListItemView");
+const EntityViewListItem = require("./EntityViewListItem");
 
 // MODEL
-class EntityListViewList extends Unseen.ViewList {
+class EntityViewList extends Unseen.ViewList {
     initialize() {
-        this.baseClass = EntityListItemView;
+        this.baseClass = EntityViewListItem;
         this.target = "body";
         this.tag = "main";
         this.id = "my-list";
@@ -23,4 +23,4 @@ class EntityListViewList extends Unseen.ViewList {
 }
 
 // Exports
-module.exports = EntityListViewList;
+module.exports = EntityViewList;

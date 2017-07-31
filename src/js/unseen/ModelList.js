@@ -9,7 +9,7 @@
 "use strict";
 
 // Imports
-const EventEmitter = require("event-emitter");
+const Component = require("./Component");
 const Util = require("./Util");
 
 
@@ -22,37 +22,35 @@ const Model = require("./Model");
  * * To hold a list of data models - equivalent to a database table.
  * @class
  */
-class ModelList {
+class ModelList extends Component {
 
     /**
+     * @param {string} idn - The id name of the component.
      * @param {Array} records - An array of data record objects.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
+     * @param {Object} [options.baseClass={}] - The base Model that this list should use.
      * @param {ModelList} [parent] - The parent (if any).
      * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(records = null, options = {}, parent = null, parentRef = 0) {
+    constructor(idn, records = null, options = {}, parent = null, parentRef = 0) {
 
-        // Component defaults
+        // Call Component constructor
+        super(idn, parent, parentRef);
+
+        // Set by user (or default).
         this.defaults = {
             baseClass: null,
             records: [],
             url: null
         };
+        this.config = Object.assign(this.defaults, options);
 
-        // Set internally (or by parent).
-        this._parent = parent;  // The parent component (if any).
-        this._id = parentRef;   // The parent's reference ID for this component (if any).
-
-        // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
-        this.initialize();      // Custom initialization.
-        this.baseClass = options.baseClass || this.baseClass || this.defaults.baseClass;
-        this.url = options.url || this.url || this.defaults.url;
+        this.baseClass = this.config.baseClass || this.baseClass;
+        this.url = this.config.url || this.url;
 
-        this.lastUpdated = 0;
-
-        // Sanity check user initialization.
+        // Sanity check component construction requirements.
         if(this.baseClass === null) {
             throw new Error("ModelList requires a base Model class.");
         }
@@ -61,8 +59,8 @@ class ModelList {
         this.models = {};
         this.length = 0;
 
-        if(this.url === null) {
-            this.reset(records || options.records || this.defaults.records);
+        if(!this.url) {
+            this.reset(records || this.config.records);
         }
 
         // Adds internal events listener used by the Model to signal this ModelList on update.
@@ -80,22 +78,6 @@ class ModelList {
             this.emit("change"); // Relay the event forward
         });
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // USER LIFECYCLE METHODS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * A lifecycle method - called when the instance is first constructed.
-     * @override
-     */
-    initialize() {}
-
-    // /**
-    //  * A lifecycle method - called when the instance is about to be destroyed.
-    //  * @override
-    //  */
-    // finalize() {}
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // DATA METHODS
@@ -117,11 +99,11 @@ class ModelList {
         this.emit("reset", this._id);
     }
 
-    get(id) {
-        if(id === undefined) {
+    get(key) {
+        if(key === undefined) {
             return this.models;
         } else {
-            return this.models[id];
+            return this.models[key];
         }
 
     }
@@ -141,16 +123,15 @@ class ModelList {
     }
 
     add(key, value) {
-        let id = this._modelCounter++;
-        this.models[id] = new this.baseClass(key, value, this, id);
+        this.models[key] = new this.baseClass(key, value, this, key);
         this.length++;
-        return id;
+        return key;
     }
 
-    remove(id) {
-        let removed = this.models[id];
+    remove(key) {
+        let removed = this.models[key];
         if(removed !== undefined) {
-            delete this.models[id];
+            delete this.models[key];
             this.length--;
         }
     }
@@ -211,8 +192,6 @@ class ModelList {
         }
     }
 }
-
-EventEmitter(ModelList.prototype);
 
 // Exports
 module.exports = ModelList;

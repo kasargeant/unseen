@@ -50,8 +50,8 @@ class Model extends Component {
         this.baseSchema =  this.config.baseSchema || this.baseSchema;
         this.url = this.config.url || this.url;
 
-        // Sanity check component requirements.
-        if(this.baseSchema === null) {
+        // Sanity check component construction requirements.
+        if(!this.baseSchema) {
             throw new Error("Model requires a base Schema for structure and default values.");
         }
 
