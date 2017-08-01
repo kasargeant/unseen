@@ -49,8 +49,8 @@ class EntityNavView extends Unseen.View {
 
     }
 
-    searchAction(evt) {
-        let value = document.getElementById("input-search-0").value;
+    searchAction(evt, viewId) {
+        let value = document.getElementById(`input-search-${viewId}`).value;
         console.log(`'searchAction' called with value: ${value}.`);
     }
 }
