@@ -133,7 +133,7 @@ class Component {
      */
     // fetch(url, method, success, failure) {
     fetch() {
-        if(this.url === null) {
+        if(!this.url) {
             this.emit("refresh", this._id);
         } else {
             Util.fetch("GET", this.url, {}, function(resData) {
@@ -161,7 +161,7 @@ class Component {
         this._modelCounter = i; // This provides a unique ID for every model.
 
         // Are we storing data locally - or proxying a backend?
-        if(this.url === null) {
+        if(!this.url) {
             // We're local...
             this.models = data;
         } else {

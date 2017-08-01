@@ -20,7 +20,7 @@ let rawData = require("../../data/processed_sample.json");
 // MODEL COLLECTION
 let myModelList = new EntityModelList("", rawData);
 
-let myNavModel = new EntityNavModel("nav-model-overide", {}, {
+let myNavModel = new EntityNavModel("nav-model-overide", {
     title: "Unseen.js",
     items: {
         "About": "#",
@@ -31,6 +31,7 @@ let myNavModel = new EntityNavModel("nav-model-overide", {}, {
 
 // VIEW
 let myNavView = new EntityNavView(myNavModel);
+myNavView.reset();
 
 // VIEW COLLECTION
 let myViewList = new EntityListViewList(myModelList);

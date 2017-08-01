@@ -51,7 +51,7 @@ class ModelList extends Component {
         this.url = this.config.url || this.url;
 
         // Sanity check component construction requirements.
-        if(this.baseClass === null) {
+        if(!this.baseClass) {
             throw new Error("ModelList requires a base Model class.");
         }
 
@@ -153,7 +153,7 @@ class ModelList extends Component {
      * @param {Function} callback
      */
     fetch() {
-        if(this.url === null) {
+        if(!this.url) {
             this.emit("reset", this._id);
         } else {
             Util.fetch("GET", this.url, {}, function(resData) {
@@ -181,7 +181,7 @@ class ModelList extends Component {
         this._modelCounter = i; // This provides a unique ID for every model.
 
         // Are we storing data locally - or proxying a backend?
-        if(this.url === null) {
+        if(!this.url) {
             // We're local...
             this.models = data;
         } else {

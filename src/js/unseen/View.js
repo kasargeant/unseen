@@ -58,8 +58,8 @@ class View {
         this.classList = options.classList || this.classList || this.defaults.baseModel;
 
         // // Sanity check user initialization.
-        // if(this.baseModel === null) {
-        //     if(this.baseModel === null && this.baseClass !== null) {
+        // if(!this.baseModel) {
+        //     if(!this.baseModel && this.baseClass) {
         //         this.baseModel = new this.baseClass();
         //     } else {
         //         this.baseModel = new Model();
@@ -73,7 +73,7 @@ class View {
         // Adds internal events listener used by the ModelList to signal this ViewList on update.
         this.baseModel.on("change", function(args) {
             console.log(`View #${this._id}: Model #${args} changed.`);
-            this.reset(this.baseModel);
+            this.reset();
         }.bind(this));
     }
 
@@ -128,31 +128,23 @@ class View {
     _handleEvents(evt) {
         console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
-        let eventTargetId = evt.target.id;
-        let splitPoint = eventTargetId.lastIndexOf("-");
-        let elementId = "#" + eventTargetId.slice(0, splitPoint);
-        if(elementId === "#") {
+        let mangledId = evt.target.id;
+        if(mangledId === "") {
             throw new Error("Missing event target.");
         }
-        let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-        // console.log(`ViewList event matched: View component '${viewId}', element ${elementId}`);
-        //
-        //console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
+        let elementId = "#" + mangledId.slice(0, mangledId.lastIndexOf("-"));
+        let viewId = evt.target.dataset.unid;
+        // let viewId = evt.target.getAttribute("data-unid"); // Alternative for older browsers.
+        console.log(`ElementId: ${viewId}`);
+        console.log(`ViewId: ${viewId}`);
+        console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
-        let events = this.viewEvents[viewId];
-        let elementEvent = events[elementId];
+        let elementEvent = this.viewEvents[viewId][elementId];
+        console.log(`View event found: ${JSON.stringify(elementEvent)}`);
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-            console.log(`ViewList '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            console.log(`View matched '${evt.type}' event for component '${viewId}' element ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
-            let view = this.views[viewId];
-            if(view !== undefined) {
-                view[elementEvent[1]]();
-
-                // DELETE A VIEW
-                // this.views[viewId]._destroy(); // Always call private life-cycle method first.
-                // delete this.views[viewId];
-                // this.collection.emit("view-remove", viewId);
-            }
+            this[elementEvent[1]](evt, viewId);
         }
 
         // let modelId = this.views[viewId].model._id;
@@ -193,7 +185,8 @@ class View {
         // First we make any element ids in this View - unique.
         // let matches = content.match(/(?:id|class)="([^"]*)"/gi);    // Matches class="sfasdf" or id="dfssf"
         // console.log("MATCHES: " + JSON.stringify(matches));
-        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        // elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
         // console.log("CONTENT: " + JSON.stringify(element));
 
         // Are we a top-level view?
@@ -201,7 +194,7 @@ class View {
         // let viewEvents = this.events();
 
         // Do we create a markup container with id and/or classes?
-        if(this.id === null && this.classList === null) {
+        if(!this.id && !this.classList) {
             // NO: Just return template result.
             this.markup = elementBody;
         } else {
@@ -216,7 +209,7 @@ class View {
         //     this.$el = jQuery(markup.html).appendTo(this.target).get(0);
         //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
         //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-        //     if(this._parent === null) {
+        //     if(!this._parent) {
         //
         //         // We set the viewEvents lookup
         //         this.viewEvents = viewEvents;
@@ -235,10 +228,10 @@ class View {
         this.$el = jQuery(this.markup).appendTo(this.target).get(0);
         if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
         // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-        if(this._parent === null) {
+        if(!this._parent) {
 
             // We set the viewEvents lookup
-            this.viewEvents = this.events();
+            this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
 
             // Add top-level event listener
             this.$el.addEventListener("click", this._handleEvents.bind(this), false);

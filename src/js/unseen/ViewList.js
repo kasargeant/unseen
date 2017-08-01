@@ -66,7 +66,7 @@ class ViewList {
         this.classList = options.classList || this.classList || this.defaults.baseModel;
 
         // // Sanity check user initialization.
-        // if(this.baseClass === null) {
+        // if(!this.baseClass) {
         //     throw new Error("ViewList requires a base View class.");
         // }
 
@@ -155,30 +155,26 @@ class ViewList {
     _handleEvents(evt) {
         console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
-        let eventTargetId = evt.target.id;
-        let splitPoint = eventTargetId.lastIndexOf("-");
-        let elementId = "#" + eventTargetId.slice(0, splitPoint);
-        if(elementId === "#") {
+        let mangledId = evt.target.id;
+        if(mangledId === "") {
             throw new Error("Missing event target.");
         }
-        let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
-        // console.log(`ViewList event matched: View component '${viewId}', element ${elementId}`);
-        //
-        //console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
+        let elementId = "#" + mangledId.slice(0, mangledId.lastIndexOf("-"));
+        let viewId = evt.target.dataset.unid;
+        // let viewId = evt.target.getAttribute("data-unid"); // Alternative for older browsers.
+        console.log(`ElementId: ${viewId}`);
+        console.log(`ViewId: ${viewId}`);
+        console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
         let events = this.viewEvents[viewId];
         let elementEvent = events[elementId];
+        console.log(`ViewList event found: ${JSON.stringify(elementEvent)}`);
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-            console.log(`ViewList '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            console.log(`ViewList matched '${evt.type}' event for component '${viewId}' element ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
-            if(view !== undefined) {
-                view[elementEvent[1]]();
-
-                // DELETE A VIEW
-                // this.views[viewId]._destroy(); // Always call private life-cycle method first.
-                // delete this.views[viewId];
-                // this.collection.emit("view-remove", viewId);
+            if(view) {
+                view[elementEvent[1]](evt, viewId);
             }
         }
 
@@ -187,6 +183,42 @@ class ViewList {
 
 
     }
+    // _handleEvents(evt) {
+    //     console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+    //
+    //     let eventTargetId = evt.target.id;
+    //     let splitPoint = eventTargetId.lastIndexOf("-");
+    //     let elementId = "#" + eventTargetId.slice(0, splitPoint);
+    //     if(elementId === "#") {
+    //         throw new Error("Missing event target.");
+    //     }
+    //     let viewId = eventTargetId.slice(splitPoint + 1); // +1 to step over delimiter
+    //     // console.log(`UNID: ${evt.target.dataset.unid}`);
+    //     console.log(`UNID: ${evt.target.getAttribute("data-unid")}`);
+    //     console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
+    //     console.log(`ViewList event matched: View component '${viewId}', element ${elementId}`);
+    //
+    //     let events = this.viewEvents[viewId];
+    //     let elementEvent = events[elementId];
+    //     if(elementEvent !== undefined && elementEvent[0] === evt.type) {
+    //         console.log(`ViewList '${evt.type}' event for component '${viewId}' element ${elementId}`);
+    //         // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
+    //         let view = this.views[viewId];
+    //         if(view !== undefined) {
+    //             view[elementEvent[1]](evt);
+    //
+    //             // DELETE A VIEW
+    //             // this.views[viewId]._destroy(); // Always call private life-cycle method first.
+    //             // delete this.views[viewId];
+    //             // this.collection.emit("view-remove", viewId);
+    //         }
+    //     }
+    //
+    //     // let modelId = this.views[viewId].model._id;
+    //     // console.log("Have model id: " + modelId);
+    //
+    //
+    // }
 
     // template(model, params) {return JSON.stringify(model);}
 
@@ -207,7 +239,7 @@ class ViewList {
     //     }
     //
     //     // Are we a top-level view?
-    //     if(this._parent === null && fragment === null) {
+    //     if(!this._parent && !fragment) {
     //         // YES - without passed fragment or parent
     //         fragment = document.createDocumentFragment();
     //     }
@@ -217,7 +249,7 @@ class ViewList {
     //         jQuery(this.target).append(fragment);
     //
     //         // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-    //         if(this._parent === null) {
+    //         if(!this._parent) {
     //
     //             // We set the viewEvents lookup
     //             this.viewEvents = viewEvents;
@@ -245,7 +277,8 @@ class ViewList {
         let elementBody = "";
 
         // First we make any element ids in this View - unique.
-        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        // elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
         // console.log("CONTENT: " + JSON.stringify(element.html));
 
         // Are we a top-level view?
@@ -278,7 +311,7 @@ class ViewList {
         this.$el = jQuery(this.markup).appendTo(this.target).get(0);
         if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
         // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-        if(this._parent === null) {
+        if(!this._parent) {
             // Add top-level event listener
             this.$el.addEventListener("click", this._handleEvents.bind(this), false);
         }
@@ -346,7 +379,7 @@ class ViewList {
         }
 
         // Are we a top-level view?
-        if(this._parent === null && markup === null) {
+        if(!this._parent && !markup) {
             // YES - without passed fragment or parent
             markup = {html: ""};
         }
@@ -354,10 +387,10 @@ class ViewList {
         if(doInsert === true) {
 
             // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-            if(this._parent === null) {
+            if(!this._parent) {
 
                 // We set the viewEvents lookup
-                this.viewEvents = viewEvents;
+                this.viewEvents = viewEvents; // Note: Array NOT just a single object!
 
                 // Add top-level event listener
                 this.$el.addEventListener("click", this._handleEvents.bind(this), false);

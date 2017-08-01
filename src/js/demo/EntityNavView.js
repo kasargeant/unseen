@@ -9,18 +9,12 @@
 // Imports
 const Unseen = require("../../index");
 
+const jQuery = require("jquery");
+
 // VIEW
 class EntityNavView extends Unseen.View {
 
     initialize() {
-        // this.baseModel = new Unseen.Model("nav-model", {baseSchema: {
-        //     title: "Unseen.js",
-        //     items: {
-        //         "About": "#",
-        //         "Docs": "https://kasargeant.github.io/unseen/api/",
-        //         "GitHub": "https://github.com/kasargeant/unseen"
-        //     }
-        // }});
         this.target = "body";
         this.tag = "header";
         this.id = "my-nav";
@@ -47,7 +41,7 @@ class EntityNavView extends Unseen.View {
             </section>
             <section class="navbar-section">
                 <div class="input-group input-inline">
-                    <input class="form-input" type="text" placeholder="search" />
+                    <input id="input-search" class="form-input" type="text" placeholder="search" />
                     <button id="button-search" class="btn btn-primary input-group-btn">Search</button>
                 </div>
             </section>
@@ -55,9 +49,9 @@ class EntityNavView extends Unseen.View {
 
     }
 
-    searchAction(evt) {
-        console.log(`'searchAction' called with value: ${JSON.stringify(evt)}.`);
-        this.destroy();
+    searchAction(evt, viewId) {
+        let value = document.getElementById(`input-search-${viewId}`).value;
+        console.log(`'searchAction' called with value: ${value}.`);
     }
 }
 
