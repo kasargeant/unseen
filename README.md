@@ -19,7 +19,6 @@ For example, if you want to use Unseen's powerful data model and back-end suppor
 ## FEATURES
 
 
-
 ## INSTALLATION
 
     npm install unseen
