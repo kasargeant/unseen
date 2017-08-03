@@ -15,7 +15,7 @@ class EntityListItemView extends Unseen.View {
     initialize() {
         // this.baseModel = myModel;
         this.id = "my-item";
-        this.tag = "div";
+        this.tag = "article";
         this.classList = ["card"];
     }
 
@@ -28,16 +28,16 @@ class EntityListItemView extends Unseen.View {
     template(model, idx) {
 
         return `
-            <div class="card-header">
-                <h4 class="card-title">${model.id}</h4>
-                <h6 class="card-subtitle">${model.name}</h6>
-            </div>
-            <div class="card-body">
+            <header class="entity-item">
+                <h1 class="card-title">${model.id}</h1>
+                <h3 class="card-subtitle">${model.name}</h3>
+            </header>
+            <section class="body">
                 ${model.id}: ${model.type} - ${model.name}
-            </div>
-            <div class="card-footer">
-                <button id="button-delete" class="btn btn-primary">Delete</button>
-            </div>
+            </section>
+            <footer>
+                <button id="button-delete" class="btn">Delete</button>
+            </footer>
         `;
     }
 

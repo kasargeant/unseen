@@ -1,0 +1,108 @@
+
+@font-face {
+    font-family: "Rubik Light";
+    src: url("../font/Rubik/Rubik-Light.ttf");
+}
+/*The order is important, the bold/italic style must come last.*/
+@font-face {
+    font-family: "Rubik Light";
+    src: url("../font/Rubik/Rubik-LightItalic.ttf");
+    font-style: italic, oblique;
+}
+
+@font-face {
+    font-family: "Rubik Black";
+    src: url("../font/Rubik/Rubik-Black.ttf");
+}
+/*The order is important, the bold/italic style must come last.*/
+@font-face {
+    font-family: "Rubik Black";
+    src: url("../font/Rubik/Rubik-BlackItalic.ttf");
+    font-style: italic, oblique;
+}
+
+@font-face {
+    font-family: "Rubik";
+    src: url("../font/Rubik/Rubik-Regular.ttf");
+}
+@font-face {
+    font-family: "Rubik";
+    src: url("../font/Rubik/Rubik-Italic.ttf");
+    font-style: italic, oblique;
+}
+@font-face {
+    font-family: "Rubik";
+    src: url("../font/Rubik/Rubik-Bold.ttf");
+    font-weight: bold;
+}
+/*The order is important, the bold/italic style must come last.*/
+@font-face {
+    font-family: "Rubik";
+    src: url("../font/Rubik/Rubik-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic, oblique;
+}
+
+
+
+body {
+    font: .75em "Rubik";
+}
+
+header {
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+}
+
+section {
+    margin: .25em;
+}
+
+nav {
+    margin: .25em;
+    border: 1px solid green;
+}
+
+
+a {
+    font-style: normal;
+}
+
+
+
+.menu {
+    display: flex;
+
+    /* Remove list bullet and indent */
+    padding: 0;
+    list-style-type: none;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    list-style: none;
+}
+.menu-column {
+    flex-direction: column;
+    list-style: none;
+}
+.menu-item {
+    border: 1px solid black;
+}
+.menu-item a {
+    text-decoration: none;
+}
+
+.menu-item.title {
+    font: 1.25em "Rubik Black";
+}
+
+
+.card {
+    border: 1px dashed red;
+}
