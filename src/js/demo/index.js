@@ -19,10 +19,10 @@ const EntityMenuView = require("./EntityMenuView");
 let rawData = require("../../data/processed_sample.json");
 
 // MODEL COLLECTION
-let myModelList = new EntityModelList("", rawData);
+let myModelList = new EntityModelList(rawData);
 
 // NAVBAR
-let myNavModel = new EntityNavModel("nav-model-overide", {
+let myNavModel = new EntityNavModel({
     title: "Unseen.js",
     items: {
         "About": "#",
@@ -35,7 +35,7 @@ myNavView.reset();
 
 
 // SIDEBAR MENU
-let myMenuModel = new EntityNavModel("nav-model-overide", {
+let myMenuModel = new EntityNavModel({
     title: "Unseen.js",
     items: {
         "About": "#",

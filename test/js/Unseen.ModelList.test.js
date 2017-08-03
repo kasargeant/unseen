@@ -111,7 +111,7 @@ describe("Class: Unseen", function() {
 
     describe("Populating", function() {
 
-        let testModelList = new TestCollection("test-collection", [
+        let testModelList = new TestCollection([
             {b: "o"},
             {a: "hiya", b: "hoho", c: 1},
             {a: "riii", b: "biii", c: 20}

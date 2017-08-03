@@ -25,18 +25,16 @@ const Util = require("./Util");
  */
 class Model extends Component {
     /**
-     * @param {string} idn - The id name of the component.
      * @param {Object} [record=null] - A data record object.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
      * @param {Object} [options.baseSchema={}] - An object representing the schema and default values of a data record.
      * @param {ModelList} [parent] - The parent (if any).
-     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(idn, record = null, options = {}, parent = null, parentRef = 0) {
+    constructor(record = null, options = {}, parent = null) {
 
         // Call Component constructor
-        super(idn, parent, parentRef);
+        super(parent);
 
         // Set by user (or default).
         this.defaults = {

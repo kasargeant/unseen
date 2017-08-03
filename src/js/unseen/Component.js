@@ -25,19 +25,14 @@ const Model = require("./Model");
 class Component {
 
     /**
-     * @param {string} idn - The id name of the component.
      * @param {Component} [parent] - The parent (if any).
-     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(idn="no-name", parent = null, parentRef = 0) {
+    constructor(parent = null) {
 
         // Set by constructor.
-        this.idn = idn;
-
-        // Set internally (or by parent).
-        this._parent = parent;  // The parent component (if any).
-        this._id = parentRef;   // The parent's reference ID for this component (if any).
+        this._id = Component.prototype.UUID++;  // A unique component ID
+        this._parent = parent;                  // The parent component (if any).
 
         // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
@@ -113,9 +108,9 @@ class Component {
      */
     toJSON() {
         if(this._parent !== null) {
-            return `{"idn": ${this.idn}, "parentIdn": ${this._parent.idn}, "parentRef": ${this._id}}`;
+            return `{"_id": ${this._id}, "parentId": ${this._parent._id}}`;
         } else {
-            return `{"idn": ${this.idn}}`;
+            return `{"_id": ${this._id}}`;
         }
     }
 
@@ -124,7 +119,7 @@ class Component {
     }
 
     receive(src, msg) {
-        console.log(`Component '${this.idn}' received message: ${JSON.stringify(msg)} from: ${src.idn}`);
+        console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src.idn}`);
     }
 
     /**
@@ -172,6 +167,8 @@ class Component {
         }
     }
 }
+
+Component.prototype.UUID = 0; // Define component counter on the class.
 
 EventEmitter(Component.prototype);
 

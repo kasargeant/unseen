@@ -25,18 +25,16 @@ const Model = require("./Model");
 class ModelList extends Component {
 
     /**
-     * @param {string} idn - The id name of the component.
      * @param {Array} records - An array of data record objects.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
      * @param {Object} [options.baseClass={}] - The base Model that this list should use.
      * @param {ModelList} [parent] - The parent (if any).
-     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(idn, records = null, options = {}, parent = null, parentRef = 0) {
+    constructor(records = null, options = {}, parent = null) {
 
         // Call Component constructor
-        super(idn, parent, parentRef);
+        super(parent);
 
         // Set by user (or default).
         this.defaults = {
@@ -89,9 +87,7 @@ class ModelList extends Component {
         let id;
         for(id = 0; id < records.length; id++) {
             // Instantiate new model and set private properties.
-            this.models[id] = new this.baseClass("Model_" + id, records[id]);
-            this.models[id]._parent = this;
-            this.models[id]._id = id;
+            this.models[id] = new this.baseClass(records[id], this);
             this.models[id].url = `${this.url}/${id}`;
         }
         this.length = id;
@@ -123,7 +119,7 @@ class ModelList extends Component {
     }
 
     add(key, value) {
-        this.models[key] = new this.baseClass(key, value, this, key);
+        this.models[key] = new this.baseClass(value, this);
         this.length++;
         return key;
     }

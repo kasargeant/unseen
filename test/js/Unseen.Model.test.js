@@ -47,9 +47,9 @@ describe("Class: Unseen", function() {
 
     describe("Models", function() {
 
-        let testModel1 = new TestModel("testModel1", {b: "o"});
-        let testModel2 = new TestModel("testModel2", {a: "hiya", b: "hoho", c: 1});  // We create second instance for binding contamination checks
-        let testModel3 = new TestModel("testModel3", {a: "riii", b: "biii", c: 20});
+        let testModel1 = new TestModel({b: "o"});
+        let testModel2 = new TestModel({a: "hiya", b: "hoho", c: 1});  // We create second instance for binding contamination checks
+        let testModel3 = new TestModel({a: "riii", b: "biii", c: 20});
 
         it("should be able to manufacture a Model class for a given definition", function() {
             expect(TestModel).toBeDefined();
