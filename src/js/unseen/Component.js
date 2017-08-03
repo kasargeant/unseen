@@ -119,52 +119,7 @@ class Component {
     }
 
     receive(src, msg) {
-        console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src.idn}`);
-    }
-
-    /**
-     * Fetches the collection's data from a local or remote source.
-     * @param {Function} callback
-     */
-    // fetch(url, method, success, failure) {
-    fetch() {
-        if(!this.url) {
-            this.emit("refresh", this._id);
-        } else {
-            Util.fetch("GET", this.url, {}, function(resData) {
-                console.log("RESPONSE: " + JSON.stringify(resData));
-                this.reset(resData);
-            }.bind(this));
-        }
-    }
-
-    /**
-     * Stores the collection's data to a local or remote source.
-     * @param {Array} data
-     * @param {Function} callback
-     * @returns {*}
-     */
-    store(records) {
-
-        // Prepare data - handling any missing/default values.
-        let data = {};
-        let i;
-        for(i = 0; i < records.length; i++) {
-            data[i] = new this.baseClass(records[i], this, i);
-        }
-        this.length = i;
-        this._modelCounter = i; // This provides a unique ID for every model.
-
-        // Are we storing data locally - or proxying a backend?
-        if(!this.url) {
-            // We're local...
-            this.models = data;
-        } else {
-            // We're proxying...
-            Util.fetch("POST", this.url, data, function(responseData) {
-                this.models = responseData;
-            });
-        }
+        console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src._id}`);
     }
 }
 
@@ -178,9 +133,9 @@ module.exports = Component;
 //
 // let comA = new Component("A");
 // let comB = new Component("B");
-// comB.emit("msg", comA, {idn:  comA.idn, msg: "la la la"});
-// comA.send(comB, {idn:  comA.idn, msg: "la la la"});
-// comB.send(comA, {idn:  comB.idn, msg: "la la la"});
+// comB.emit("msg", comA, {_id:  comA._id, msg: "la la la"});
+// comA.send(comB, {_id:  comA._id, msg: "la la la"});
+// comB.send(comA, {_id:  comB._id, msg: "la la la"});
 //
 // setTimeout(function(){ console.log("Done"); }, 3000);
 

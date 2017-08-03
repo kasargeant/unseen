@@ -9,7 +9,7 @@
 "use strict";
 
 // Imports
-const EventEmitter = require("event-emitter");
+const Component = require("./Component");
 const jQuery = require("jquery");
 const walk = require("./walk");
 
@@ -21,18 +21,20 @@ const walk = require("./walk");
  * * To be able to attach events to the resultant markup.
  * @class
  */
-class View {
+class View extends Component {
 
     /**
      * @param {Model} baseModel - A model instance.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
-     * @param {ViewList} [parent=null] - The parent (if any).
-     * @param {number} [parentRef=0] - The parent's reference ID for this component (if any).
+     * @param {Component} [parent=null] - The parent (if any).
      * @constructor
      */
-    constructor(baseModel = null, options = {}, parent = null, parentRef = 0) {
+    constructor(baseModel = null, options = {}, parent = null) {
 
-        // Component defaults
+        // Call Component constructor
+        super(parent);
+
+        // Set by user (or default).
         this.defaults = {
             baseClass: null,
             baseModel: null,
@@ -43,14 +45,9 @@ class View {
             classList: null
         };
 
-        // Set internally (or by parent).
-        this._parent = parent;  // The parent component (if any).
-        this._id = parentRef;   // The parent's reference ID for this component (if any).
-
         // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
-        this.initialize();      // Custom initialization.
-        this.baseModel = baseModel || options.baseModel || this.baseModel || this.defaults.baseModel;
+        this.baseModel = baseModel || this.config.baseModel || this.baseModel || this.defaults.baseModel;
         this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
         this.target = options.target || this.target || this.defaults.target;
         this.tag = options.tag || this.tag || this.defaults.tag;
@@ -78,23 +75,12 @@ class View {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // USER LIFECYCLE METHODS
+    // DATA METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     * A lifecycle method - called when the instance is first constructed.
-     * @override
-     */
-    initialize() {}
-
-    /**
-     * A lifecycle method - called when the instance is about to be destroyed.
-     * @override
-     */
-    finalize() {}
-
-    /**
-     *
+     * Renders and inserts the view into the DOM.
+     * @private
      */
     reset() {
         this._render(true);
@@ -238,8 +224,6 @@ class View {
         }
     }
 }
-
-EventEmitter(View.prototype);
 
 // Exports
 module.exports = View;

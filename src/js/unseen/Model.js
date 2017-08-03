@@ -28,7 +28,7 @@ class Model extends Component {
      * @param {Object} [record=null] - A data record object.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
      * @param {Object} [options.baseSchema={}] - An object representing the schema and default values of a data record.
-     * @param {ModelList} [parent] - The parent (if any).
+     * @param {Component} [parent] - The parent (if any).
      * @constructor
      */
     constructor(record = null, options = {}, parent = null) {

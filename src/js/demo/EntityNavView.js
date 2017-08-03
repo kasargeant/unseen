@@ -18,7 +18,7 @@ class EntityNavView extends Unseen.View {
         this.target = "header";
         this.tag = "nav";
         this.id = "my-nav";
-        this.classList = ["navbar"];
+        this.classList = ["row"];
     }
 
     events() {

@@ -8,11 +8,13 @@
 
 // Imports
 const Unseen = require("../../index");
+const EntityModel = require("./model/EntityModel");
 const EntityModelList = require("./model/EntityModelList");
 const EntityListViewList = require("./EntityViewList");
 const EntityNavModel = require("./model/EntityNavModel");
 const EntityNavView = require("./EntityNavView");
 const EntityMenuView = require("./EntityMenuView");
+const EntityDetailView = require("./EntityDetailView");
 
 // const jQuery = require("jquery");
 
@@ -50,6 +52,12 @@ myMenuView.reset();
 let myViewList = new EntityListViewList(myModelList);
 
 myViewList.collection.fetch();
+
+// DETAIL PANEL
+let myDetailView = new EntityDetailView(new EntityModel());
+myDetailView.reset();
+
+
 
 // DEMO: CONSOLE
 // let markupResult = {html: ""};

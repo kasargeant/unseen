@@ -29,8 +29,8 @@ class EntityListItemView extends Unseen.View {
 
         return `
             <header class="entity-item">
-                <h1 class="card-title">${model.id}</h1>
-                <h3 class="card-subtitle">${model.name}</h3>
+                <h3 class="subtitle">${model.id}</h3>
+                <h1 class="title">${model.name}</h1>
             </header>
             <section class="body">
                 ${model.id}: ${model.type} - ${model.name}

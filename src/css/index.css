@@ -52,18 +52,53 @@ body {
 header {
 }
 
-main {
+section#content {
     display: flex;
     flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+footer {
+}
+
+aside {
+    margin: 0.5%;
+}
+aside.left {
+    width: 25%;
+
+}
+aside.right {
+    width: 25%;
+}
+
+main {
+    margin: 0.5%;
+    width: 45%;
 }
 
 section {
-    margin: .25em;
 }
+
 
 nav {
     margin: .25em;
     border: 1px solid green;
+}
+
+
+h1 {
+    font-size: 1.5em;
+}
+h2 {
+    font-size: 1em;
+}
+h3 {
+    font-size: 0.75em;
+}
+h4 {
+    font-size: 0.5em;
 }
 
 
@@ -85,6 +120,7 @@ a {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: baseline;
     list-style: none;
 }
 .menu-column {
