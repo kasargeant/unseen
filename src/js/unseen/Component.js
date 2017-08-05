@@ -12,9 +12,6 @@
 const EventEmitter = require("event-emitter");
 const Util = require("./Util");
 
-
-const Model = require("./Model");
-
 /**
  * The Component class.
  *
