@@ -85,7 +85,7 @@ describe("Class: Unseen", function() {
                 {a: "riii", b: "biii", c: 20}
             ]);
 
-            let testModel = testModelList.get(1);
+            let testModel = testModelList.find({a: "hiya"});
 
             expect(testModelList.length).toBe(3);
             expect(testModel.a).toBe("hiya");

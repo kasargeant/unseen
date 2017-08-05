@@ -97,6 +97,8 @@ class View extends Component {
         console.log("SELECTOR" + selector);
         console.log(`View ${this._id} is being destroyed!!!`);
         jQuery(selector).remove();
+
+        this.baseModel.destroy();
     }
 
     /**

@@ -18,7 +18,7 @@ class EntityMenuView extends Unseen.View {
         this.target = "aside.left";
         this.tag = "nav";
         this.id = "sidebar";
-        this.classList = [];
+        this.classList = ["nav--column"];
     }
 
     events() {
@@ -31,35 +31,35 @@ class EntityMenuView extends Unseen.View {
 
         let itemsMarkup = "";
         for(let item in model.items) {
-            itemsMarkup += `<a href="${model.items[item]}" class="btn btn-link">${item}</a>`;
+            itemsMarkup += `<a href="${model.items[item]}" class="btn">${item}</a>`;
         }
 
         return `
-            <ul class="menu menu-column">
-                <li class="menu-item">
+            <ul class="menu menu--column">
+                <li class="menu--column__item">
                     <a href="index.html#introduction">Getting started</a>
                 </li>
-                <li class="menu-item">
+                <li class="menu--column__item">
                     <a href="elements.html">Elements</a>
                 </li>
-                <li class="menu-item active">
+                <li class="menu--column__item active">
                     <a href="layout.html">Layout</a>
                     <ul class="nav">
-                        <li class="menu-item">
+                        <li class="menu--column__item">
                             <a href="layout.html#grid">Flexbox grid</a>
                         </li>
-                        <li class="menu-item">
+                        <li class="menu--column__item">
                             <a href="layout.html#responsive">Responsive</a>
                         </li>
                     </ul>
                 </li>
-                <li class="menu-item">
+                <li class="menu--column__item">
                     <a href="components.html">Components</a>
                 </li>
-                <li class="menu-item">
+                <li class="menu--column__item">
                     <a href="utilities.html">Utilities</a>
                 </li>
-                <li class="menu-item">
+                <li class="menu--column__item">
                     <a href="experimentals.html">Experimentals</a>
                 </li>
             </ul>

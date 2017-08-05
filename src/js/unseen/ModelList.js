@@ -77,21 +77,44 @@ class ModelList extends Component {
         });
     }
 
+    // Overrides Component super method
+    receive(src, msg) {
+        console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src._id}`);
+        let indexBy = src.indexBy;
+        let id = src[indexBy];
+        console.log(`Deleting Model with index {${indexBy}: ${id}}.`);
+        console.log(`- model ${(this.models[id]) ? "exists" : "doesn't exist"}`);
+
+        delete this.models[id];
+    }
+
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // DATA METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     reset(records) {
+
         this.models = {};
+
+
+
         // Instantiate ModelList's contents
-        let id;
-        for(id = 0; id < records.length; id++) {
+        let i;
+        for(i = 0; i < records.length; i++) {
+
             // Instantiate new model and set private properties.
-            this.models[id] = new this.baseClass(records[id], this);
+            let model = new this.baseClass(records[i], {}, this);
+
+            // Determine index property and thus index value
+            let indexKey = model.indexBy;
+            let id = model[indexKey];
+
+            // Set models with new model instance and index with determined key.
+            this.models[id] = model;
             this.models[id].url = `${this.url}/${id}`;
         }
-        this.length = id;
-        this._modelCounter = id; // This provides a unique ID for every model.
+        this.length = i;
         this.emit("reset", this._id);
     }
 
@@ -125,12 +148,20 @@ class ModelList extends Component {
     }
 
     remove(key) {
+        console.log("ModelList.remove() called.");
         let removed = this.models[key];
         if(removed !== undefined) {
             delete this.models[key];
             this.length--;
         }
     }
+
+    find(key, value) {
+        return this.models.find(function(model) {
+            model[key] === value;
+        });
+    }
+
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // UTILITY METHODS
@@ -192,12 +223,13 @@ class ModelList extends Component {
 // Exports
 module.exports = ModelList;
 
-// LOCAL TEST
+// // LOCAL TEST
 // const schema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
 //
 // class MyModel extends Model {
 //     initialize() {
 //         this.baseSchema = schema;
+//         this.indexBy = "idn";
 //     }
 // }
 // class MyModelList extends ModelList {
@@ -210,7 +242,8 @@ module.exports = ModelList;
 //     {"id": 124, "idn": "040430544", "type": "test", "name": "Test Avenue"},
 //     {"id": 125, "idn": "384894398", "type": "test", "name": "Test Lane"},
 // ]);
-// let myModel = myModelList.get(1);
+// // let myModel = myModelList.get(124);
+// let myModel = myModelList.get("384894398");
 // console.log(myModel.toJSON());
 
 // // REST TEST

@@ -108,10 +108,11 @@ class ViewList {
             let model = models[id]; // Note if the 'model' IS a single model... it returns itself
 
             // Instantiate view and set private properties.
-            let view = new this.baseClass(model, {}, this, id);
+            let view = new this.baseClass(model, {}, this);
 
             // Now add newly created View to store.
-            this.views[id] = view;
+            // this.views[id] = view;
+            this.views[view._id] = view;
             this.length++;
         }
     }

@@ -39,14 +39,16 @@ class Model extends Component {
         // Set by user (or default).
         this.defaults = {
             baseSchema: null,
+            indexBy: "id",
             record: {},
             url: null
         };
-        this.config = Object.assign(this.defaults, options);
+        // this.config = Object.assign(this.defaults, options);
 
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
-        this.baseSchema =  this.config.baseSchema || this.baseSchema;
-        this.url = this.config.url || this.url;
+        this.baseSchema =  options.baseSchema || this.baseSchema || this.defaults.baseSchema;
+        this.indexBy = options.indexBy || this.indexBy || this.defaults.indexBy;
+        this.url = options.url || this.url || this.defaults.url;
 
         // Sanity check component construction requirements.
         if(!this.baseSchema) {
@@ -59,7 +61,7 @@ class Model extends Component {
         this.urlLastUpdated = 0;
 
         // Initialise Model with Schema settings and assign data record values (if any).
-        this._init(record || this.config.record);
+        this._init(record || options.record || this.defaults.record);
     }
 
     /**
@@ -93,6 +95,13 @@ class Model extends Component {
             });
             // Assign the property a value - or default value if none given.
             this._data[key] = data[key] || this.baseSchema[key];
+        }
+    }
+
+    destroy() {
+        console.log(`Model ${this._id} is being destroyed!!!`);
+        if(this._parent) {
+            this.send(this._parent, "DESTROY!!!");
         }
     }
 
