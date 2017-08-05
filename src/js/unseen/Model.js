@@ -101,7 +101,7 @@ class Model extends Component {
     destroy() {
         console.log(`Model ${this._id} is being destroyed!!!`);
         if(this._parent) {
-            this.send(this._parent, "DESTROY!!!");
+            this.send(this._parent, {action: "remove", arg: this._data[this.indexBy]});
         }
     }
 

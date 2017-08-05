@@ -80,12 +80,11 @@ class ModelList extends Component {
     // Overrides Component super method
     receive(src, msg) {
         console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src._id}`);
-        let indexBy = src.indexBy;
-        let id = src[indexBy];
-        console.log(`Deleting Model with index {${indexBy}: ${id}}.`);
-        console.log(`- model ${(this.models[id]) ? "exists" : "doesn't exist"}`);
-
-        delete this.models[id];
+        if(["remove"].includes(msg.action)) {
+            this[msg.action](msg.arg);
+        } else {
+            console.error(`ModelList received unrecognised message: ${JSON.stringify(msg)}`)
+        }
     }
 
 
@@ -149,6 +148,8 @@ class ModelList extends Component {
 
     remove(key) {
         console.log("ModelList.remove() called.");
+        console.log(`Deleting Model with index: ${key}.`);
+        console.log(`- model ${(this.models[key]) ? "exists" : "doesn't exist"}`);
         let removed = this.models[key];
         if(removed !== undefined) {
             delete this.models[key];
