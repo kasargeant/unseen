@@ -15,8 +15,8 @@ const EntityViewListItem = require("./EntityViewListItem");
 class EntityViewList extends Unseen.ViewList {
     initialize() {
         this.baseClass = EntityViewListItem;
-        this.target = "body";
-        this.tag = "main";
+        this.target = "main";
+        this.tag = "section";
         this.id = "my-list";
         this.classList = ["container"];
     }

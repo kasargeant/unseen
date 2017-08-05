@@ -8,19 +8,23 @@
 
 // Imports
 const Unseen = require("../../index");
-const EntityModelList = require("./EntityModelList");
+const EntityModel = require("./model/EntityModel");
+const EntityModelList = require("./model/EntityModelList");
 const EntityListViewList = require("./EntityViewList");
-const EntityNavModel = require("./EntityNavModel");
+const EntityNavModel = require("./model/EntityNavModel");
 const EntityNavView = require("./EntityNavView");
+const EntityMenuView = require("./EntityMenuView");
+const EntityDetailView = require("./EntityDetailView");
 
 // const jQuery = require("jquery");
 
 let rawData = require("../../data/processed_sample.json");
 
 // MODEL COLLECTION
-let myModelList = new EntityModelList("", rawData);
+let myModelList = new EntityModelList(rawData);
 
-let myNavModel = new EntityNavModel("nav-model-overide", {
+// NAVBAR
+let myNavModel = new EntityNavModel({
     title: "Unseen.js",
     items: {
         "About": "#",
@@ -28,15 +32,32 @@ let myNavModel = new EntityNavModel("nav-model-overide", {
         "GitHub": "https://github.com/kasargeant/unseen"
     }
 });
-
-// VIEW
 let myNavView = new EntityNavView(myNavModel);
 myNavView.reset();
+
+
+// SIDEBAR MENU
+let myMenuModel = new EntityNavModel({
+    title: "Unseen.js",
+    items: {
+        "About": "#",
+        "Docs": "https://kasargeant.github.io/unseen/api/",
+        "GitHub": "https://github.com/kasargeant/unseen"
+    }
+});
+let myMenuView = new EntityMenuView(myMenuModel);
+myMenuView.reset();
 
 // VIEW COLLECTION
 let myViewList = new EntityListViewList(myModelList);
 
 myViewList.collection.fetch();
+
+// DETAIL PANEL
+let myDetailView = new EntityDetailView(new EntityModel());
+myDetailView.reset();
+
+
 
 // DEMO: CONSOLE
 // let markupResult = {html: ""};

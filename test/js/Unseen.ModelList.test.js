@@ -25,11 +25,12 @@ let workingDirectory = process.cwd();
 if(IS_TRAVIS) {workingDirectory = process.env.TRAVIS_BUILD_DIR;} // Usually: "/home/travis/build/kasargeant/warhorse"
 
 // Setup
-const TestSchema = {a: "hi", b: "ho", c: 3};
+const TestSchema = {id: 0, a: "hi", b: "ho", c: 3};
 
 class TestModel extends Unseen.Model {
     initialize() {
         this.baseSchema = TestSchema;
+        // this.indexBy = "id";
     }
 }
 class TestCollection extends Unseen.ModelList {
@@ -80,9 +81,9 @@ describe("Class: Unseen", function() {
         it("should be able to be reset for a new model type.", function() {
 
             testModelList.reset([
-                {b: "o"},
-                {a: "hiya", b: "hoho", c: 1},
-                {a: "riii", b: "biii", c: 20}
+                {id: 0, b: "o"},
+                {id: 1, a: "hiya", b: "hoho", c: 1},
+                {id: 2, a: "riii", b: "biii", c: 20}
             ]);
 
             let testModel = testModelList.get(1);
@@ -111,10 +112,10 @@ describe("Class: Unseen", function() {
 
     describe("Populating", function() {
 
-        let testModelList = new TestCollection("test-collection", [
-            {b: "o"},
-            {a: "hiya", b: "hoho", c: 1},
-            {a: "riii", b: "biii", c: 20}
+        let testModelList = new TestCollection([
+            {id: 0, b: "o"},
+            {id: 1, a: "hiya", b: "hoho", c: 1},
+            {id: 2, a: "riii", b: "biii", c: 20}
         ]);
         let testModel1 = testModelList.get(0);
         let testModel2 = testModelList.get(1);

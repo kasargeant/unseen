@@ -1,6 +1,6 @@
 {
   "name": "unseen",
-  "version": "0.6.6",
+  "version": "0.7.0",
   "description": "A lightly-opinionated micro-library for rapidly delivering robust and performant SPAs.",
   "keywords": [
     "javascript",
@@ -40,7 +40,6 @@
     "coveralls": "^2.13.1",
     "jest": "^20.0.4",
     "purecss": "^1.0.0",
-    "spectre.css": "^0.2.14",
     "vue": "^2.3.4"
   },
   "dependencies": {

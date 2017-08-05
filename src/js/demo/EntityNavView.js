@@ -15,10 +15,10 @@ const jQuery = require("jquery");
 class EntityNavView extends Unseen.View {
 
     initialize() {
-        this.target = "body";
-        this.tag = "header";
+        this.target = "header";
+        this.tag = "nav";
         this.id = "my-nav";
-        this.classList = ["navbar"];
+        this.classList = ["nav--row"];
     }
 
     events() {
@@ -31,20 +31,18 @@ class EntityNavView extends Unseen.View {
 
         let itemsMarkup = "";
         for(let item in model.items) {
-            itemsMarkup += `<a href="${model.items[item]}" class="btn btn-link">${item}</a>`;
+            itemsMarkup += `<li class="menu--row__item"><a href="${model.items[item]}" class="btn btn-link">${item}</a></li>`;
         }
 
         return `
-            <section class="navbar-section">
-                <a href="/" class="navbar-brand mr-10">${model.title}</a>
+            <h1 class="menu--row__title">${model.title}</h1>
+            <ul class="menu menu-row">
                 ${itemsMarkup}
-            </section>
-            <section class="navbar-section">
-                <div class="input-group input-inline">
-                    <input id="input-search" class="form-input" type="text" placeholder="search" />
-                    <button id="button-search" class="btn btn-primary input-group-btn">Search</button>
-                </div>
-            </section>
+            </ul>
+            <div class="menu--row__search">
+                <input id="input-search" class="form-input" type="text" placeholder="search" />
+                <button id="button-search" class="btn btn-primary input-group-btn">Search</button>
+            </div>
         `;
 
     }

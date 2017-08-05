@@ -1,0 +1,176 @@
+
+@font-face {
+    font-family: "Rubik Light";
+    src: url("../font/Rubik/Rubik-Light.ttf");
+}
+/*The order is important, the bold/italic style must come last.*/
+@font-face {
+    font-family: "Rubik Light";
+    src: url("../font/Rubik/Rubik-LightItalic.ttf");
+    font-style: italic, oblique;
+}
+
+@font-face {
+    font-family: "Rubik Black";
+    src: url("../font/Rubik/Rubik-Black.ttf");
+}
+/*The order is important, the bold/italic style must come last.*/
+@font-face {
+    font-family: "Rubik Black";
+    src: url("../font/Rubik/Rubik-BlackItalic.ttf");
+    font-style: italic, oblique;
+}
+
+@font-face {
+    font-family: "Rubik";
+    src: url("../font/Rubik/Rubik-Regular.ttf");
+}
+@font-face {
+    font-family: "Rubik";
+    src: url("../font/Rubik/Rubik-Italic.ttf");
+    font-style: italic, oblique;
+}
+@font-face {
+    font-family: "Rubik";
+    src: url("../font/Rubik/Rubik-Bold.ttf");
+    font-weight: bold;
+}
+/*The order is important, the bold/italic style must come last.*/
+@font-face {
+    font-family: "Rubik";
+    src: url("../font/Rubik/Rubik-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic, oblique;
+}
+
+
+
+body {
+    overflow: hidden;
+    font: .75em "Rubik";
+}
+
+header {
+}
+
+section#content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+footer {
+}
+
+aside {
+    margin: 0.5%;
+}
+aside.left {
+    width: 25%;
+
+}
+aside.right {
+    width: 25%;
+}
+
+main {
+    margin: 0.5%;
+    width: 45%;
+}
+
+section {
+}
+
+
+nav {
+    display: flex;
+    margin: .25em;
+    border: 1px solid green;
+}
+.nav--row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.nav--column {
+    flex-direction: column;
+    align-items: baseline;
+}
+
+
+h1 {
+    font-size: 1.5em;
+}
+h2 {
+    font-size: 1em;
+}
+h3 {
+    font-size: 0.75em;
+}
+h4 {
+    font-size: 0.5em;
+}
+
+
+a {
+    font-style: normal;
+}
+
+
+/* BLOCK: menu */
+.menu {
+    display: flex;
+
+    /* Remove list bullet and indent */
+    list-style-type: none;
+    padding: 0 .25em;
+}
+
+.menu a {
+    text-decoration: none;
+}
+
+    .menu--row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+        list-style: none;
+    }
+    .menu--row li {
+        align-items: center;
+        height: 2.5em;
+    }
+
+    .menu--row__title {
+        font: 2em "Rubik Black";
+        border: 1px solid purple;
+    }
+
+    .menu--row__item {
+        margin-right: 1em;
+        border: 1px solid purple;
+    }
+
+    .menu--column {
+        flex-direction: column;
+        align-items: baseline;
+        list-style: none;
+    }
+
+    .menu--column__item {
+        border: 1px solid orange;
+    }
+
+
+
+.card {
+    border: 1px dashed red;
+}
+
+/* BLOCK: msg-list */
+.msg-list {}
+.msg-list__item {
+    padding-bottom: .5em;
+}

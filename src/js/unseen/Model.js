@@ -25,30 +25,30 @@ const Util = require("./Util");
  */
 class Model extends Component {
     /**
-     * @param {string} idn - The id name of the component.
      * @param {Object} [record=null] - A data record object.
      * @param {Object} [options={}] - Instance options to override class/custom defaults.
      * @param {Object} [options.baseSchema={}] - An object representing the schema and default values of a data record.
-     * @param {ModelList} [parent] - The parent (if any).
-     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
+     * @param {Component} [parent] - The parent (if any).
      * @constructor
      */
-    constructor(idn, record = null, options = {}, parent = null, parentRef = 0) {
+    constructor(record = null, options = {}, parent = null) {
 
         // Call Component constructor
-        super(idn, parent, parentRef);
+        super(parent);
 
         // Set by user (or default).
         this.defaults = {
             baseSchema: null,
+            indexBy: "id",
             record: {},
             url: null
         };
-        this.config = Object.assign(this.defaults, options);
+        // this.config = Object.assign(this.defaults, options);
 
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
-        this.baseSchema =  this.config.baseSchema || this.baseSchema;
-        this.url = this.config.url || this.url;
+        this.baseSchema =  options.baseSchema || this.baseSchema || this.defaults.baseSchema;
+        this.indexBy = options.indexBy || this.indexBy || this.defaults.indexBy;
+        this.url = options.url || this.url || this.defaults.url;
 
         // Sanity check component construction requirements.
         if(!this.baseSchema) {
@@ -61,7 +61,7 @@ class Model extends Component {
         this.urlLastUpdated = 0;
 
         // Initialise Model with Schema settings and assign data record values (if any).
-        this._init(record || this.config.record);
+        this._init(record || options.record || this.defaults.record);
     }
 
     /**
@@ -95,6 +95,13 @@ class Model extends Component {
             });
             // Assign the property a value - or default value if none given.
             this._data[key] = data[key] || this.baseSchema[key];
+        }
+    }
+
+    destroy() {
+        console.log(`Model ${this._id} is being destroyed!!!`);
+        if(this._parent) {
+            this.send(this._parent, "DESTROY!!!");
         }
     }
 

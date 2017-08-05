@@ -12,9 +12,6 @@
 const EventEmitter = require("event-emitter");
 const Util = require("./Util");
 
-
-const Model = require("./Model");
-
 /**
  * The Component class.
  *
@@ -25,19 +22,14 @@ const Model = require("./Model");
 class Component {
 
     /**
-     * @param {string} idn - The id name of the component.
      * @param {Component} [parent] - The parent (if any).
-     * @param {number} [parentRef] - The parent's reference ID for this component (if any).
      * @constructor
      */
-    constructor(idn="no-name", parent = null, parentRef = 0) {
+    constructor(parent = null) {
 
         // Set by constructor.
-        this.idn = idn;
-
-        // Set internally (or by parent).
-        this._parent = parent;  // The parent component (if any).
-        this._id = parentRef;   // The parent's reference ID for this component (if any).
+        this._id = Component.prototype.UUID++;  // A unique component ID
+        this._parent = parent;                  // The parent component (if any).
 
         // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
@@ -113,9 +105,9 @@ class Component {
      */
     toJSON() {
         if(this._parent !== null) {
-            return `{"idn": ${this.idn}, "parentIdn": ${this._parent.idn}, "parentRef": ${this._id}}`;
+            return `{"_id": ${this._id}, "parentId": ${this._parent._id}}`;
         } else {
-            return `{"idn": ${this.idn}}`;
+            return `{"_id": ${this._id}}`;
         }
     }
 
@@ -124,54 +116,11 @@ class Component {
     }
 
     receive(src, msg) {
-        console.log(`Component '${this.idn}' received message: ${JSON.stringify(msg)} from: ${src.idn}`);
-    }
-
-    /**
-     * Fetches the collection's data from a local or remote source.
-     * @param {Function} callback
-     */
-    // fetch(url, method, success, failure) {
-    fetch() {
-        if(!this.url) {
-            this.emit("refresh", this._id);
-        } else {
-            Util.fetch("GET", this.url, {}, function(resData) {
-                console.log("RESPONSE: " + JSON.stringify(resData));
-                this.reset(resData);
-            }.bind(this));
-        }
-    }
-
-    /**
-     * Stores the collection's data to a local or remote source.
-     * @param {Array} data
-     * @param {Function} callback
-     * @returns {*}
-     */
-    store(records) {
-
-        // Prepare data - handling any missing/default values.
-        let data = {};
-        let i;
-        for(i = 0; i < records.length; i++) {
-            data[i] = new this.baseClass(records[i], this, i);
-        }
-        this.length = i;
-        this._modelCounter = i; // This provides a unique ID for every model.
-
-        // Are we storing data locally - or proxying a backend?
-        if(!this.url) {
-            // We're local...
-            this.models = data;
-        } else {
-            // We're proxying...
-            Util.fetch("POST", this.url, data, function(responseData) {
-                this.models = responseData;
-            });
-        }
+        console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src._id}`);
     }
 }
+
+Component.prototype.UUID = 0; // Define component counter on the class.
 
 EventEmitter(Component.prototype);
 
@@ -181,9 +130,9 @@ module.exports = Component;
 //
 // let comA = new Component("A");
 // let comB = new Component("B");
-// comB.emit("msg", comA, {idn:  comA.idn, msg: "la la la"});
-// comA.send(comB, {idn:  comA.idn, msg: "la la la"});
-// comB.send(comA, {idn:  comB.idn, msg: "la la la"});
+// comB.emit("msg", comA, {_id:  comA._id, msg: "la la la"});
+// comA.send(comB, {_id:  comA._id, msg: "la la la"});
+// comB.send(comA, {_id:  comB._id, msg: "la la la"});
 //
 // setTimeout(function(){ console.log("Done"); }, 3000);
 
