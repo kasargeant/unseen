@@ -45,7 +45,6 @@ class View extends Component {
             classList: null
         };
 
-        // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
         this.baseModel = baseModel || this.config.baseModel || this.baseModel || this.defaults.baseModel;
         this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
@@ -88,6 +87,11 @@ class View extends Component {
             this._insert();
         }
     }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // LIFECYCLE METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * Destroys the View.

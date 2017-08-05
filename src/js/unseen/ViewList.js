@@ -9,7 +9,7 @@
 "use strict";
 
 // Imports
-const EventEmitter = require("event-emitter");
+const Component = require("./Component");
 const jQuery = require("jquery");
 
 /**
@@ -21,7 +21,7 @@ const jQuery = require("jquery");
  * * To handle all related events.
  * @class
  */
-class ViewList {
+class ViewList extends Component {
 
     /**
      * @param {ModelList} modelCollection - An instantiated ModelList object.
@@ -36,7 +36,10 @@ class ViewList {
      */
     constructor(collection = {}, options = {}, parent = null, parentRef = null) {
 
-        // Component defaults
+        // Call Component constructor
+        super(parent);
+
+        // Set by user (or default).
         this.defaults = {
             baseClass: null,
             collection: null,
@@ -48,13 +51,7 @@ class ViewList {
             classList: []
         };
 
-        // Set internally (or by parent).
-        this._parent = parent;  // The parent component (if any).
-        this._id = parentRef;   // The parent's reference ID for this component (if any).
-
-        // Set by user (or default).
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
-        this.initialize();      // Custom initialization.
         this.baseClass = options.baseClass || this.baseClass || this.defaults.baseClass;
         this.collection = collection || options.collection || this.collection || this.defaults.collection;
         if(this.collection !== null) {this.collection._parent = this;}
@@ -98,6 +95,14 @@ class ViewList {
         // TODO - Add internal events listener used by Views signalling this ViewList
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // DATA METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     * Renders and inserts the view into the DOM.
+     * @private
+     */
     reset(models) {
         // Instantiate initial View components from ModelList models
         this.views = {};
@@ -118,20 +123,8 @@ class ViewList {
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // USER LIFECYCLE METHODS
+    // LIFECYCLE METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * A lifecycle method - called when the instance is first constructed.
-     * @override
-     */
-    initialize() {}
-
-    /**
-     * A lifecycle method - called when the instance is about to be destroyed.
-     * @override
-     */
-    finalize() {}
 
     /**
      * Destroys the ViewList.
@@ -404,8 +397,6 @@ class ViewList {
     }
 
 }
-
-EventEmitter(ViewList.prototype);
 
 // Exports
 module.exports = ViewList;
