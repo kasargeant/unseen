@@ -51,6 +51,10 @@ body {
 }
 
 header {
+    margin: 0.25%;
+}
+
+section {
 }
 
 section#content {
@@ -64,32 +68,29 @@ footer {
 }
 
 aside {
-    margin: 0.5%;
+    margin: 0.25%;
 }
 aside.left {
-    width: 25%;
-
+    min-width: 30%;
 }
 aside.right {
     width: 25%;
 }
 
 main {
-    margin: 0.5%;
+    margin: 0.25%;
     width: 45%;
 }
 
-section {
-}
 
 
 nav {
     display: flex;
-    margin: .25em;
     border: 1px solid green;
 }
 .nav--row {
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: baseline;
 }
@@ -121,10 +122,9 @@ a {
 /* BLOCK: menu */
 .menu {
     display: flex;
-
-    /* Remove list bullet and indent */
+    margin: 0;
+    padding: 0.25em 0.25em;
     list-style-type: none;
-    padding: 0 .25em;
 }
 
 .menu a {
@@ -134,6 +134,7 @@ a {
     .menu--row {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         justify-content: space-between;
         align-items: baseline;
         list-style: none;
@@ -144,8 +145,13 @@ a {
     }
 
     .menu--row__title {
+        margin: .25em 0.125em;
         font: 2em "Rubik Black";
         border: 1px solid purple;
+    }
+
+    .menu--row__search {
+        white-space: nowrap;
     }
 
     .menu--row__item {
@@ -163,14 +169,68 @@ a {
         border: 1px solid orange;
     }
 
-
-
 .card {
     border: 1px dashed red;
 }
+
+footer.entity-item {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+
 
 /* BLOCK: msg-list */
 .msg-list {}
 .msg-list__item {
     padding-bottom: .5em;
+}
+@media screen and (max-width: 480px) {
+
+    .nav--row {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: baseline;
+    }
+
+    section#content {
+        justify-content: space-between;
+    }
+
+    aside.right {
+        display: none;
+    }
+    main {
+        margin: 0.5%;
+        width: 70%;
+    }
+}
+
+
+
+
+
+@media screen and (max-width: 320px) {
+
+    .nav--row {
+        flex-direction: column;
+        justify-content: inherit;
+        align-items: inherit;
+    }
+
+    section#content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    aside.left {
+        width: 100%;
+    }
+
+    main {
+        margin: 0.25%;
+        width: 100%;
+    }
 }

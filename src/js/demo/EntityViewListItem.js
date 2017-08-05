@@ -32,10 +32,10 @@ class EntityListItemView extends Unseen.View {
                 <h3 class="subtitle">${model.id}</h3>
                 <h1 class="title">${model.name}</h1>
             </header>
-            <section class="body">
+            <section class="entity-item">
                 ${model.id}: ${model.type} - ${model.name}
             </section>
-            <footer>
+            <footer class="entity-item">
                 <button id="button-delete" class="btn">Delete</button>
             </footer>
         `;
