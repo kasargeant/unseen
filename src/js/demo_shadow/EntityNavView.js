@@ -21,10 +21,61 @@ class EntityNavView extends Unseen.View {
         this.classList = ["nav--row"];
     }
 
-    events() {
-        return {
-            "#button-search": ["click", "searchAction"]
-        };
+    style() {
+        return `
+        <style>
+            nav {
+                display: flex;
+                border: 1px solid green;
+            }
+            .nav--row {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: baseline;
+            }
+
+            /* BLOCK: menu */
+            .menu {
+                display: flex;
+                margin: 0;
+                padding: 0.25em 0.25em;
+                list-style-type: none;
+            }
+            
+            .menu a {
+                text-decoration: none;
+            }
+        
+            .menu--row {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: baseline;
+                list-style: none;
+            }
+            .menu--row li {
+                align-items: center;
+                height: 2.5em;
+            }
+        
+            .menu--row__title {
+                margin: .25em 0.125em;
+                font: 2em "Rubik Black";
+                border: 1px solid purple;
+            }
+        
+            .menu--row__search {
+                white-space: nowrap;
+            }
+        
+            .menu--row__item {
+                margin-right: 1em;
+                border: 1px solid purple;
+            }
+        </style>
+        `;
     }
 
     template(model, idx) {
@@ -45,6 +96,12 @@ class EntityNavView extends Unseen.View {
             </div>
         `;
 
+    }
+
+    events() {
+        return {
+            "#button-search": ["click", "searchAction"]
+        };
     }
 
     searchAction(evt, viewId) {

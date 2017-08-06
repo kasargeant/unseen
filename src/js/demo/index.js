@@ -16,9 +16,9 @@ const EntityNavView = require("./EntityNavView");
 const EntityMenuView = require("./EntityMenuView");
 const EntityDetailView = require("./EntityDetailView");
 
-// const jQuery = require("jquery");
+const jQuery = require("jquery");
 
-let rawData = require("../../data/processed_sample.json");
+let rawData = require("../../data/processed_half.json");
 
 // MODEL COLLECTION
 let myModelList = new EntityModelList(rawData);
@@ -71,10 +71,10 @@ myDetailView.reset();
 // myViewCollection.render(true);
 //
 // console.timeEnd("render");
-//
-// console.time("insert");
-// jQuery(document).ready(function() {
-//     // Action after append is completely done
-//     console.timeEnd("insert");
-// });
-//
+
+console.time("insert");
+jQuery(document).ready(function() {
+    // Action after append is completely done
+    console.timeEnd("insert");
+});
+

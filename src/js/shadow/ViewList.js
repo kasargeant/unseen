@@ -45,6 +45,7 @@ class ViewList extends Component {
             collection: null,
             views: null,
             useDOM: true,
+            isStyled: true,
             target: "main",
             tag: "div",
             id: "view",      // HTML Element ID
@@ -57,6 +58,7 @@ class ViewList extends Component {
         if(this.collection !== null) {this.collection._parent = this;}
         this.views = options.views || this.views || this.defaults.views;
         this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
+        this.isStyled = options.isStyled || this.isStyled || this.defaults.isStyled;
         this.target = options.target || this.target || this.defaults.target;
         this.tag = options.tag || this.tag || this.defaults.tag;
         this.id = options.id || this.id || this.defaults.id;
@@ -71,6 +73,8 @@ class ViewList extends Component {
         this.$el = null;
         this.markup = "";
         this.deferred = [];
+
+        this.viewStyle = null;
 
         this.viewEvents = null; // We set the viewEvents lookup (i.e. the collected events of all sub-views)
 
@@ -123,10 +127,15 @@ class ViewList extends Component {
             let model = models[id]; // Note if the 'model' IS a single model... it returns itself
 
             // Instantiate view and set private properties.
-            let view = new this.baseClass(model, {}, this);
+            // NOTE: We set isStyled to false - as we will only be adding ONE stylesheet for the entire view list.
+            let view = new this.baseClass(model, {isStyled: false}, this);
+
+            // We stash the first view's scoped stylesheet - for use during rendering of the entire view list.
+            if(!this.viewStyle) {
+                this.viewStyle = view.style();
+            }
 
             // Now add newly created View to store.
-            // this.views[id] = view;
             this.views[view._id] = view;
             this.length++;
         }
@@ -248,7 +257,20 @@ class ViewList extends Component {
     //
     // }
 
-    // template(model, params) {return JSON.stringify(model);}
+    /**
+     * Returns this View's built template.
+     * @returns {string}
+     * @override
+     */
+    template(model, idx=0, params={}) {return "";}
+
+
+    /**
+     * Returns this View's scoped stylesheet.
+     * @returns {string}
+     * @override
+     */
+    style() {return "";}
 
     // _renderFragment(doInsert=false, fragment=null) {
     //
@@ -355,7 +377,11 @@ class ViewList extends Component {
             elementChildren += view._render(false, elementChildren);
         }
 
-        this.markup = elementOpen + elementBody + elementChildren + elementClose;
+        this.markup = this.viewStyle + elementOpen + elementBody + elementChildren + elementClose;
+
+        // Add additional stylesheet for the entire ViewList if required
+        if(this.isStyled) {this.markup = this.style() + this.markup;}
+
         // console.log("MARKUP: " + JSON.stringify(markup.html));
 
         this.emit("rendered"); // Relay the event forward

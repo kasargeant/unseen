@@ -39,6 +39,7 @@ class View extends Component {
             baseClass: null,
             baseModel: null,
             useDOM: true,
+            isStyled: true,
             target: "main",
             tag: "div",
             id: null,      // HTML Element ID
@@ -48,6 +49,7 @@ class View extends Component {
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
         this.baseModel = baseModel || this.config.baseModel || this.baseModel || this.defaults.baseModel;
         this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
+        this.isStyled = options.isStyled || this.isStyled || this.defaults.isStyled;
         this.target = options.target || this.target || this.defaults.target;
         this.tag = options.tag || this.tag || this.defaults.tag;
         this.id = options.id || this.id || this.defaults.id;
@@ -154,7 +156,7 @@ class View extends Component {
     template(model, idx=0, params={}) {return "";}
 
     /**
-     * [UNIMPLEMENTED] Returns this View's scoped stylesheet.
+     * Returns this View's scoped stylesheet.
      * @returns {string}
      * @override
      */
@@ -194,6 +196,10 @@ class View extends Component {
             // YES: Then template result with wrapping tag.
             this.markup = elementOpen + elementBody + elementClose;
         }
+
+        // Add scoped stylesheet if required
+        if(this.isStyled) {this.markup = this.style() + this.markup;}
+
         // console.log("MARKUP: " + JSON.stringify(markup.html));
 
         // if(doInsert === true) {

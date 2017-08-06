@@ -19,10 +19,39 @@ class EntityListItemView extends Unseen.View {
         this.classList = ["card"];
     }
 
-    events() {
-        return {
-            "#button-delete": ["click", "deleteAction"]
-        };
+    style() {
+        return `
+        <style>
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            h2 {
+                font-size: 1em;
+            }
+            h3 {
+                font-size: 0.75em;
+            }
+            h4 {
+                font-size: 0.5em;
+            }
+            
+            
+            a {
+                font-style: normal;
+            }
+            
+            .card {
+                border: 1px dashed red;
+            }
+            
+            footer.entity-item {
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: space-between;
+            }
+        </style>
+        `;
     }
 
     template(model, idx) {
@@ -39,6 +68,12 @@ class EntityListItemView extends Unseen.View {
                 <button id="button-delete" class="btn">Delete</button>
             </footer>
         `;
+    }
+
+    events() {
+        return {
+            "#button-delete": ["click", "deleteAction"]
+        };
     }
 
     deleteAction(evt) {

@@ -21,10 +21,42 @@ class EntityMenuView extends Unseen.View {
         this.classList = ["nav--column"];
     }
 
-    events() {
-        return {
-            "#button-search": ["click", "searchAction"]
-        };
+    style() {
+        return `
+        <style>
+            nav {
+                display: flex;
+                border: 1px solid green;
+            }
+            
+            .nav--column {
+                flex-direction: column;
+                align-items: baseline;
+            }        
+        
+            /* BLOCK: menu */
+            .menu {
+                display: flex;
+                margin: 0;
+                padding: 0.25em 0.25em;
+                list-style-type: none;
+            }
+            
+            .menu a {
+                text-decoration: none;
+            }
+        
+            .menu--column {
+                flex-direction: column;
+                align-items: baseline;
+                list-style: none;
+            }
+        
+            .menu--column__item {
+                border: 1px solid orange;
+            }
+        </style>
+        `;
     }
 
     template(model, idx) {
@@ -65,6 +97,12 @@ class EntityMenuView extends Unseen.View {
             </ul>
         `;
 
+    }
+
+    events() {
+        return {
+            "#button-search": ["click", "searchAction"]
+        };
     }
 
     searchAction(evt, viewId) {
