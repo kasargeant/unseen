@@ -120,6 +120,7 @@ class ViewList extends Component {
     reset(models) {
         // Instantiate initial View components from ModelList models
         this.views = {};
+        this.viewEvents = {};
         this.length = 0;
         for(let id in models) {
 
@@ -129,6 +130,9 @@ class ViewList extends Component {
             // Instantiate view and set private properties.
             // NOTE: We set isStyled to false - as we will only be adding ONE stylesheet for the entire view list.
             let view = new this.baseClass(model, {isStyled: false}, this);
+
+            // We stash the view events for all contained views;
+            this.viewEvents[view._id] = view.events();
 
             // We stash the first view's scoped stylesheet - for use during rendering of the entire view list.
             if(!this.viewStyle) {
@@ -365,15 +369,10 @@ class ViewList extends Component {
         elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
         // console.log("CONTENT: " + JSON.stringify(element.html));
 
-        // Are we a top-level view?
-        // Collect events
-        this.viewEvents = {};
-
         // Now we add any sub-views
         let elementChildren = "";
         for(let id in this.views) {
             let view = this.views[id];
-            this.viewEvents[view._id] = view.events();
             elementChildren += view._render(false, elementChildren);
         }
 
@@ -443,9 +442,6 @@ class ViewList extends Component {
         elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
         // console.log("CONTENT: " + JSON.stringify(element.html));
 
-        // Collect events
-        let viewEvents = {};
-
         if(doInsert === true) {
             let html = elementOpen + elementBody + elementClose;
             this.$el = jQuery(html).appendTo(this.target).get(0);
@@ -490,9 +486,6 @@ class ViewList extends Component {
 
             // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
             if(!this._parent) {
-
-                // We set the viewEvents lookup
-                this.viewEvents = viewEvents; // Note: Array NOT just a single object!
 
                 // Add top-level event listener
                 this.$el.addEventListener("click", this._handleEvents.bind(this), false);

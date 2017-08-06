@@ -18,7 +18,7 @@ const EntityDetailView = require("./EntityDetailView");
 
 const jQuery = require("jquery");
 
-let rawData = require("../../data/processed_half.json");
+let rawData = require("../../data/processed_sample.json");
 
 // MODEL COLLECTION
 let myModelList = new EntityModelList(rawData);
