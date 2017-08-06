@@ -97,10 +97,11 @@ class View extends Component {
      * Destroys the View.
      */
     destroy() {
-        let selector = `#${this.id}-${this._id}`;
-        console.log("SELECTOR" + selector);
         console.log(`View ${this._id} is being destroyed!!!`);
-        jQuery(selector).remove();
+        // let id = `${this.id}-${this._id}`;
+        this.send(this._parent, {action: "remove", id: this._id});
+        //console.log("SELECTOR" + selector);
+        //jQuery(selector).remove();
 
         this.baseModel.destroy();
     }

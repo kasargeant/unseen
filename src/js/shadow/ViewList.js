@@ -95,6 +95,16 @@ class ViewList extends Component {
         // TODO - Add internal events listener used by Views signalling this ViewList
     }
 
+    // Overrides Component super method
+    receive(src, msg) {
+        console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src._id}`);
+        if(["remove"].includes(msg.action)) {
+            this[msg.action](msg.id);
+        } else {
+            console.error(`ModelList received unrecognised message: ${JSON.stringify(msg)}`);
+        }
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // DATA METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,6 +130,30 @@ class ViewList extends Component {
             this.views[view._id] = view;
             this.length++;
         }
+    }
+
+    remove(id) {
+        console.log(`ViewList removing View UUID: ${id}`);
+        let view = this.views[id];
+        if(!view) {console.error("NO VIEW FOUND!");}
+        let selectorID = `${view.id}-${view._id}`;
+        console.log("selectorID: " + selectorID);
+
+        let element = this.$el.shadowRoot.getElementById(selectorID);
+        element.outerHTML = "";
+
+        // let element = this.$el.shadowRoot.querySelector(selector);
+
+        // console.log(element);
+
+        // element.outerHTML = "";
+        // element.parentElement.removeChild(element);
+        console.log(`ViewList: View ${id} output removed from DOM.`);
+
+        // Remove the View from the view list array.
+        delete this.views[id];
+        console.log(`ViewList: View ${id} removed from ViewList.`);
+
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -260,6 +294,40 @@ class ViewList extends Component {
      * @returns {string|*|string}
      * @private
      */
+    // _render() {
+    //
+    //     let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
+    //     classList.push(...this.classList); // We add any remaining classes.
+    //
+    //     let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
+    //     let elementClose = "</" + this.tag + ">";
+    //     // let elementBody = this.template(this.baseModel, 0);
+    //     let elementBody = "";
+    //
+    //     // First we make any element ids in this View - unique.
+    //     // elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+    //     elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+    //     // console.log("CONTENT: " + JSON.stringify(element.html));
+    //
+    //     // Are we a top-level view?
+    //     // Collect events
+    //     this.viewEvents = {};
+    //
+    //     // Now we add any sub-views
+    //     let elementChildren = "";
+    //     for(let id in this.views) {
+    //         let view = this.views[id];
+    //         this.viewEvents[view._id] = view.events();
+    //         elementChildren += view._render(false, elementChildren);
+    //     }
+    //
+    //     this.markup = elementOpen + elementBody + elementChildren + elementClose;
+    //     // console.log("MARKUP: " + JSON.stringify(markup.html));
+    //
+    //     this.emit("rendered"); // Relay the event forward
+    //
+    //     return this.markup;
+    // }
     _render() {
 
         let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
@@ -295,20 +363,36 @@ class ViewList extends Component {
         return this.markup;
     }
 
+
     /**
      *
      * @private
      */
+    // _insert() {
+    //     // jQuery(this.target).append(markup);
+    //     console.log(`Appending to ${this.target}`);
+    //     this.$el = jQuery(this.markup).appendTo(this.target).get(0);
+    //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+    //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+    //     if(!this._parent) {
+    //         // Add top-level event listener
+    //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+    //     }
+    // }
     _insert() {
-        // jQuery(this.target).append(markup);
-        console.log(`Appending to ${this.target}`);
-        this.$el = jQuery(this.markup).appendTo(this.target).get(0);
-        if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+        console.log("Creating Shadow DOM");
+        this.$el = document.createElement("div");
+        const shadowRoot = this.$el.attachShadow({mode: "open"});
+        shadowRoot.innerHTML = this.markup;
         if(!this._parent) {
             // Add top-level event listener
-            this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+            shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
         }
+        console.log(`Appending to ${this.target}`);
+        jQuery(this.target).append(this.$el);
+        // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+
     }
 
     _deferAppend(html) {
