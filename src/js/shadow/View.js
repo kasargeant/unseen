@@ -215,20 +215,37 @@ class View extends Component {
         return this.markup;
     }
 
+    // _insert() {
+    //     // jQuery(this.target).append(markup);
+    //     console.log(`Appending to ${this.target}`);
+    //     this.$el = jQuery(this.markup).appendTo(this.target).get(0);
+    //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+    //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+    //     if(!this._parent) {
+    //
+    //         // We set the viewEvents lookup
+    //         this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+    //
+    //         // Add top-level event listener
+    //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+    //     }
+    // }
     _insert() {
-        // jQuery(this.target).append(markup);
-        console.log(`Appending to ${this.target}`);
-        this.$el = jQuery(this.markup).appendTo(this.target).get(0);
-        if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+        console.log("Creating Shadow DOM");
+        this.$el = document.createElement("div");
+        const shadowRoot = this.$el.attachShadow({mode: "open"});
+        shadowRoot.innerHTML = this.markup;
         if(!this._parent) {
 
             // We set the viewEvents lookup
             this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
 
             // Add top-level event listener
-            this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+            shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
         }
+        console.log(`Appending to ${this.target}`);
+        jQuery(this.target).append(this.$el);
+        // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
     }
 }
 

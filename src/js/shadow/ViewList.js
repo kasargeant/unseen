@@ -391,8 +391,6 @@ class ViewList extends Component {
         console.log(`Appending to ${this.target}`);
         jQuery(this.target).append(this.$el);
         // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-
     }
 
     _deferAppend(html) {
