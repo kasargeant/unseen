@@ -366,14 +366,13 @@ class ViewList extends Component {
 
         // First we make any element ids in this View - unique.
         // elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
-        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        //elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
         // console.log("CONTENT: " + JSON.stringify(element.html));
 
         // Now we add any sub-views
-        let elementChildren = "";
-        for(let id in this.views) {
-            let view = this.views[id];
-            elementChildren += view._render(false, elementChildren);
+        var elementChildren = "";
+        for(var id in this.views) {
+            elementChildren += this.views[id]._render(false, elementChildren);
         }
 
         this.markup = this.viewStyle + elementOpen + elementBody + elementChildren + elementClose;
@@ -382,8 +381,6 @@ class ViewList extends Component {
         if(this.isStyled) {this.markup = this.style() + this.markup;}
 
         // console.log("MARKUP: " + JSON.stringify(markup.html));
-
-        this.emit("rendered"); // Relay the event forward
 
         return this.markup;
     }
@@ -404,6 +401,8 @@ class ViewList extends Component {
     //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
     //     }
     // }
+
+//WORKING SHADOW DOM - first version
     _insert() {
         console.log("Creating Shadow DOM");
         this.$el = document.createElement("div");
@@ -417,6 +416,34 @@ class ViewList extends Component {
         jQuery(this.target).append(this.$el);
         // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
     }
+
+
+    /// SECOND ATTEMPT
+    // _insert() {
+    //     console.log("Creating Shadow DOM");
+    //     this.$el = document.createElement("div");
+    //     const shadowRoot = this.$el.attachShadow({mode: "open"});
+    //
+    //     console.log("Creating DIV");
+    //     var div = document.createElement("div");
+    //     div.innerHTML = this.markup;
+    //     div.id = "inside";
+    //     console.log("Created DIV");
+    //
+    //     shadowRoot.appendChild(div);
+    //
+    //     console.log("Appended DIV to shadow");
+    //
+    //     // shadowRoot.innerHTML = this.markup;
+    //     if(!this._parent) {
+    //         // Add top-level event listener
+    //         shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
+    //     }
+    //     console.log(`Appending to ${this.target}`);
+    //     jQuery(this.target).append(this.$el);
+    //     // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+    // }
+
 
     _deferAppend(html) {
         this.deferred.push(html);

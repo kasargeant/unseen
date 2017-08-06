@@ -24,7 +24,10 @@ class EntityViewList extends Unseen.ViewList {
     style() {
         return `
         <style>
-            
+            :host {
+                display: inline-block;
+                contain: content;
+            }
             h1 {
                 font-size: 1.5em;
             }
