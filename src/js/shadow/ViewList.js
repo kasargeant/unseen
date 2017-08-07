@@ -45,6 +45,7 @@ class ViewList extends Component {
             collection: null,
             views: null,
             useDOM: true,
+            isStyled: true,
             target: "main",
             tag: "div",
             id: "view",      // HTML Element ID
@@ -57,6 +58,7 @@ class ViewList extends Component {
         if(this.collection !== null) {this.collection._parent = this;}
         this.views = options.views || this.views || this.defaults.views;
         this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
+        this.isStyled = options.isStyled || this.isStyled || this.defaults.isStyled;
         this.target = options.target || this.target || this.defaults.target;
         this.tag = options.tag || this.tag || this.defaults.tag;
         this.id = options.id || this.id || this.defaults.id;
@@ -71,6 +73,8 @@ class ViewList extends Component {
         this.$el = null;
         this.markup = "";
         this.deferred = [];
+
+        this.viewStyle = null;
 
         this.viewEvents = null; // We set the viewEvents lookup (i.e. the collected events of all sub-views)
 
@@ -95,6 +99,16 @@ class ViewList extends Component {
         // TODO - Add internal events listener used by Views signalling this ViewList
     }
 
+    // Overrides Component super method
+    receive(src, msg) {
+        console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src._id}`);
+        if(["remove"].includes(msg.action)) {
+            this[msg.action](msg.id);
+        } else {
+            console.error(`ModelList received unrecognised message: ${JSON.stringify(msg)}`);
+        }
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // DATA METHODS
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -106,6 +120,7 @@ class ViewList extends Component {
     reset(models) {
         // Instantiate initial View components from ModelList models
         this.views = {};
+        this.viewEvents = {};
         this.length = 0;
         for(let id in models) {
 
@@ -113,13 +128,45 @@ class ViewList extends Component {
             let model = models[id]; // Note if the 'model' IS a single model... it returns itself
 
             // Instantiate view and set private properties.
-            let view = new this.baseClass(model, {}, this);
+            // NOTE: We set isStyled to false - as we will only be adding ONE stylesheet for the entire view list.
+            let view = new this.baseClass(model, {isStyled: false}, this);
+
+            // We stash the view events for all contained views;
+            this.viewEvents[view._id] = view.events();
+
+            // We stash the first view's scoped stylesheet - for use during rendering of the entire view list.
+            if(!this.viewStyle) {
+                this.viewStyle = view.style();
+            }
 
             // Now add newly created View to store.
-            // this.views[id] = view;
             this.views[view._id] = view;
             this.length++;
         }
+    }
+
+    remove(id) {
+        console.log(`ViewList removing View UUID: ${id}`);
+        let view = this.views[id];
+        if(!view) {console.error("NO VIEW FOUND!");}
+        let selectorID = `${view.id}-${view._id}`;
+        console.log("selectorID: " + selectorID);
+
+        let element = this.$el.shadowRoot.getElementById(selectorID);
+        element.outerHTML = "";
+
+        // let element = this.$el.shadowRoot.querySelector(selector);
+
+        // console.log(element);
+
+        // element.outerHTML = "";
+        // element.parentElement.removeChild(element);
+        console.log(`ViewList: View ${id} output removed from DOM.`);
+
+        // Remove the View from the view list array.
+        delete this.views[id];
+        console.log(`ViewList: View ${id} removed from ViewList.`);
+
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,7 +261,20 @@ class ViewList extends Component {
     //
     // }
 
-    // template(model, params) {return JSON.stringify(model);}
+    /**
+     * Returns this View's built template.
+     * @returns {string}
+     * @override
+     */
+    template(model, idx=0, params={}) {return "";}
+
+
+    /**
+     * Returns this View's scoped stylesheet.
+     * @returns {string}
+     * @override
+     */
+    style() {return "";}
 
     // _renderFragment(doInsert=false, fragment=null) {
     //
@@ -260,6 +320,40 @@ class ViewList extends Component {
      * @returns {string|*|string}
      * @private
      */
+    // _render() {
+    //
+    //     let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
+    //     classList.push(...this.classList); // We add any remaining classes.
+    //
+    //     let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
+    //     let elementClose = "</" + this.tag + ">";
+    //     // let elementBody = this.template(this.baseModel, 0);
+    //     let elementBody = "";
+    //
+    //     // First we make any element ids in this View - unique.
+    //     // elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+    //     elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+    //     // console.log("CONTENT: " + JSON.stringify(element.html));
+    //
+    //     // Are we a top-level view?
+    //     // Collect events
+    //     this.viewEvents = {};
+    //
+    //     // Now we add any sub-views
+    //     let elementChildren = "";
+    //     for(let id in this.views) {
+    //         let view = this.views[id];
+    //         this.viewEvents[view._id] = view.events();
+    //         elementChildren += view._render(false, elementChildren);
+    //     }
+    //
+    //     this.markup = elementOpen + elementBody + elementChildren + elementClose;
+    //     // console.log("MARKUP: " + JSON.stringify(markup.html));
+    //
+    //     this.emit("rendered"); // Relay the event forward
+    //
+    //     return this.markup;
+    // }
     _render() {
 
         let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
@@ -272,44 +366,84 @@ class ViewList extends Component {
 
         // First we make any element ids in this View - unique.
         // elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
-        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        //elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
         // console.log("CONTENT: " + JSON.stringify(element.html));
 
-        // Are we a top-level view?
-        // Collect events
-        this.viewEvents = {};
-
         // Now we add any sub-views
-        let elementChildren = "";
-        for(let id in this.views) {
-            let view = this.views[id];
-            this.viewEvents[view._id] = view.events();
-            elementChildren += view._render(false, elementChildren);
+        var elementChildren = "";
+        for(var id in this.views) {
+            elementChildren += this.views[id]._render(false, elementChildren);
         }
 
-        this.markup = elementOpen + elementBody + elementChildren + elementClose;
-        // console.log("MARKUP: " + JSON.stringify(markup.html));
+        this.markup = this.viewStyle + elementOpen + elementBody + elementChildren + elementClose;
 
-        this.emit("rendered"); // Relay the event forward
+        // Add additional stylesheet for the entire ViewList if required
+        if(this.isStyled) {this.markup = this.style() + this.markup;}
+
+        // console.log("MARKUP: " + JSON.stringify(markup.html));
 
         return this.markup;
     }
+
 
     /**
      *
      * @private
      */
+    // _insert() {
+    //     // jQuery(this.target).append(markup);
+    //     console.log(`Appending to ${this.target}`);
+    //     this.$el = jQuery(this.markup).appendTo(this.target).get(0);
+    //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+    //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+    //     if(!this._parent) {
+    //         // Add top-level event listener
+    //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+    //     }
+    // }
+
+//WORKING SHADOW DOM - first version
     _insert() {
-        // jQuery(this.target).append(markup);
-        console.log(`Appending to ${this.target}`);
-        this.$el = jQuery(this.markup).appendTo(this.target).get(0);
-        if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+        console.log("Creating Shadow DOM");
+        this.$el = document.createElement("div");
+        const shadowRoot = this.$el.attachShadow({mode: "open"});
+        shadowRoot.innerHTML = this.markup;
         if(!this._parent) {
             // Add top-level event listener
-            this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+            shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
         }
+        console.log(`Appending to ${this.target}`);
+        jQuery(this.target).append(this.$el);
+        // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
     }
+
+
+    /// SECOND ATTEMPT
+    // _insert() {
+    //     console.log("Creating Shadow DOM");
+    //     this.$el = document.createElement("div");
+    //     const shadowRoot = this.$el.attachShadow({mode: "open"});
+    //
+    //     console.log("Creating DIV");
+    //     var div = document.createElement("div");
+    //     div.innerHTML = this.markup;
+    //     div.id = "inside";
+    //     console.log("Created DIV");
+    //
+    //     shadowRoot.appendChild(div);
+    //
+    //     console.log("Appended DIV to shadow");
+    //
+    //     // shadowRoot.innerHTML = this.markup;
+    //     if(!this._parent) {
+    //         // Add top-level event listener
+    //         shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
+    //     }
+    //     console.log(`Appending to ${this.target}`);
+    //     jQuery(this.target).append(this.$el);
+    //     // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+    // }
+
 
     _deferAppend(html) {
         this.deferred.push(html);
@@ -334,9 +468,6 @@ class ViewList extends Component {
         // First we make any element ids in this View - unique.
         elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
         // console.log("CONTENT: " + JSON.stringify(element.html));
-
-        // Collect events
-        let viewEvents = {};
 
         if(doInsert === true) {
             let html = elementOpen + elementBody + elementClose;
@@ -382,9 +513,6 @@ class ViewList extends Component {
 
             // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
             if(!this._parent) {
-
-                // We set the viewEvents lookup
-                this.viewEvents = viewEvents; // Note: Array NOT just a single object!
 
                 // Add top-level event listener
                 this.$el.addEventListener("click", this._handleEvents.bind(this), false);

@@ -39,6 +39,7 @@ class View extends Component {
             baseClass: null,
             baseModel: null,
             useDOM: true,
+            isStyled: true,
             target: "main",
             tag: "div",
             id: null,      // HTML Element ID
@@ -48,6 +49,8 @@ class View extends Component {
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
         this.baseModel = baseModel || this.config.baseModel || this.baseModel || this.defaults.baseModel;
         this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
+        // this.isStyled = options.isStyled || this.isStyled || this.defaults.isStyled;
+        this.isStyled = (options.isStyled !== undefined) ? options.isStyled : this.isStyled || this.defaults.isStyled;
         this.target = options.target || this.target || this.defaults.target;
         this.tag = options.tag || this.tag || this.defaults.tag;
         this.id = options.id || this.id || this.defaults.id;
@@ -97,10 +100,11 @@ class View extends Component {
      * Destroys the View.
      */
     destroy() {
-        let selector = `#${this.id}-${this._id}`;
-        console.log("SELECTOR" + selector);
         console.log(`View ${this._id} is being destroyed!!!`);
-        jQuery(selector).remove();
+        // let id = `${this.id}-${this._id}`;
+        this.send(this._parent, {action: "remove", id: this._id});
+        //console.log("SELECTOR" + selector);
+        //jQuery(selector).remove();
 
         this.baseModel.destroy();
     }
@@ -153,7 +157,7 @@ class View extends Component {
     template(model, idx=0, params={}) {return "";}
 
     /**
-     * [UNIMPLEMENTED] Returns this View's scoped stylesheet.
+     * Returns this View's scoped stylesheet.
      * @returns {string}
      * @override
      */
@@ -193,6 +197,10 @@ class View extends Component {
             // YES: Then template result with wrapping tag.
             this.markup = elementOpen + elementBody + elementClose;
         }
+
+        // Add scoped stylesheet if required
+        if(this.isStyled) {this.markup = this.style() + this.markup;}
+
         // console.log("MARKUP: " + JSON.stringify(markup.html));
 
         // if(doInsert === true) {
@@ -214,20 +222,37 @@ class View extends Component {
         return this.markup;
     }
 
+    // _insert() {
+    //     // jQuery(this.target).append(markup);
+    //     console.log(`Appending to ${this.target}`);
+    //     this.$el = jQuery(this.markup).appendTo(this.target).get(0);
+    //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+    //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+    //     if(!this._parent) {
+    //
+    //         // We set the viewEvents lookup
+    //         this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+    //
+    //         // Add top-level event listener
+    //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+    //     }
+    // }
     _insert() {
-        // jQuery(this.target).append(markup);
-        console.log(`Appending to ${this.target}`);
-        this.$el = jQuery(this.markup).appendTo(this.target).get(0);
-        if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+        console.log("Creating Shadow DOM");
+        this.$el = document.createElement("div");
+        const shadowRoot = this.$el.attachShadow({mode: "open"});
+        shadowRoot.innerHTML = this.markup;
         if(!this._parent) {
 
             // We set the viewEvents lookup
             this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
 
             // Add top-level event listener
-            this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+            shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
         }
+        console.log(`Appending to ${this.target}`);
+        jQuery(this.target).append(this.$el);
+        // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
     }
 }
 

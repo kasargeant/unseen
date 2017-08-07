@@ -7,7 +7,7 @@
 "use strict";
 
 // Imports
-const Unseen = require("../../index");
+const Unseen = require("../shadow/Unseen");
 const EntityModel = require("./model/EntityModel");
 const EntityModelList = require("./model/EntityModelList");
 const EntityListViewList = require("./EntityViewList");
@@ -18,7 +18,7 @@ const EntityDetailView = require("./EntityDetailView");
 
 const jQuery = require("jquery");
 
-let rawData = require("../../data/processed_half.json");
+let rawData = require("../../data/processed_sample.json");
 
 // MODEL COLLECTION
 let myModelList = new EntityModelList(rawData);
@@ -59,6 +59,15 @@ myDetailView.reset();
 
 
 
+// DEMO: BROWSER
+console.log(`Testing with ${myModelList.length} records.`);
+console.time("insert");
+jQuery(document).ready(function() {
+    // Action after append is completely done
+    console.timeEnd("insert");
+});
+
+
 // DEMO: CONSOLE
 // let markupResult = {html: ""};
 // myViewList._renderMarkup(false, markupResult);
@@ -71,10 +80,10 @@ myDetailView.reset();
 // myViewCollection.render(true);
 //
 // console.timeEnd("render");
-
-console.time("insert");
-jQuery(document).ready(function() {
-    // Action after append is completely done
-    console.timeEnd("insert");
-});
-
+//
+// console.time("insert");
+// jQuery(document).ready(function() {
+//     // Action after append is completely done
+//     console.timeEnd("insert");
+// });
+//

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shadow DOM test</title>
+</head>
+<body>
+<div id="container"></div>
+<script>
+    // Attach a shadow root to <fancy-tabs>.
+    const $container = document.getElementById("container");
+    const shadowRoot = $container.attachShadow({mode: "open"});
+
+    //Inside element
+    var span = document.createElement( "span" );
+    span.textContent = "i'm inside the Shadow DOM";
+    span.id = "inside";
+    shadowRoot.appendChild( span );
+
+    //Access inside element
+    console.log( container.shadowRoot.querySelector( "#inside" ) );
+
+    var span = document.createElement( "span" );
+    span.textContent = "i'm ALSO inside the Shadow DOM";
+    span.id = "inside2";
+    container.shadowRoot.appendChild( span );
+</script>
+</body>
+</html>
