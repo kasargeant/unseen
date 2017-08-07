@@ -41,12 +41,14 @@ class EntityListItemView extends Unseen.View {
                 font-style: normal;
             }
             
-            .card {
+            article {
+                margin-bottom: 0.25em;
+                padding: 0.25em;
                 background-color: lightgray;
                 border-radius: .5em;
             }
             
-            footer.entity-item {
+            footer {
                 display: flex;
                 flex-direction: row-reverse;
                 justify-content: space-between;
@@ -58,14 +60,14 @@ class EntityListItemView extends Unseen.View {
     template(model, idx) {
 
         return `
-            <header class="entity-item">
+            <header>
                 <h3 class="subtitle">${model.id}</h3>
                 <h1 class="title">${model.name}</h1>
             </header>
-            <section class="entity-item">
+            <section>
                 ${model.id}: ${model.type} - ${model.name}
             </section>
-            <footer class="entity-item">
+            <footer>
                 <button id="button-delete" class="btn">Delete</button>
             </footer>
         `;

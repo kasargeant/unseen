@@ -29,11 +29,10 @@ class EntityDetailView extends Unseen.View {
                 background-color: lightgray;
                 border-radius: .5em;
             }
-            .msg-list {
-
-            }
-            .msg-list__item {
-                padding-bottom: .5em;
+            .list {}
+            .item {
+                padding-bottom: .25em;
+                list-style-type: decimal-leading-zero;
             }
         </style>
         `;
@@ -48,23 +47,23 @@ class EntityDetailView extends Unseen.View {
 
         return `
             <h2>Comments</h2>
-            <ul class="msg">
-                <li class="msg-item">
+            <ul class="list">
+                <li class="item">
                     Bla blab blbb lblabbl l lbalb lablbalab lba
                 </li>
-                <li class="msg-item">
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                </li>
-                <li class="msg-item">
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                </li>
-                <li class="msg-item">
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
+                <li class="item">
                     Bla blab blbb lblabbl l lbalb lablbalab lba
                     Bla blab blbb lblabbl l lbalb lablbalab lba
                 </li>
-                <li class="msg-item">
+                <li class="item">
+                    Bla blab blbb lblabbl l lbalb lablbalab lba
+                </li>
+                <li class="item">
+                    Bla blab blbb lblabbl l lbalb lablbalab lba
+                    Bla blab blbb lblabbl l lbalb lablbalab lba
+                    Bla blab blbb lblabbl l lbalb lablbalab lba
+                </li>
+                <li class="item">
                     Bla blab blbb lblabbl l lbalb lablbalab lba
                     Bla blab blbb lblabbl l lbalb lablbalab lba
                 </li>

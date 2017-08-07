@@ -26,7 +26,8 @@ class EntityMenuView extends Unseen.View {
         <style>
             nav {
                 display: flex;
-                background-color: lightgray;
+                padding: 0.25em;
+                background-color: #666;
                 border-radius: .5em;
             }
             
@@ -38,23 +39,24 @@ class EntityMenuView extends Unseen.View {
             /* BLOCK: menu */
             .menu {
                 display: flex;
+                flex-direction: column;
+                align-items: baseline;
                 margin: 0;
                 padding: 0.25em 0.25em;
-                list-style-type: none;
+                list-style: none;
             }
             
             .menu a {
+                color: white;
                 text-decoration: none;
             }
+            .sub-menu a {
+                color: #DDD;
+                text-decoration: none;
+            }           
         
-            .menu--column {
-                flex-direction: column;
-                align-items: baseline;
-                list-style: none;
-            }
-        
-            .menu--column__item {
-                border: 1px solid orange;
+            .item {
+                margin-bottom: 0.25em;
             }
         </style>
         `;
@@ -68,31 +70,31 @@ class EntityMenuView extends Unseen.View {
         }
 
         return `
-            <ul class="menu menu--column">
-                <li class="menu--column__item">
+            <ul class="menu">
+                <li class="item">
                     <a href="index.html#introduction">Getting started</a>
                 </li>
-                <li class="menu--column__item">
+                <li class="item">
                     <a href="elements.html">Elements</a>
                 </li>
-                <li class="menu--column__item active">
+                <li class="item active">
                     <a href="layout.html">Layout</a>
-                    <ul class="nav">
-                        <li class="menu--column__item">
+                    <ul class="sub-menu">
+                        <li class="item">
                             <a href="layout.html#grid">Flexbox grid</a>
                         </li>
-                        <li class="menu--column__item">
+                        <li class="item">
                             <a href="layout.html#responsive">Responsive</a>
                         </li>
                     </ul>
                 </li>
-                <li class="menu--column__item">
+                <li class="item">
                     <a href="components.html">Components</a>
                 </li>
-                <li class="menu--column__item">
+                <li class="item">
                     <a href="utilities.html">Utilities</a>
                 </li>
-                <li class="menu--column__item">
+                <li class="item">
                     <a href="experimentals.html">Experimentals</a>
                 </li>
             </ul>
