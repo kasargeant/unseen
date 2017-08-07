@@ -12,9 +12,7 @@
 
 It offers developers an entirely **component-based** and **encapsulated approach** to contructing applications.
 
-And is a library - in the Backbone.js sense - that it provides developers with a selection of core components that they can use or ignore as their needs require.  
-
-For example, if you want to use Unseen's powerful data model and back-end support - but with React or Vue providing the visuals - you can.
+That means, no need for separate stylesheets, no need for separate templates, everything handled by JS alone - and all component/widget creation and wiring is done in one place - for maximum productivity and maintainability.
 
 ## FEATURES
 
@@ -22,13 +20,11 @@ For example, if you want to use Unseen's powerful data model and back-end suppor
 
 * It's main design goal is to be invisible.  That is, to function as automatically as possible, with as little boilerplate as possible.
 
-* And it's main implementational advantage is to utilise - by default - will utilise the new Shadow DOM v1 functionality available in modern browsers and mobiles.
-
-Thus, in every way... Unseen! ;)
+* And it's main implementation advantage is to utilise and the new Shadow DOM v1 functionality available in modern browsers and mobiles.
 
 As to specific features:-
 
-* Modern **ES2015 design and implementation** - new components created simply using 'extends'.
+* Modern **ES2015 design and implementation** - Model and View components created simply using 'extends'.
 * **Components encapsulate all markup, style and logic** - with **no bleeding or pollution** of other components or the main page.
 * **Cleaner, simpler code and stylesheets** than non-component based applications of equivalent functionality!
 * Data models can **sync with a wide variety of back-ends**:- files, REST, [TODO] Socket.IO or [TODO] raw Websockets.
