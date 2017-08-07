@@ -26,7 +26,8 @@ class EntityNavView extends Unseen.View {
         <style>
             nav {
                 display: flex;
-                border: 1px solid green;
+                background-color: lightgray;
+                border-radius: .5em;
             }
             .nav--row {
                 flex-direction: row;
@@ -44,7 +45,10 @@ class EntityNavView extends Unseen.View {
             }
             
             .menu a {
+                padding: 0 1em;
                 text-decoration: none;
+                background-color: darkgrey;
+                border-radius: .5em;
             }
         
             .menu--row {
@@ -63,7 +67,6 @@ class EntityNavView extends Unseen.View {
             .menu--row__title {
                 margin: .25em 0.125em;
                 font: 2em "Rubik Black";
-                border: 1px solid purple;
             }
         
             .menu--row__search {
@@ -72,7 +75,6 @@ class EntityNavView extends Unseen.View {
         
             .menu--row__item {
                 margin-right: 1em;
-                border: 1px solid purple;
             }
         </style>
         `;

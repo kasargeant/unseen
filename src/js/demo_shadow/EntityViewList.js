@@ -26,6 +26,7 @@ class EntityViewList extends Unseen.ViewList {
         <style>
             :host {
                 display: inline-block;
+                width: 100%;
                 contain: content;
             }
             h1 {
@@ -40,7 +41,6 @@ class EntityViewList extends Unseen.ViewList {
             h4 {
                 font-size: 0.5em;
             }
-            
             
             a {
                 font-style: normal;

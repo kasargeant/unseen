@@ -42,7 +42,8 @@ class EntityListItemView extends Unseen.View {
             }
             
             .card {
-                border: 1px dashed red;
+                background-color: lightgray;
+                border-radius: .5em;
             }
             
             footer.entity-item {

@@ -26,7 +26,8 @@ class EntityMenuView extends Unseen.View {
         <style>
             nav {
                 display: flex;
-                border: 1px solid green;
+                background-color: lightgray;
+                border-radius: .5em;
             }
             
             .nav--column {

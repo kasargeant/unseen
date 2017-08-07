@@ -21,10 +21,22 @@ class EntityDetailView extends Unseen.View {
         this.classList = [];
     }
 
-    events() {
-        return {
-            "#button-search": ["click", "searchAction"]
-        };
+    style() {
+        return `
+        <style>
+            section.detail {
+                padding: .25em;
+                background-color: lightgray;
+                border-radius: .5em;
+            }
+            .msg-list {
+
+            }
+            .msg-list__item {
+                padding-bottom: .5em;
+            }
+        </style>
+        `;
     }
 
     template(model, idx) {
@@ -59,6 +71,12 @@ class EntityDetailView extends Unseen.View {
             </ul>
         `;
 
+    }
+
+    events() {
+        return {
+            "#button-search": ["click", "searchAction"]
+        };
     }
 
     searchAction(evt, viewId) {
