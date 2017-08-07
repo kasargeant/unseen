@@ -1,4 +1,4 @@
-
+/* FONTS */
 @font-face {
     font-family: "Rubik Light";
     src: url("./font/Rubik/Rubik-Light.ttf");
@@ -43,6 +43,7 @@
     font-style: italic, oblique;
 }
 
+/* BODY RULES */
 body {
     background-color: black;
     font: .75em "Rubik";
@@ -52,17 +53,11 @@ header {
     margin: 0.25%;
 }
 
-section {
-}
-
 section#content {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     width: 100%;
-}
-
-footer {
 }
 
 aside {
@@ -80,116 +75,8 @@ main {
     width: 45%;
 }
 
-
-
-nav {
-    display: flex;
-    border: 1px solid green;
-}
-.nav--row {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-}
-.nav--column {
-    flex-direction: column;
-    align-items: baseline;
-}
-
-
-h1 {
-    font-size: 1.5em;
-}
-h2 {
-    font-size: 1em;
-}
-h3 {
-    font-size: 0.75em;
-}
-h4 {
-    font-size: 0.5em;
-}
-
-
-a {
-    font-style: normal;
-}
-
-
-/* BLOCK: menu */
-.menu {
-    display: flex;
-    margin: 0;
-    padding: 0.25em 0.25em;
-    list-style-type: none;
-}
-
-.menu a {
-    text-decoration: none;
-}
-
-    .menu--row {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: baseline;
-        list-style: none;
-    }
-    .menu--row li {
-        align-items: center;
-        height: 2.5em;
-    }
-
-    .menu--row__title {
-        margin: .25em 0.125em;
-        font: 2em "Rubik Black";
-        border: 1px solid purple;
-    }
-
-    .menu--row__search {
-        white-space: nowrap;
-    }
-
-    .menu--row__item {
-        margin-right: 1em;
-        border: 1px solid purple;
-    }
-
-    .menu--column {
-        flex-direction: column;
-        align-items: baseline;
-        list-style: none;
-    }
-
-    .menu--column__item {
-        border: 1px solid orange;
-    }
-
-.card {
-    border: 1px dashed red;
-}
-
-footer.entity-item {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-}
-
-
-/* BLOCK: msg-list */
-.msg-list {}
-.msg-list__item {
-    padding-bottom: .5em;
-}
+/* MEDIA QUERIES */
 @media screen and (max-width: 480px) {
-
-    .nav--row {
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: baseline;
-    }
 
     section#content {
         justify-content: space-between;
@@ -204,17 +91,7 @@ footer.entity-item {
     }
 }
 
-
-
-
-
 @media screen and (max-width: 320px) {
-
-    .nav--row {
-        flex-direction: column;
-        justify-content: inherit;
-        align-items: inherit;
-    }
 
     section#content {
         display: flex;
