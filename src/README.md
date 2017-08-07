@@ -7,13 +7,11 @@
 
 *Unseen* utilises a standard MVC design as its base for delivering SPAs and other web application UIs.  
 
-It is data-centric in it's design - it attempts to 'wrap' the existing data as-is - rather than force it into a pre-defined format.
+It is data-centric in it's design.  It attempts to 'wrap' the existing data as-is - rather than force it into a pre-defined format.
 
-And it is data-driven in it's functioning - where the most typical out-the-box setup will automatically sync and "push" data updates forward to views without need for any 'controller' code.
+And it's data-driven in it's functioning.  Where the most typical out-the-box setup will automatically sync and "push" data updates forward to views without need for any 'controller' code.
 
-Additionally, there are two signalling mechanisms built into all Unseen components:- Custom events for broadcasting and component-to-component direct messaging.
-
-These add a lot of loosely-coupled flexibility when implementing complex or high-performance applications.
+Additionally, there are two signalling mechanisms built into all Unseen components:- Custom events for broadcasting and component-to-component direct messaging.  These add a lot of loosely-coupled flexibility when implementing complex or high-performance applications.
 
 ## The Components
 

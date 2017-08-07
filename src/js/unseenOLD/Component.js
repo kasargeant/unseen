@@ -95,6 +95,10 @@ class Component {
      */
     remove(key) {}
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // UTILITY METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     /**
      * Removes...
      * @override
@@ -107,38 +111,13 @@ class Component {
         }
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // UTILITY METHODS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * Sends a message to another component.
-     * @override
-     */
     send(dst, msg) {
         dst.emit("msg", this, msg);
     }
 
-    /**
-     * Receives messages from other components.
-     * @override
-     */
     receive(src, msg) {
         console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src._id}`);
     }
-
-    /**
-     * Fetches data/settings from a remote datasource.
-     * @override
-     */
-    fetch(key, value) {}
-
-    /**
-     * Stores data/settings in a remote datasource.
-     * @override
-     */
-    store(key, value) {}
-
 }
 
 Component.prototype.UUID = 0; // Define component counter on the class.

@@ -7,7 +7,7 @@
 "use strict";
 
 // Imports
-const Unseen = require("../shadow/Unseen");
+const Unseen = require("../../unseen/Unseen");
 
 // VIEW
 class EntityListItemView extends Unseen.View {

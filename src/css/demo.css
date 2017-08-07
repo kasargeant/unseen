@@ -1,0 +1,111 @@
+/* FONTS */
+@font-face {
+    font-family: "Rubik Light";
+    src: url("./font/Rubik/Rubik-Light.ttf");
+}
+/*The order is important, the bold/italic style must come last.*/
+@font-face {
+    font-family: "Rubik Light";
+    src: url("./font/Rubik/Rubik-LightItalic.ttf");
+    font-style: italic, oblique;
+}
+
+@font-face {
+    font-family: "Rubik Black";
+    src: url("./font/Rubik/Rubik-Black.ttf");
+}
+/*The order is important, the bold/italic style must come last.*/
+@font-face {
+    font-family: "Rubik Black";
+    src: url("./font/Rubik/Rubik-BlackItalic.ttf");
+    font-style: italic, oblique;
+}
+
+@font-face {
+    font-family: "Rubik";
+    src: url("./font/Rubik/Rubik-Regular.ttf");
+}
+@font-face {
+    font-family: "Rubik";
+    src: url("./font/Rubik/Rubik-Italic.ttf");
+    font-style: italic, oblique;
+}
+@font-face {
+    font-family: "Rubik";
+    src: url("./font/Rubik/Rubik-Bold.ttf");
+    font-weight: bold;
+}
+/*The order is important, the bold/italic style must come last.*/
+@font-face {
+    font-family: "Rubik";
+    src: url("./font/Rubik/Rubik-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic, oblique;
+}
+
+/* BODY RULES */
+body {
+    background-color: black;
+    font: .75em "Rubik";
+}
+
+header {
+    margin: 0.25%;
+}
+
+section#content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+aside {
+    margin: 0.25%;
+}
+aside.left {
+    min-width: 30%;
+}
+aside.right {
+    width: 25%;
+}
+
+main {
+    margin: 0.25%;
+    width: 45%;
+}
+
+/* MEDIA QUERIES */
+@media screen and (max-width: 480px) {
+
+    section#content {
+        justify-content: space-between;
+    }
+
+    aside.right {
+        display: none;
+    }
+    main {
+        margin: 0.5%;
+        width: 70%;
+    }
+}
+
+@media screen and (max-width: 320px) {
+
+    section#content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    aside.left {
+        width: 100%;
+    }
+
+    main {
+        margin: 0.25%;
+        width: 100%;
+    }
+}

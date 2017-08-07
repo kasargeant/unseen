@@ -79,6 +79,7 @@ class Model extends Component {
             Object.defineProperty(this, key, {
                 /**
                  * Getter for an individual model data property. e.g. console.log(myModel.myProp);
+                 * @private
                  */
                 get: function() {
                     return this._data[key];
@@ -86,6 +87,7 @@ class Model extends Component {
                 /**
                  * Setter for an individual model data property. e.g. myModel.myProp = 10;
                  * @param {Object} value - The value to set this data property
+                 * @private
                  */
                 set: function(value) {
                     // Assign new value - or default value if none given.

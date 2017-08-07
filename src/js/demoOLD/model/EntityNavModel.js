@@ -7,7 +7,7 @@
 "use strict";
 
 // Imports
-const Unseen = require("../../shadow/Unseen");
+const Unseen = require("../../../index");
 
 class EntityNavModel extends Unseen.Model {
     initialize() {

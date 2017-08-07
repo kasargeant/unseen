@@ -16,7 +16,7 @@ const Util = require("./Util");
  * The Component class.
  *
  * Responsibilities:-
- * * To hold a list of data models - equivalent to a database table.
+ * * Base class for all Models and Views.
  * @class
  */
 class Component {
@@ -66,38 +66,34 @@ class Component {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     * Resets...
+     * Resets the data value or values.
      * @override
      */
     reset(data) {}
 
     /**
-     * Gets...
+     * Gets a data value or values.
      * @override
      */
     get(key) {}
 
     /**
-     * Sets...
+     * Sets a data value or values.
      * @override
      */
     set(key, value) {}
 
     /**
-     * Adds...
+     * Adds a data value or values.
      * @override
      */
     add(key, value) {}
 
     /**
-     * Removes...
+     * Removes a data value or values.
      * @override
      */
     remove(key) {}
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // UTILITY METHODS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * Removes...
@@ -111,13 +107,38 @@ class Component {
         }
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // UTILITY METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     * Sends a message to another component.
+     * @override
+     */
     send(dst, msg) {
         dst.emit("msg", this, msg);
     }
 
+    /**
+     * Receives messages from other components.
+     * @override
+     */
     receive(src, msg) {
         console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src._id}`);
     }
+
+    /**
+     * Fetches data/settings from a remote datasource.
+     * @override
+     */
+    fetch(key, value) {}
+
+    /**
+     * Stores data/settings in a remote datasource.
+     * @override
+     */
+    store(key, value) {}
+
 }
 
 Component.prototype.UUID = 0; // Define component counter on the class.
