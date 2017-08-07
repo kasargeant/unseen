@@ -49,7 +49,8 @@ class View extends Component {
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
         this.baseModel = baseModel || this.config.baseModel || this.baseModel || this.defaults.baseModel;
         this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
-        this.isStyled = options.isStyled || this.isStyled || this.defaults.isStyled;
+        // this.isStyled = options.isStyled || this.isStyled || this.defaults.isStyled;
+        this.isStyled = (options.isStyled !== undefined) ? options.isStyled : this.isStyled || this.defaults.isStyled;
         this.target = options.target || this.target || this.defaults.target;
         this.tag = options.tag || this.tag || this.defaults.tag;
         this.id = options.id || this.id || this.defaults.id;
