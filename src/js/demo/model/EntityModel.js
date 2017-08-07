@@ -7,7 +7,7 @@
 "use strict";
 
 // Imports
-const Unseen = require("../../../index");
+const Unseen = require("../../unseen/Unseen");
 
 // MODEL
 class EntityModel extends Unseen.Model {

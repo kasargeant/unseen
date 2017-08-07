@@ -11,7 +11,7 @@ const ModelList = require("./ModelList");
 // const ModelCollection = require("./ModelCollection");
 const View = require("./View");
 const ViewList = require("./ViewList");
-const ViewCollection = require("./ViewCollection");
+// const ViewCollection = require("./ViewCollection");
 
 // Exports
 module.exports = {
@@ -21,5 +21,5 @@ module.exports = {
     // ModelCollection: ModelCollection,
     View: View,
     ViewList: ViewList,
-    ViewCollection: ViewCollection
+    // ViewCollection: ViewCollection
 };

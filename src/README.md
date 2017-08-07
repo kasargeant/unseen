@@ -7,11 +7,11 @@
 
 *Unseen* utilises a standard MVC design as its base for delivering SPAs and other web application UIs.  
 
-It is data-centric or data-driven in it's approach - it attempts to 'wrap' the existing data as-is - rather than force it into a pre-defined format.
+It is data-centric in it's design.  It attempts to 'wrap' the existing data as-is - rather than force it into a pre-defined format.
 
-Thus, the base 'component' of Unseen is essentially the record Schema.  
+And it's data-driven in it's functioning.  Where the most typical out-the-box setup will automatically sync and "push" data updates forward to views without need for any 'controller' code.
 
-That and the other class components that make up the full API are detailed below.
+Additionally, there are two signalling mechanisms built into all Unseen components:- Custom events for broadcasting and component-to-component direct messaging.  These add a lot of loosely-coupled flexibility when implementing complex or high-performance applications.
 
 ## The Components
 
@@ -29,16 +29,13 @@ Thus we have:-
 
 #### Schema
 
-A record **Schema** to be specific.  In the form of a simple JSON object where **keys** represent **field names** and **values** represent **default values**.
+A record **Schema** is the fundamental 'building-block' of Unseen.  Essentially it is a simple JS/JSON object that defines some data's structure and default values.  
+And within the Schema object, **keys** represent **field names** and **values** represent **default values**.  
 
-For example, a person record might have the default schema of:-
+For example, a personal account record might have the default schema of:-
 
-    {
-        id: 0,
-        name: "Unknown",
-        age: 0,
-        isRegistered: false
-    }
+    {id: null, name: "Unknown", balance: 0, isSubscribed: false}
+
 
 #### Model
 

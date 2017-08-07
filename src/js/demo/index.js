@@ -7,18 +7,21 @@
 "use strict";
 
 // Imports
-const Unseen = require("../../index");
+const Unseen = require("../unseen/Unseen");
+
 const EntityModel = require("./model/EntityModel");
 const EntityModelList = require("./model/EntityModelList");
-const EntityListViewList = require("./EntityViewList");
 const EntityNavModel = require("./model/EntityNavModel");
-const EntityNavView = require("./EntityNavView");
-const EntityMenuView = require("./EntityMenuView");
-const EntityDetailView = require("./EntityDetailView");
 
-const jQuery = require("jquery");
+const EntityListViewList = require("./view/EntityViewList");
+const EntityNavView = require("./view/EntityNavView");
+const EntityMenuView = require("./view/EntityMenuView");
+const EntityDetailView = require("./view/EntityDetailView");
 
-let rawData = require("../../data/processed_half.json");
+const jQuery = require("jquery"); // NOTE: jQuery used only during benchmarking.
+
+// TEST DATA
+let rawData = require("../../data/processed_sample.json");
 
 // MODEL COLLECTION
 let myModelList = new EntityModelList(rawData);
@@ -59,6 +62,15 @@ myDetailView.reset();
 
 
 
+// DEMO: BROWSER
+console.log(`Testing with ${myModelList.length} records.`);
+console.time("insert");
+jQuery(document).ready(function() {
+    // Action after append is completely done
+    console.timeEnd("insert");
+});
+
+
 // DEMO: CONSOLE
 // let markupResult = {html: ""};
 // myViewList._renderMarkup(false, markupResult);
@@ -71,10 +83,10 @@ myDetailView.reset();
 // myViewCollection.render(true);
 //
 // console.timeEnd("render");
-
-console.time("insert");
-jQuery(document).ready(function() {
-    // Action after append is completely done
-    console.timeEnd("insert");
-});
-
+//
+// console.time("insert");
+// jQuery(document).ready(function() {
+//     // Action after append is completely done
+//     console.timeEnd("insert");
+// });
+//

@@ -7,7 +7,7 @@
 "use strict";
 
 // Imports
-const Unseen = require("../../shadow/Unseen");
+const Unseen = require("../../../index");
 
 const EntityModel = require("./EntityModel");
 

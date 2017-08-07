@@ -5,31 +5,36 @@
 ## ABOUT
 
 ```diff
-- NOTE: THIS LIBRARY IS BEING PROTOTYPED AND UNDER HEAVY DEVELOPMENT.  PLEASE VISIT LATER... FOR SOMETHING A LITTLE MORE STABLE! ;)
+- NOTE: THIS LIBRARY IS BEING PROTOTYPED.  PLEASE VISIT LATER, FOR SOMETHING A LITTLE MORE STABLE! ;)
 ```
 
 **Unseen** is a micro-library designed to provide a robust and performant foundation for building SPAs and other front-end applications.
 
-It is a library - in the Backbone.js sense - that provides developers with a selection of core components that they can use or ignore as their needs require.  
+It offers developers an entirely **component-based** and **encapsulated approach** to contructing applications.
 
-It does not force "buy-in" to some one all encompassing framework of UI Truth!  So unlike many other "solutions", you will not have to refactor your entire codebase to be able to use what it offers!
-
-For example, if you want to use Unseen's powerful data model and back-end support - but with React or Vue providing the visuals - you can.
+That means, no need for separate stylesheets, no need for separate templates, everything handled by JS alone - and all component/widget creation and wiring is done in one place - for maximum productivity and maintainability.
 
 ## FEATURES
 
+**Unseen** was given its name for two reasons:-  
+
+* It's main design goal is to be invisible.  That is, to function as automatically as possible, with as little boilerplate as possible.
+
+* And it's main implementation advantage is to utilise and the new Shadow DOM v1 functionality available in modern browsers and mobiles.
+
+As to specific features:-
+
+* Modern **ES2015 design and implementation** - Model and View components created simply using 'extends'.
+* **Components encapsulate all markup, style and logic** - with **no bleeding or pollution** of other components or the main page.
+* **Cleaner, simpler code and stylesheets** than non-component based applications of equivalent functionality!
+* Data models can **sync with a wide variety of back-ends**:- files, REST, [TODO] Socket.IO or [TODO] raw Websockets.
+* [TODO] Built-in login, authentication and **baseline security** support.  
+* Built-in **component messaging and custom event** support.
+* No implicit reliance on any bundler e.g. WebPack (although, Unseen happily works with them all).
 
 ## INSTALLATION
 
     npm install unseen
-
-## USAGE
-
-### Using vanilla Unseen
-
-### Using Unseen with React
-
-### Using Unseen with Vue
 
 ## DOCUMENTATION
 
