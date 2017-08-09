@@ -12,16 +12,29 @@ const Unseen = require("../../unseen/Unseen");
 // VIEW
 class EntityListItemView extends Unseen.View {
 
+    /**
+     * Initialize and target component
+     */
     initialize() {
-        // this.baseModel = myModel;
         this.id = "my-item";
         this.tag = "article";
         this.classList = ["card"];
     }
 
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
     style() {
         return `
         <style>
+                        
+            article {
+                margin-bottom: 0.25em;
+                padding: 0.25em;
+                background-color: lightgray;
+                border-radius: .5em;
+            }
             
             h1 {
                 font-size: 1.5em;
@@ -29,24 +42,12 @@ class EntityListItemView extends Unseen.View {
             h2 {
                 font-size: 1em;
             }
-            h3 {
-                font-size: 0.75em;
-            }
-            h4 {
-                font-size: 0.5em;
-            }
-            
             
             a {
                 font-style: normal;
             }
             
-            article {
-                margin-bottom: 0.25em;
-                padding: 0.25em;
-                background-color: lightgray;
-                border-radius: .5em;
-            }
+            header {}
             
             footer {
                 display: flex;
@@ -57,11 +58,17 @@ class EntityListItemView extends Unseen.View {
         `;
     }
 
+    /**
+     * Defines component template and returns markup for the given Model instance.
+     * @param {model} model - The Model instance to be used with this template.
+     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
+     * @returns {string}
+     */
     template(model, idx) {
 
         return `
             <header>
-                <h3 class="subtitle">${model.id}</h3>
+                <h2 class="subtitle">${model.id}</h2>
                 <h1 class="title">${model.name}</h1>
             </header>
             <section>
@@ -73,12 +80,21 @@ class EntityListItemView extends Unseen.View {
         `;
     }
 
+    /**
+     * Defines and returns the event lookup table for this component.
+     * @returns {Object} - the event lookup table for this component.
+     */
     events() {
         return {
             "#button-delete": ["click", "deleteAction"]
         };
     }
 
+    /**
+     * A custom search action method for this component.
+     * @param {Event} evt - The event that triggered this method.
+     * @param {number} viewId - The UUID of the component target.
+     */
     deleteAction(evt) {
         console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
         this.destroy();

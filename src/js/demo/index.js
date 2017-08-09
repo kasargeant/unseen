@@ -38,13 +38,16 @@ let myNavModel = new EntityNavModel({
 let myNavView = new EntityNavView(myNavModel);
 myNavView.reset();
 
-
 // SIDEBAR MENU
 let myMenuModel = new EntityNavModel({
-    title: "Unseen.js",
+    title: "Contents",
     items: {
         "About": "#",
         "Docs": "https://kasargeant.github.io/unseen/api/",
+        "Components": {
+            "Model": "https://kasargeant.github.io/unseen/api/Model.html",
+            "View": "https://kasargeant.github.io/unseen/api/View.html"
+        },
         "GitHub": "https://github.com/kasargeant/unseen"
     }
 });
@@ -61,7 +64,6 @@ let myDetailView = new EntityDetailView(new EntityModel());
 myDetailView.reset();
 
 
-
 // DEMO: BROWSER
 console.log(`Testing with ${myModelList.length} records.`);
 console.time("insert");
@@ -69,24 +71,3 @@ jQuery(document).ready(function() {
     // Action after append is completely done
     console.timeEnd("insert");
 });
-
-
-// DEMO: CONSOLE
-// let markupResult = {html: ""};
-// myViewList._renderMarkup(false, markupResult);
-// console.log(markupResult.html);
-//
-// // DEMO: BROWSER
-// console.log(`Testing with ${myModelList.length} records.`);
-// console.time("render");
-//
-// myViewCollection.render(true);
-//
-// console.timeEnd("render");
-//
-// console.time("insert");
-// jQuery(document).ready(function() {
-//     // Action after append is completely done
-//     console.timeEnd("insert");
-// });
-//

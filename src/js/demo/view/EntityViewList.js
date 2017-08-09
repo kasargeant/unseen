@@ -13,6 +13,10 @@ const EntityViewListItem = require("./EntityViewListItem");
 
 // MODEL
 class EntityViewList extends Unseen.ViewList {
+
+    /**
+     * Initialize and target component
+     */
     initialize() {
         this.baseClass = EntityViewListItem;
         this.target = "main";
@@ -21,6 +25,10 @@ class EntityViewList extends Unseen.ViewList {
         this.classList = ["container"];
     }
 
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
     style() {
         return `
         <style>
