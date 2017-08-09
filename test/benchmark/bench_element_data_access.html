@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Benchmark: Accessing an element's data attribute.</title>
+    <script src="../../node_modules/lodash/lodash.js"></script>
+    <script src="../../node_modules/benchmark/benchmark.js"></script>
+</head>
+<body>
+
+<p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+<p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+<p>Here is some random text.<span id="special" data-uuid="123">Here</span> is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+<p>Here is some random text.Here is some random text.Here is some <span data-id="special2">random</span> text.Here is some random text.Here is some random text.</p>
+<p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+<p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+
+
+    <script>
+    "use strict";
+
+    let suite = new Benchmark.Suite("Accessing an element's data attribute.");
+
+    // Unit
+    let element = document.getElementById("special");
+
+    console.log("Sanity check:-");
+        console.log(element.dataset.uuid);
+        console.log(element.getAttribute("data-uuid"));
+
+    // Benchmark
+    console.log();
+    console.log("Benchmark:-");
+    suite
+        .add("Access via newer dataset property.", function() {
+            return element.dataset.uuid;
+        })
+        .add("Access via older getAttribute method.", function() {
+            return element.getAttribute("data-uuid");
+        })
+        // add listeners
+        .on("cycle", function(event) {
+            console.log(String(event.target));
+        })
+        .on("complete", function() {
+            console.log("Fastest is " + this.filter("fastest").map("name"));
+        })
+        // run async
+        .run({"async": true});
+
+</script>
+</body>
+</html>
