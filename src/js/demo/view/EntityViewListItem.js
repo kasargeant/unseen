@@ -16,9 +16,9 @@ class EntityListItemView extends Unseen.View {
      * Initialize and target component
      */
     initialize() {
-        this.id = "my-item";
+        this.id = "entity-item";
         this.tag = "article";
-        this.classList = ["card"];
+        this.classList = [];
     }
 
     /**
@@ -86,6 +86,7 @@ class EntityListItemView extends Unseen.View {
      */
     events() {
         return {
+            "#entity-item": ["click", "focusAction"],
             "#button-delete": ["click", "deleteAction"]
         };
     }
@@ -98,6 +99,16 @@ class EntityListItemView extends Unseen.View {
     deleteAction(evt) {
         console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
         this.destroy();
+    }
+
+    /**
+     * A custom focus action - that opens details of this entity in another view.
+     * @param {Event} evt - The event that triggered this method.
+     * @param {number} viewId - The UUID of the component target.
+     */
+    focusAction(evt) {
+        console.log(`focusAction for ${this._id} called by ${JSON.stringify(evt)}.`);
+
     }
 }
 

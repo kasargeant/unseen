@@ -202,22 +202,49 @@ class ViewList extends Component {
     _handleEvents(evt) {
         console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
-        let mangledId = evt.target.id;
-        if(mangledId === "") {
-            throw new Error("Missing event target.");
+        // Sanity Guard
+        if(!this.viewEvents) {
+            console.warn("Warning: No events defined for this component.  Ignoring.");
+            return;
         }
+
+        let evtTarget = evt.target;
+        let mangledId = evtTarget.id;
+
+        // If no ID then walk up DOM until you find one.
+        while(mangledId === "") {
+            console.log("No element ID so moving up to parent.");
+            evtTarget = evtTarget.parentNode;
+            if(!evtTarget) {
+                // throw new Error("Missing any event target ID.");
+                console.warn("Warning: Missing any event target ID.");
+                return;
+            }
+            mangledId = evtTarget.id;
+        }
+
+        let tagName = evtTarget.tagName;
         let elementId = "#" + mangledId.slice(0, mangledId.lastIndexOf("-"));
-        let viewId = evt.target.dataset.unid;
-        // let viewId = evt.target.getAttribute("data-unid"); // Alternative for older browsers.
-        console.log(`ElementId: ${viewId}`);
+        let viewId = evtTarget.getAttribute("data-unid"); // Note: Faster than dataset property.
+        console.log(`Target: ${JSON.stringify(evtTarget)}`);
+        console.log(`TagName: ${tagName}`);
+        console.log(`TagId: ${elementId}`);
         console.log(`ViewId: ${viewId}`);
-        console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
+        // console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
         let events = this.viewEvents[viewId];
+        if(!events) {
+            console.warn(`Warning: No events defined for View ${viewId}.`);
+            return;
+        }
         let elementEvent = events[elementId];
+        if(!elementEvent) {
+            console.warn(`Warning: No events defined for ID ${elementId} in View ${viewId}.`);
+            return;
+        }
         console.log(`ViewList event found: ${JSON.stringify(elementEvent)}`);
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-            console.log(`ViewList matched '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            console.log(`ViewList matched '${evt.type}' event for component: '${viewId}' tag: ${tagName}, id: ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view) {
