@@ -195,8 +195,8 @@ class ViewList extends Component {
     events() {return null;}
 
     /**
-     *
-     * @param evt
+     * Handles all events for this View and any sub-views.
+     * @param {Event} evt - Event that triggered this method.
      * @private
      */
     _handleEvents(evt) {
@@ -390,7 +390,7 @@ class ViewList extends Component {
     _render() {
 
         let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
-        classList.push(...this.classList); // We add any remaining classes.
+        if(this.classList) {classList.push(...this.classList);} // We add any remaining classes.
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";

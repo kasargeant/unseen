@@ -123,8 +123,8 @@ class View extends Component {
     events() {return {};}
 
     /**
-     *
-     * @param evt
+     * Handles all events for this View and any sub-views.
+     * @param {Event} evt - Event that triggered this method.
      * @private
      */
     _handleEvents(evt) {
@@ -187,7 +187,14 @@ class View extends Component {
      * @returns {string}
      * @override
      */
-    template(model, idx=0, params={}) {return "";}
+    template(model, idx=0, params={}) {
+        let markup = `<ul>`;
+        for(let key of model._keys) {
+            let value = model[key];
+            markup += `<li><strong>${key}</strong>: ${value}</li>`;
+        }
+        return markup + `</ul>`;
+    }
 
     /**
      * Returns this View's scoped stylesheet.
@@ -205,7 +212,7 @@ class View extends Component {
     _render() {
 
         let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
-        classList.push(...this.classList); // We add any remaining classes.
+        if(this.classList) {classList.push(...this.classList);} // We add any remaining classes.
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}" data-unid="${this._id}">`;
         let elementClose = "</" + this.tag + ">";

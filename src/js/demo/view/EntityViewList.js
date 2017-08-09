@@ -31,13 +31,13 @@ class EntityViewList extends Unseen.ViewList {
      */
     style() {
         return `
-        <style>
-            :host {
-                display: inline-block;
-                width: 100%;
-                contain: content;
-            }
-        </style>
+            <style>
+                :host {
+                    display: inline-block;
+                    width: 100%;
+                    contain: content;
+                }
+            </style>
         `;
     }
 }

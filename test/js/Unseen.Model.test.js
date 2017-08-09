@@ -34,7 +34,7 @@ class TestModel extends Unseen.Model {
 }
 
 // Tests
-describe("Class: Unseen", function() {
+describe("Class: Model", function() {
 
     describe("Standard sanity check", function() {
         it("contains spec with an positive expectation", function() {
@@ -45,7 +45,7 @@ describe("Class: Unseen", function() {
         });
     });
 
-    describe("Models", function() {
+    describe("Instances", function() {
 
         let testModel1 = new TestModel({b: "o"});
         let testModel2 = new TestModel({a: "hiya", b: "hoho", c: 1});  // We create second instance for binding contamination checks
@@ -73,6 +73,5 @@ describe("Class: Unseen", function() {
             expect(testModel2.c).toBe(1);
         });
     });
-
 
 });

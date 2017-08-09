@@ -27,34 +27,34 @@ class EntityListItemView extends Unseen.View {
      */
     style() {
         return `
-        <style>
-                        
-            article {
-                margin-bottom: 0.25em;
-                padding: 0.25em;
-                background-color: lightgray;
-                border-radius: .5em;
-            }
-            
-            h1 {
-                font-size: 1.5em;
-            }
-            h2 {
-                font-size: 1em;
-            }
-            
-            a {
-                font-style: normal;
-            }
-            
-            header {}
-            
-            footer {
-                display: flex;
-                flex-direction: row-reverse;
-                justify-content: space-between;
-            }
-        </style>
+            <style>
+                            
+                article {
+                    margin-bottom: 0.25em;
+                    padding: 0.25em;
+                    background-color: lightgray;
+                    border-radius: .5em;
+                }
+                
+                h1 {
+                    font-size: 1.5em;
+                }
+                h2 {
+                    font-size: 1em;
+                }
+                
+                a {
+                    font-style: normal;
+                }
+                
+                header {}
+                
+                footer {
+                    display: flex;
+                    flex-direction: row-reverse;
+                    justify-content: space-between;
+                }
+            </style>
         `;
     }
 
