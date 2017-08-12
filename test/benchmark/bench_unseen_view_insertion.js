@@ -84,17 +84,17 @@ class EntityListItemView extends Unseen.View {
     template(model, idx) {
 
         return `
-                        <header>
-                            <h2 class="subtitle">${model.id}</h2>
-                            <h1 class="title">${model.name}</h1>
-                        </header>
-                        <section>
-                            ${model.id}: ${model.type} - ${model.name}
-                        </section>
-                        <footer>
-                            <button id="button-delete" class="btn">Delete</button>
-                        </footer>
-                    `;
+            <header>
+                <h2 class="subtitle">${model.id}</h2>
+                <h1 class="title">${model.name}</h1>
+            </header>
+            <section>
+                ${model.id}: ${model.type} - ${model.name}
+            </section>
+            <footer>
+                <button id="button-delete" class="btn">Delete</button>
+            </footer>
+        `;
     }
 
     /**
@@ -129,83 +129,114 @@ class EntityListItemView extends Unseen.View {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log(`%c Benchmark started...`, 'background: #000; color: #fff; font-size: 14px');
+document.addEventListener("DOMContentLoaded", () => {
+    console.log(`%c Benchmark started...`, "background: #000; color: #fff; font-size: 14px");
 
-    // // DOM - inline style
+
+    // SANITY CHECK SETUP
     // let $target = document.getElementById("test-target");
     // let view = new EntityListItemView(entityModel);
-    // // view.reset();
-    // view._render();
-    // view._insertDOM();
+    //
+    // // SANITY CHECKS...
+    //
+    // // // DOM - inline style
+    // // view._render();
+    // // view._insertMarkupDOM();
+    // // jQuery($target).children().remove();
+    // // view._insertMarkupDOM();
+    // // console.log(view.markup);
+    //
+    // // // // DOM - element style
+    // // view._renderInlineElement();
+    // // view._insertMarkupDOM();
+    // // // jQuery($target).children().remove();
+    // // // view._insertMarkupDOM();
+    // // console.log(view.markup);
+    //
+    //
+    // // // SHADOW_DOM - inline style
+    // // view._render();
+    // // view._insertMarkupShadowDOM();
+    // // jQuery($target).children().remove();
+    // // // view._insertMarkupShadowDOM();
+    // // console.log(view.markup);
+    //
+    //
+    // // // DOM_FRAGMENT - inline style
+    // view._renderFragment();
+    // view._insertElementDOM();
+    // // jQuery($target).children().remove();
+    // // view._insertMarkupDOM();
+    // console.log(view.markup);
+    //
+    // // SHADOW_DOM_FRAGMENT - inline style
+    // view._renderFragment();
+    // view._insertElementShadowDOM();
     // jQuery($target).children().remove();
-    // view._insertDOM();
+    // view._insertElementShadowDOM();
     // console.log(view.markup);
 
-    // // DOM - element style
-    let $target = document.getElementById("test-target");
-    let view = new EntityListItemView(entityModel);
-    // view.reset();
-    view._renderInlineElement();
-    view._insertDOM();
-    // jQuery($target).children().remove();
-    // view._insertDOM();
-    console.log(view.markup);
-
-    // // SHADOW_DOM - inline style
-    // let $target = document.getElementById("test-target");
-    // let view = new EntityListItemView(entityModel);
-    // // view.reset();
-    // view._render();
-    // view._insertShadowDOM();
-    // jQuery($target).children().remove();
-    // // view._insertShadowDOM();
-    // console.log(view.markup);
 
 
+    // let el = document.getElementById("myroot");
+    // while (el.firstChild) {
+    //     el.removeChild(el.firstChild);
+    // }
 
     ///////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////
     // UNIT BENCHMARK
-    //
-    // let suite = new Benchmark.Suite("Benchmark: Unseen View insertion.");
-    //
-    //
-    // // console.log("Sanity check:-");
-    // let $target = document.getElementById("test-target");
-    // let view = new EntityListItemView(entityModel);
-    //
-    // // Benchmark
-    // console.log();
-    // console.log("Benchmark:-");
-    // suite
-    // .add("DOM - inline style.", function() {
-    //     view._render();
-    //     view._insertDOM();
-    //     jQuery($target).children().remove();
-    //     return $target.id;
-    // })
-    // .add("DOM - element attribute style.", function() {
-    //     view._renderInlineElement();
-    //     view._insertDOM();
-    //     jQuery($target).children().remove();
-    //     return $target.id;
-    // })
-    // .add("ShadowDOM - inline style.", function() {
-    //     view._render();
-    //     view._insertShadowDOM();
-    //     jQuery($target).children().remove();
-    //     return $target.id;
-    // })
-    // // add listeners
-    // .on("cycle", function(event) {
-    //     console.log(String(event.target));
-    // })
-    // .on("complete", function() {
-    //     console.log("Fastest is " + this.filter("fastest").map("name"));
-    // })
-    // // run async
-    // .run({"async": true});
+
+    let suite = new Benchmark.Suite("Benchmark: Unseen View insertion.");
+
+
+    // console.log("Sanity check:-");
+    let $target = document.getElementById("test-target");
+    let view = new EntityListItemView(entityModel);
+
+    // Benchmark
+    console.log();
+    console.log("Benchmark:-");
+    suite
+        .add("DOM - inline style.", function() {
+            view._render();
+            view._insertMarkupDOM();
+            jQuery($target).children().remove();
+            return $target.id;
+        })
+        .add("DOM - element attribute style.", function() {
+            view._renderInlineElement();
+            view._insertMarkupDOM();
+            jQuery($target).children().remove();
+            return $target.id;
+        })
+        .add("ShadowDOM - inline style.", function() {
+            view._render();
+            view._insertMarkupShadowDOM();
+            jQuery($target).children().remove();
+            return $target.id;
+        })
+        .add("DOM Fragment - inline style.", function() {
+            view._renderFragment();
+            view._insertElementDOM();
+            jQuery($target).children().remove();
+            return $target.id;
+        })
+        .add("ShadowDOM Fragment - inline style.", function() {
+            view._renderFragment();
+            view._insertElementShadowDOM();
+            jQuery($target).children().remove();
+            return $target.id;
+        })
+        // add listeners
+        .on("cycle", function(event) {
+            console.log(String(event.target));
+        })
+        .on("complete", function() {
+            console.log("Fastest is " + this.filter("fastest").map("name"));
+        })
+        // run async
+        .run({"async": true});
 
 
 
