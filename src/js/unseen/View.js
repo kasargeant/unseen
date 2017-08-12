@@ -203,13 +203,29 @@ class View extends Component {
      */
     style() {return "";}
 
+
+    /**
+     * Returns this View's scoped stylesheet.
+     * @returns {string}
+     * @override
+     */
+    styleElement() {return "";}
+    styleElementInitial() {return "";}
+
     /**
      *
      * @param doInsert
      * @returns {{}|*}
      * @private
      */
-    _render() {
+    _render() {this._renderInline();}
+    /**
+     *
+     * @param doInsert
+     * @returns {{}|*}
+     * @private
+     */
+    _renderInline() {
 
         let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
         if(this.classList) {classList.push(...this.classList);} // We add any remaining classes.
@@ -243,27 +259,62 @@ class View extends Component {
 
         // console.log("MARKUP: " + JSON.stringify(markup.html));
 
-        // if(doInsert === true) {
-        //     // jQuery(this.target).append(markup);
-        //     console.log(`Appending to ${this.target}`);
-        //     this.$el = jQuery(markup.html).appendTo(this.target).get(0);
-        //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-        //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-        //     if(!this._parent) {
-        //
-        //         // We set the viewEvents lookup
-        //         this.viewEvents = viewEvents;
-        //
-        //         // Add top-level event listener
-        //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
-        //     }
-        // }
+        return this.markup;
+    }
+
+    _renderInlineElement() {
+
+        let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
+        if(this.classList) {classList.push(...this.classList);} // We add any remaining classes.
+
+        // Add element style attribute if required
+        let elementOpen;
+        if(this.isStyled) {
+            // // let style = this.style().replace(/\n/g, " ");
+            // let style = this.style();
+            // style = style.replace(/<style>|<\/style>/g, "");
+            // style = style.replace(/ /g, "");
+            // style = style.replace(/\n/g, " ");
+            let style = this.styleElement();
+            // console.log("STYLE: " + style);
+            elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}" data-unid="${this._id}" style="${style}">`;
+        } else {
+            elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}" data-unid="${this._id}">`;
+        }
+        let elementClose = "</" + this.tag + ">";
+        let elementBody = this.template(this.baseModel, this._id);
+
+        // First we make any element ids in this View - unique.
+        // let matches = content.match(/(?:id|class)="([^"]*)"/gi);    // Matches class="sfasdf" or id="dfssf"
+        // console.log("MATCHES: " + JSON.stringify(matches));
+        // elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+        // console.log("CONTENT: " + JSON.stringify(element));
+
+        // Stop style cascade
+        // elementBody = `<div style="${this.styleElementInitial()}">${elementBody}</div>`;
+
+        // Are we a top-level view?
+        // Collect events
+        // let viewEvents = this.events();
+
+        // Do we create a markup container with id and/or classes?
+        if(!this.id && !this.classList) {
+            // NO: Just return template result.
+            this.markup = elementBody;
+        } else {
+            // YES: Then template result with wrapping tag.
+            this.markup = elementOpen + elementBody + elementClose;
+        }
+
+        // console.log("MARKUP: " + JSON.stringify(markup.html));
 
         return this.markup;
     }
 
+
     _insertDOM() {
-        console.log(`Appending to ${this.target}`);
+        //console.log(`Appending to ${this.target}`);
         this.$el = jQuery(this.markup).appendTo(this.target).get(0);
         if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
         // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
@@ -278,7 +329,7 @@ class View extends Component {
     }
 
     _insertShadowDOM() {
-        console.log("Creating Shadow DOM");
+        //console.log("Creating Shadow DOM");
         this.$el = document.createElement("div");
         const shadowRoot = this.$el.attachShadow({mode: "open"});
         shadowRoot.innerHTML = this.markup;
@@ -290,7 +341,7 @@ class View extends Component {
             // Add top-level event listener
             shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
         }
-        console.log(`Appending to ${this.target}`);
+        //console.log(`Appending to ${this.target}`);
         jQuery(this.target).append(this.$el);
         // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
     }
