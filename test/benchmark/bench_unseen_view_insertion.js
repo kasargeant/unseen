@@ -164,16 +164,16 @@ document.addEventListener("DOMContentLoaded", () => {
     //
     // // // DOM_FRAGMENT - inline style
     // view._renderFragment();
-    // view._insertElementDOM();
+    // view._insertFragmentDOM();
     // // jQuery($target).children().remove();
     // // view._insertMarkupDOM();
     // console.log(view.markup);
     //
     // // SHADOW_DOM_FRAGMENT - inline style
     // view._renderFragment();
-    // view._insertElementShadowDOM();
+    // view._insertFragmentShadowDOM();
     // jQuery($target).children().remove();
-    // view._insertElementShadowDOM();
+    // view._insertFragmentShadowDOM();
     // console.log(view.markup);
 
 
@@ -216,15 +216,27 @@ document.addEventListener("DOMContentLoaded", () => {
             jQuery($target).children().remove();
             return $target.id;
         })
-        .add("DOM Fragment - inline style.", function() {
-            view._renderFragment();
+        .add("DOM Insert Element - inline style.", function() {
+            view._renderElement();
             view._insertElementDOM();
             jQuery($target).children().remove();
             return $target.id;
         })
-        .add("ShadowDOM Fragment - inline style.", function() {
-            view._renderFragment();
+        .add("ShadowDOM Insert Element - inline style.", function() {
+            view._renderElement();
             view._insertElementShadowDOM();
+            jQuery($target).children().remove();
+            return $target.id;
+        })
+        .add("DOM Insert Fragment - inline style.", function() {
+            view._renderFragment();
+            view._insertFragmentDOM();
+            jQuery($target).children().remove();
+            return $target.id;
+        })
+        .add("ShadowDOM Insert Fragment - inline style.", function() {
+            view._renderFragment();
+            view._insertFragmentShadowDOM();
             jQuery($target).children().remove();
             return $target.id;
         })

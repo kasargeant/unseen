@@ -221,6 +221,36 @@ class View extends Component {
      */
     _render() {this._renderInline();}
 
+    /**
+     *
+     * @param doInsert
+     * @returns {{}|*}
+     * @private
+     */
+    _renderElement() {
+
+        let element = document.createElement(this.tag);
+        element.id = this.id;
+        element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
+        element.classList.add(...this.classList); // We add any remaining classes.
+        // element.setAttribute("data-unid", this._id);
+        element.innerHTML = this.style() + this.template(this.baseModel, this._id);
+
+        // First we make any element ids in this View - unique.
+        walk(element, function(node) {
+            // console.log("node", node); // DEBUG ONLY
+
+            // If we have an element node AND it has an ID..
+            if(node.nodeType === 1 && node.id) {
+                node.id = node.id + "-" + this._id;
+                node.setAttribute("data-unid", this._id);
+            }
+        }.bind(this));
+
+        this.el = element;
+
+        return this.el;
+    }
 
     /**
      *
@@ -348,8 +378,40 @@ class View extends Component {
         return this.markup;
     }
 
-
     _insertElementDOM() {
+        //console.log(`Appending to ${this.target}`);
+        this.$el = jQuery(this.el).appendTo(this.target).get(0);
+        if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+        if(!this._parent) {
+
+            // We set the viewEvents lookup
+            this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+
+            // Add top-level event listener
+            this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+        }
+    }
+
+    _insertElementShadowDOM() {
+        //console.log("Creating Shadow DOM");
+        this.$el = document.createElement("div");
+        const shadowRoot = this.$el.attachShadow({mode: "open"});
+        shadowRoot.appendChild(this.el);
+
+        if(!this._parent) {
+
+            // We set the viewEvents lookup
+            this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+
+            // Add top-level event listener
+            shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
+        }
+        //console.log(`Appending to ${this.target}`);
+        jQuery(this.target).append(this.$el);
+    }
+
+    _insertFragmentDOM() {
         //console.log(`Appending to ${this.target}`);
         this.$el = jQuery(this.fragment).appendTo(this.target).get(0);
         if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
@@ -364,7 +426,7 @@ class View extends Component {
         }
     }
 
-    _insertElementShadowDOM() {
+    _insertFragmentShadowDOM() {
         //console.log("Creating Shadow DOM");
         this.$el = document.createElement("div");
         const shadowRoot = this.$el.attachShadow({mode: "open"});

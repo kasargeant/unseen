@@ -164,16 +164,16 @@ document.addEventListener("DOMContentLoaded", () => {
     //
     // // // DOM_FRAGMENT - inline style
     // view._renderFragment();
-    // view._insertElementDOM();
+    // view._insertFragmentDOM();
     // // jQuery($target).children().remove();
     // // view._insertMarkupDOM();
     // console.log(view.markup);
     //
     // // SHADOW_DOM_FRAGMENT - inline style
     // view._renderFragment();
-    // view._insertElementShadowDOM();
+    // view._insertFragmentShadowDOM();
     // jQuery($target).children().remove();
-    // view._insertElementShadowDOM();
+    // view._insertFragmentShadowDOM();
     // console.log(view.markup);
 
 
@@ -203,6 +203,9 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .add("Render markup - with element attribute style.", function() {
             return view._renderInlineElement();
+        })
+        .add("Render document element - inline style.", function() {
+            return view._renderElement();
         })
         .add("Render document fragment - inline style.", function() {
             return view._renderFragment();
