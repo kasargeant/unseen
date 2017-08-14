@@ -32,10 +32,16 @@ As to specific features:-
 * Built-in **component messaging and custom event** support.
 * No implicit reliance on any bundler e.g. WebPack (although, Unseen happily works with them all).
 
+## DEMO
+
+A simple live-demo can be found at:- [https://kasargeant.github.io/unseen/demo/](https://kasargeant.github.io/unseen/demo/)
+
 ## INSTALLATION
 
     npm install unseen
 
 ## DOCUMENTATION
 
-See the [Unseen Wiki](https://github.com/kasargeant/unseen/wiki) for current documentation.
+The [API Documentation](https://kasargeant.github.io/unseen/api/index.html) details the various components that make up Unseen.
+
+And the [Unseen Wiki](https://github.com/kasargeant/unseen/wiki) has a Quick start and various useful links.
