@@ -194,50 +194,70 @@ document.addEventListener("DOMContentLoaded", () => {
     let $target = document.getElementById("test-target");
     let view = new EntityListItemView(entityModel);
 
+    function removeChildren(el) {
+        while(el.firstChild) {
+            el.removeChild(el.firstChild);
+        }
+    }
+
     // Benchmark
     console.log();
     console.log("Benchmark:-");
     suite
         .add("DOM - inline style.", function() {
-            view._render();
+            view._renderMarkup();
             view._insertMarkupDOM();
-            jQuery($target).children().remove();
+            // jQuery($target).children().remove();
+            removeChildren($target);
+            return $target.id;
+        })
+        .add("ShadowDOM - inline style.", function() {
+            view._renderMarkup();
+            view._insertMarkupShadowDOM();
+            // jQuery($target).children().remove();
+            removeChildren($target);
             return $target.id;
         })
         .add("DOM - element attribute style.", function() {
             view._renderInlineElement();
             view._insertMarkupDOM();
-            jQuery($target).children().remove();
+            // jQuery($target).children().remove();
+            removeChildren($target);
             return $target.id;
         })
-        .add("ShadowDOM - inline style.", function() {
-            view._render();
+        .add("ShadowDOM - element attribute style.", function() {
+            view._renderInlineElement();
             view._insertMarkupShadowDOM();
-            jQuery($target).children().remove();
+            // jQuery($target).children().remove();
+            removeChildren($target);
             return $target.id;
         })
         .add("DOM Insert Element - inline style.", function() {
             view._renderElement();
             view._insertElementDOM();
-            jQuery($target).children().remove();
+            // jQuery($target).children().remove();
+            removeChildren($target);
             return $target.id;
         })
         .add("ShadowDOM Insert Element - inline style.", function() {
             view._renderElement();
             view._insertElementShadowDOM();
-            jQuery($target).children().remove();
+            // jQuery($target).children().remove();
+            removeChildren($target);
             return $target.id;
         })
         .add("DOM Insert Fragment - inline style.", function() {
             view._renderFragment();
             view._insertFragmentDOM();
-            jQuery($target).children().remove();
+            // jQuery($target).children().remove();
+            removeChildren($target);
             return $target.id;
         })
         .add("ShadowDOM Insert Fragment - inline style.", function() {
             view._renderFragment();
             view._insertFragmentShadowDOM();
-            jQuery($target).children().remove();
+            // jQuery($target).children().remove();
+            removeChildren($target);
             return $target.id;
         })
         // add listeners

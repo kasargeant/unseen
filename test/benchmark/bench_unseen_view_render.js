@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Benchmark:-");
     suite
         .add("Render markup - with inline style.", function() {
-            return view._render();
+            return view._renderMarkup();
         })
         .add("Render markup - with element attribute style.", function() {
             return view._renderInlineElement();

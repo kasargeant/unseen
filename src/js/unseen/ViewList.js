@@ -73,7 +73,9 @@ class ViewList extends Component {
 
         // Set depending on previous internal/user properties.
         this.$el = null;
+        this.$target = null;
         this.markup = "";
+        this.fragment = null;
         this.deferred = [];
 
         this.viewStyle = null;
@@ -405,7 +407,7 @@ class ViewList extends Component {
         // Now we add any sub-views
         var elementChildren = "";
         for(var id in this.views) {
-            elementChildren += this.views[id]._render(false, elementChildren);
+            elementChildren += this.views[id]._renderMarkup(false, elementChildren);
         }
 
         this.markup = this.viewStyle + elementOpen + elementBody + elementChildren + elementClose;
@@ -424,30 +426,46 @@ class ViewList extends Component {
      * @private
      */
     _insertDOM() {
-        // jQuery(this.target).append(markup);
-        console.log(`Appending to ${this.target}`);
-        this.$el = jQuery(this.markup).appendTo(this.target).get(0);
-        if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+        //console.log(`ViewList: Appending to ${this.target}`);
+
+        // Retrieve reference to target element - if it hasn't already been obtained.
+        if(this.$target === null) {
+            this.$target = document.querySelector(this.target);
+            if(!this.$target) {throw new Error("Unable to find DOM target to append to.");}
+        }
+
+        // this.$el = document.getElementById(this.target.slice(1)); //jQuery(this.markup).appendTo(this.target).get(0);
+        this.$el = document.createElement(null);
+        this.$el.innerHTML = this.markup;
         // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
         if(!this._parent) {
             // Add top-level event listener
             this.$el.addEventListener("click", this._handleEvents.bind(this), false);
         }
+        this.$target.appendChild(this.$el);
     }
 
     //WORKING SHADOW DOM - first version
     _insertShadowDOM() {
-        console.log("Creating Shadow DOM");
+        //console.log(`ViewList: Appending to ${this.target}`);
+
+        // Retrieve reference to target element - if it hasn't already been obtained.
+        if(this.$target === null) {
+            this.$target = document.querySelector(this.target);
+            if(!this.$target) {throw new Error("Unable to find DOM target to append to.");}
+        }
+
+        //console.log("Creating Shadow DOM");
         this.$el = document.createElement("div");
         const shadowRoot = this.$el.attachShadow({mode: "open"});
         shadowRoot.innerHTML = this.markup;
+
+        // If parent - add event listener
         if(!this._parent) {
             // Add top-level event listener
             shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
         }
-        console.log(`Appending to ${this.target}`);
-        jQuery(this.target).append(this.$el);
-        // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+        this.$target.appendChild(this.$el);
     }
 
     _deferAppend(html) {
