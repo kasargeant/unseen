@@ -171,7 +171,7 @@ describe("Class: View", function() {
         });
 
         it("should be able to render a default version of a model.", function() {
-            expect(view._render()).toBe(`<ul><li><strong>id</strong>: 100013440</li><li><strong>idn</strong>: unnamed</li><li><strong>class</strong>: building</li><li><strong>type</strong>: restaurant</li><li><strong>name</strong>: La Perla</li></ul>`);
+            expect(view._renderMarkup()).toBe(`<ul><li><strong>id</strong>: 100013440</li><li><strong>idn</strong>: unnamed</li><li><strong>class</strong>: building</li><li><strong>type</strong>: restaurant</li><li><strong>name</strong>: La Perla</li></ul>`);
         });
     });
 
