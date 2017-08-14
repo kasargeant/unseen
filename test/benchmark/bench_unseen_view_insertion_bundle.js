@@ -30742,686 +30742,6 @@ Response.prototype.clone = function() {
 };
 
 },{"./body":104,"./headers":106,"http":47}],109:[function(require,module,exports){
-module.exports=[{"id":100011508,"idn":"","class":"road","type":"residential","name":"St. Mary's Gate"},{"id":100013440,"idn":"","class":"building","type":"restaurant","name":"La Perla"},{"id":100013447,"idn":"","class":"building","type":null,"name":"The Lady"},{"id":100015712,"idn":"","class":"road","type":"unclassified","name":"Carlisle Lane"},{"id":100015713,"idn":"","class":"road","type":"unclassified","name":"Virgil Street"},{"id":100015714,"idn":"","class":"road","type":"unclassified","name":"Virgil Street"},{"id":100015715,"idn":"","class":"road","type":"unclassified","name":"Carlisle Lane"},{"id":100015716,"idn":"","class":"road","type":"unclassified","name":"Centaur Street"},{"id":100015720,"idn":"","class":"road","type":"unclassified","name":"Upper Marsh"},{"id":100015721,"idn":"","class":"road","type":"unclassified","name":"Upper Marsh"},{"id":100015723,"idn":"","class":"road","type":"unclassified","name":"Station Approach"},{"id":100026128,"idn":"","class":"road","type":"trunk","name":"Sterling Way"},{"id":100026129,"idn":"","class":"road","type":"trunk","name":"North Circular Road"},{"id":100026130,"idn":"","class":"road","type":"trunk","name":"Sterling Way"},{"id":100026131,"idn":"","class":"road","type":"trunk","name":"North Circular Road"},{"id":1000463949,"idn":"","class":"point","type":"supermarket","name":"Empire"},{"id":1000467325,"idn":"","class":"point","type":"restaurant","name":"Trusha (indian cuisine)"}]
-
-},{}],110:[function(require,module,exports){
-/**
- * @file index.js
- * @description Module index.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../unseen/Unseen");
-
-const EntityModel = require("./model/EntityModel");
-const EntityModelList = require("./model/EntityModelList");
-const EntityNavModel = require("./model/EntityNavModel");
-
-const EntityListViewList = require("./view/EntityViewList");
-const EntityNavView = require("./view/EntityNavView");
-const EntityMenuView = require("./view/EntityMenuView");
-const EntityDetailView = require("./view/EntityDetailView");
-
-const jQuery = require("jquery"); // NOTE: jQuery used only during benchmarking.
-
-// TEST DATA
-let rawData = require("../../data/processed_sample.json");
-
-// MODEL COLLECTION
-let myModelList = new EntityModelList(rawData);
-
-// NAVBAR
-let myNavModel = new EntityNavModel({
-    title: "Unseen.js",
-    items: {
-        "About": "#",
-        "Docs": "https://kasargeant.github.io/unseen/api/",
-        "GitHub": "https://github.com/kasargeant/unseen"
-    }
-});
-let myNavView = new EntityNavView(myNavModel);
-myNavView.reset();
-
-// SIDEBAR MENU
-let myMenuModel = new EntityNavModel({
-    title: "Contents",
-    items: {
-        "About": "#",
-        "Docs": "https://kasargeant.github.io/unseen/api/",
-        "Components": {
-            "Model": "https://kasargeant.github.io/unseen/api/Model.html",
-            "View": "https://kasargeant.github.io/unseen/api/View.html"
-        },
-        "GitHub": "https://github.com/kasargeant/unseen"
-    }
-});
-let myMenuView = new EntityMenuView(myMenuModel);
-myMenuView.reset();
-
-// VIEW COLLECTION
-let myViewList = new EntityListViewList(myModelList);
-
-myViewList.collection.fetch();
-
-// DETAIL PANEL
-let myDetailView = new EntityDetailView(new EntityModel());
-myDetailView.reset();
-
-
-// DEMO: BROWSER
-console.log(`Testing with ${myModelList.length} records.`);
-console.time("insert");
-jQuery(document).ready(function() {
-    // Action after append is completely done
-    console.timeEnd("insert");
-});
-
-},{"../../data/processed_sample.json":109,"../unseen/Unseen":122,"./model/EntityModel":111,"./model/EntityModelList":112,"./model/EntityNavModel":113,"./view/EntityDetailView":114,"./view/EntityMenuView":115,"./view/EntityNavView":116,"./view/EntityViewList":117,"jquery":102}],111:[function(require,module,exports){
-/**
- * @file EntityModel.js
- * @description EntityModel component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../unseen/Unseen");
-
-// MODEL
-class EntityModel extends Unseen.Model {
-    initialize() {
-        this.baseSchema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
-    }
-}
-
-// Exports
-module.exports = EntityModel;
-
-},{"../../unseen/Unseen":122}],112:[function(require,module,exports){
-/**
- * @file EntityModelList.js
- * @description EntityModelList component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../unseen/Unseen");
-
-const EntityModel = require("./EntityModel");
-
-// MODEL COLLECTION
-class EntityModelList extends Unseen.ModelList {
-    initialize() {
-        this.baseClass = EntityModel;
-    }
-}
-
-// Exports
-module.exports = EntityModelList;
-
-},{"../../unseen/Unseen":122,"./EntityModel":111}],113:[function(require,module,exports){
-/**
- * @file EntityNavModel.js
- * @description EntityNavView component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../unseen/Unseen");
-
-class EntityNavModel extends Unseen.Model {
-    initialize() {
-        this.baseSchema = {"title": "No title", "items": {}};
-    }
-}
-
-
-// Exports
-module.exports = EntityNavModel;
-
-},{"../../unseen/Unseen":122}],114:[function(require,module,exports){
-/**
- * @file EntityDetailView.js
- * @description EntityDetailView component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../unseen/Unseen");
-
-const jQuery = require("jquery");
-
-// VIEW
-class EntityDetailView extends Unseen.View {
-
-    /**
-     * Initialize and target component
-     */
-    initialize() {
-        this.target = "aside.right";
-        this.tag = "section";
-        this.id = "detail";
-        this.classList = [];
-    }
-
-    /**
-     * Defines 'scoped' stylesheet
-     * @returns {string}
-     */
-    style() {
-        return `
-        <style>
-            section.detail {
-                padding: .25em;
-                background-color: lightgray;
-                border-radius: .5em;
-            }
-            .list {}
-            .item {
-                padding-bottom: .25em;
-                list-style-type: decimal-leading-zero;
-            }
-        </style>
-        `;
-    }
-
-    /**
-     * Defines component template and returns markup for the given Model instance.
-     * @param {model} model - The Model instance to be used with this template.
-     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
-     * @returns {string}
-     */
-    template(model, idx) {
-
-        let itemsMarkup = "";
-        for(let item in model.items) {
-            itemsMarkup += `<a href="${model.items[item]}" class="btn btn-link">${item}</a>`;
-        }
-
-        return `
-            <h2>Comments</h2>
-            <ul class="list">
-                <li class="item">
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                </li>
-                <li class="item">
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                </li>
-                <li class="item">
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                </li>
-                <li class="item">
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                </li>
-                <li class="item">
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                    Bla blab blbb lblabbl l lbalb lablbalab lba
-                </li>
-            </ul>
-        `;
-
-    }
-}
-
-// Exports
-module.exports = EntityDetailView;
-
-},{"../../unseen/Unseen":122,"jquery":102}],115:[function(require,module,exports){
-/**
- * @file EntityMenuView.js
- * @description EntityMenuView component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../unseen/Unseen");
-
-// VIEW
-class EntityMenuView extends Unseen.View {
-
-    /**
-     * Initialize and target component
-     */
-    initialize() {
-        this.target = "aside.left";
-        this.tag = "nav";
-        this.id = "sidebar";
-        this.classList = ["column"];
-    }
-
-    /**
-     * Defines 'scoped' stylesheet
-     * @returns {string}
-     */
-    style() {
-        return `
-        <style>
-            nav {
-                display: flex;
-                padding: 0.25em;
-                background-color: #666;
-                border-radius: .5em;
-            }
-            
-            .column {
-                flex-direction: column;
-                align-items: baseline;
-            }        
-        
-            .menu {
-                display: flex;
-                flex-direction: column;
-                align-items: baseline;
-                margin: 0;
-                padding: 0.25em 0.25em;
-                list-style: none;
-            }
-            
-            .menu a {
-                color: white;
-                text-decoration: none;
-            }
-            .sub-menu a {
-                color: #DDD;
-                text-decoration: none;
-            }           
-        
-            .item {
-                margin-bottom: 0.25em;
-            }
-        </style>
-        `;
-    }
-
-    /**
-     * Defines component template and returns markup for the given Model instance.
-     * @param {model} model - The Model instance to be used with this template.
-     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
-     * @returns {string}
-     */
-    template(model, idx) {
-
-        // Build markup: item links
-        let itemsMarkup = "";
-        // Iterate across items
-        for(let item in model.items) {
-            let itemValue = model.items[item];
-            console.log(`ItemKey: ${item} = ${itemValue}`);
-            let itemType = typeof itemValue;
-            if(itemType === "string") {
-                itemsMarkup += `
-                    <li class="item">
-                        <a href="${itemValue}">${item}</a>
-                    </li>
-                `;
-            } else if(itemType === "object") {
-                // Open sublist
-                itemsMarkup += `
-                    <li class="item active">
-                        <a href="#">${item}</a>
-                        <ul class="sub-menu">
-                `;
-                // Iterate across sub-items
-                for(let subItem in itemValue) {
-                    let subItemValue = itemValue[subItem];
-                    console.log(`SubItemKey: ${subItem} = ${subItemValue}`);
-                    itemsMarkup += `
-                        <li class="sub-item">
-                            <a href="${subItemValue}" class="sub-item">${subItem}</a>
-                        </li>
-                    `;
-                }
-                // Close sublist
-                itemsMarkup += `
-                        </ul>
-                    </li>
-                `;
-            }
-
-        }
-
-        // Collate returned markup
-        return `
-            <ul class="menu">
-                ${itemsMarkup}
-            </ul>
-        `;
-
-    }
-}
-
-// Exports
-module.exports = EntityMenuView;
-
-},{"../../unseen/Unseen":122}],116:[function(require,module,exports){
-/**
- * @file EntityNavView.js
- * @description EntityNavView component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../unseen/Unseen");
-
-const jQuery = require("jquery");
-
-// VIEW
-class EntityNavView extends Unseen.View {
-
-    /**
-     * Initialize and target component
-     */
-    initialize() {
-        this.target = "header";
-        this.tag = "nav";
-        this.id = "my-nav";
-        this.classList = ["nav--row"];
-    }
-
-    /**
-     * Defines 'scoped' stylesheet
-     * @returns {string}
-     */
-    style() {
-        return `
-        <style>
-            nav {
-                display: flex;
-                padding: 0.25em;
-                border-radius: 0.5em;
-                background-color: #666;
-                color: white;
-            }
-            .nav--row {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: space-between;
-                align-items: baseline;
-            }
-
-            /* BLOCK: menu */
-            .menu {
-                display: flex;
-                margin: 0;
-                padding: 0.25em 0.25em;
-                list-style-type: none;
-            }
-            
-            .menu a {
-                padding: 0 1em;
-                text-decoration: none;
-                background-color: darkgrey;
-                border-radius: .5em;
-            }
-        
-            .menu--row {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: space-between;
-                align-items: baseline;
-                list-style: none;
-            }
-            .menu--row li {
-                align-items: center;
-                height: 2.5em;
-            }
-        
-            .menu--row__title {
-                display: block;
-                margin: 0.125em 0.125em;
-                padding: 0.125em 0.25em;
-                background-color: black;
-                color: white;
-                border-radius: 0.25em;
-                font: 2em "Rubik Black";
-           }
-        
-            .menu--row__search {
-                white-space: nowrap;
-            }
-        
-            .menu--row__item {
-                margin-right: 1em;
-            }
-        </style>
-        `;
-    }
-
-    /**
-     * Defines component template and returns markup for the given Model instance.
-     * @param {model} model - The Model instance to be used with this template.
-     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
-     * @returns {string}
-     */
-    template(model, idx) {
-
-        let itemsMarkup = "";
-        for(let item in model.items) {
-            itemsMarkup += `<li class="menu--row__item"><a href="${model.items[item]}" class="btn btn-link">${item}</a></li>`;
-        }
-
-        return `
-            <h1 class="menu--row__title">${model.title}</h1>
-            <ul class="menu menu-row">
-                ${itemsMarkup}
-            </ul>
-            <div class="menu--row__search">
-                <input id="input-search" class="form-input" type="text" placeholder="search" />
-                <button id="button-search" class="btn btn-primary input-group-btn">Search</button>
-            </div>
-        `;
-
-    }
-
-    /**
-     * Defines and returns the event lookup table for this component.
-     * @returns {Object} - the event lookup table for this component.
-     */
-    events() {
-        return {
-            "#button-search": ["click", "searchAction"]
-        };
-    }
-
-    /**
-     * A custom search action method for this component.
-     * @param {Event} evt - The event that triggered this method.
-     * @param {number} viewId - The UUID of the component target.
-     */
-    searchAction(evt, viewId) {
-        let value = document.getElementById(`input-search-${viewId}`).value;
-        console.log(`'searchAction' called with value: ${value}.`);
-    }
-}
-
-// Exports
-module.exports = EntityNavView;
-
-},{"../../unseen/Unseen":122,"jquery":102}],117:[function(require,module,exports){
-/**
- * @file EntityListViewList.js
- * @description EntityListViewList component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../unseen/Unseen");
-
-const EntityViewListItem = require("./EntityViewListItem");
-
-// MODEL
-class EntityViewList extends Unseen.ViewList {
-
-    /**
-     * Initialize and target component
-     */
-    initialize() {
-        this.baseClass = EntityViewListItem;
-        this.target = "main";
-        this.tag = "section";
-        this.id = "my-list";
-        this.classList = ["container"];
-    }
-
-    /**
-     * Defines 'scoped' stylesheet
-     * @returns {string}
-     */
-    style() {
-        return `
-            <style>
-                :host {
-                    display: inline-block;
-                    width: 100%;
-                    contain: content;
-                }
-            </style>
-        `;
-    }
-}
-
-// Exports
-module.exports = EntityViewList;
-
-},{"../../unseen/Unseen":122,"./EntityViewListItem":118}],118:[function(require,module,exports){
-/**
- * @file EntityListItemView.js
- * @description EntityListItemView component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../unseen/Unseen");
-
-// VIEW
-class EntityListItemView extends Unseen.View {
-
-    /**
-     * Initialize and target component
-     */
-    initialize() {
-        this.id = "entity-item";
-        this.tag = "article";
-        this.classList = [];
-    }
-
-    /**
-     * Defines 'scoped' stylesheet
-     * @returns {string}
-     */
-    style() {
-        return `
-            <style>
-                            
-                article {
-                    margin-bottom: 0.25em;
-                    padding: 0.25em;
-                    background-color: lightgray;
-                    border-radius: .5em;
-                }
-                
-                h1 {
-                    font-size: 1.5em;
-                }
-                h2 {
-                    font-size: 1em;
-                }
-                
-                a {
-                    font-style: normal;
-                }
-                
-                header {}
-                
-                footer {
-                    display: flex;
-                    flex-direction: row-reverse;
-                    justify-content: space-between;
-                }
-            </style>
-        `;
-    }
-
-    /**
-     * Defines component template and returns markup for the given Model instance.
-     * @param {model} model - The Model instance to be used with this template.
-     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
-     * @returns {string}
-     */
-    template(model, idx) {
-
-        return `
-            <header>
-                <h2 class="subtitle">${model.id}</h2>
-                <h1 class="title">${model.name}</h1>
-            </header>
-            <section>
-                ${model.id}: ${model.type} - ${model.name}
-            </section>
-            <footer>
-                <button id="button-delete" class="btn">Delete</button>
-            </footer>
-        `;
-    }
-
-    /**
-     * Defines and returns the event lookup table for this component.
-     * @returns {Object} - the event lookup table for this component.
-     */
-    events() {
-        return {
-            "#entity-item": ["click", "focusAction"],
-            "#button-delete": ["click", "deleteAction"]
-        };
-    }
-
-    /**
-     * A custom search action method for this component.
-     * @param {Event} evt - The event that triggered this method.
-     * @param {number} viewId - The UUID of the component target.
-     */
-    deleteAction(evt) {
-        console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
-        this.destroy();
-    }
-
-    /**
-     * A custom focus action - that opens details of this entity in another view.
-     * @param {Event} evt - The event that triggered this method.
-     * @param {number} viewId - The UUID of the component target.
-     */
-    focusAction(evt) {
-        console.log(`focusAction for ${this._id} called by ${JSON.stringify(evt)}.`);
-
-    }
-}
-
-// Exports
-module.exports = EntityListItemView;
-
-},{"../../unseen/Unseen":122}],119:[function(require,module,exports){
 /**
  * @file Component.js
  * @description The Component class.
@@ -31582,7 +30902,7 @@ module.exports = Component;
 // setTimeout(function(){ console.log("Done"); }, 3000);
 
 
-},{"./Util":123,"event-emitter":78}],120:[function(require,module,exports){
+},{"./Util":113,"event-emitter":78}],110:[function(require,module,exports){
 /**
  * @file Model.js
  * @description The Model class.
@@ -31808,7 +31128,7 @@ module.exports = Model;
 // }.bind(myModel));
 // myModel.fetch();
 
-},{"./Component":119,"./Util":123}],121:[function(require,module,exports){
+},{"./Component":109,"./Util":113}],111:[function(require,module,exports){
 /**
  * @file ModelList.js
  * @description The ModelList class.
@@ -32080,7 +31400,7 @@ module.exports = ModelList;
 // }.bind(myModelList));
 // myModelList.fetch();
 
-},{"./Component":119,"./Model":120,"./Util":123}],122:[function(require,module,exports){
+},{"./Component":109,"./Model":110,"./Util":113}],112:[function(require,module,exports){
 /**
  * @file Unseen.js
  * @description Module index.
@@ -32107,7 +31427,7 @@ module.exports = {
     // ViewCollection: ViewCollection
 };
 
-},{"./Model":120,"./ModelList":121,"./View":124,"./ViewList":125}],123:[function(require,module,exports){
+},{"./Model":110,"./ModelList":111,"./View":114,"./ViewList":115}],113:[function(require,module,exports){
 /**
  * @file Model.js
  * @description The Model class.
@@ -32232,7 +31552,7 @@ class Util {
 // Exports
 module.exports = Util;
 
-},{"fetchival":79,"node-fetch":103}],124:[function(require,module,exports){
+},{"fetchival":79,"node-fetch":103}],114:[function(require,module,exports){
 /**
  * @file View.js
  * @description The View class.
@@ -32836,7 +32156,7 @@ module.exports = View;
 //
 // myModel.fetch();
 
-},{"./Component":119,"./walk":126,"jquery":102}],125:[function(require,module,exports){
+},{"./Component":109,"./walk":116,"jquery":102}],115:[function(require,module,exports){
 /**
  * @file ViewList.js
  * @description The ViewList class.
@@ -33484,7 +32804,7 @@ module.exports = ViewList;
 // });
 // myModelList.fetch();
 
-},{"./Component":119,"jquery":102}],126:[function(require,module,exports){
+},{"./Component":109,"jquery":102}],116:[function(require,module,exports){
 "use strict";
 
 // Source: https://github.com/npm-dom/dom-walk
@@ -33516,4 +32836,284 @@ module.exports = function(nodes, cb) {
     }
 };
 
-},{}]},{},[110]);
+},{}],117:[function(require,module,exports){
+"use strict";
+
+// BUNDLE WITH: browserify bench_unseen_view_insertion.js > bench_unseen_view_insertion_bundle.js
+
+// Imports
+const Unseen = require("../../src/js/unseen/Unseen");
+
+const jQuery = require("jquery");
+
+///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
+// UNIT SETUP
+
+let entityData = {"id": 100013440,"idn": "", "class": "building", "type": "restaurant", "name": "La Perla"};
+
+class EntityModel extends Unseen.Model {
+    initialize() {
+        this.baseSchema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+    }
+}
+let entityModel = new EntityModel(entityData);
+
+class EntityListItemView extends Unseen.View {
+
+    /**
+     * Initialize and target component
+     */
+    initialize() {
+        this.target = "#test-target";
+        this.id = "test-id";
+        this.tag = "article";
+        this.classList = [];
+    }
+
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
+    style() {
+        return `
+                        <style>
+
+                            article {
+                                margin-bottom: 0.25em;
+                                padding: 0.25em;
+                                background-color: lightgray;
+                                border-radius: .5em;
+                            }
+
+                            h1 {
+                                font-size: 1.5em;
+                            }
+                            h2 {
+                                font-size: 1em;
+                            }
+
+                            a {
+                                font-style: normal;
+                            }
+
+                            header {}
+
+                            footer {
+                                display: flex;
+                                flex-direction: row-reverse;
+                                justify-content: space-between;
+                            }
+                        </style>
+                    `;
+    }
+
+    styleElement() {
+        return `color: red; border: 1px solid black; margin-bottom: 0.25em; padding: 0.25em; background-color: lightgray; border-radius: .5em;`;
+    }
+    styleElementInitial() {
+        return `color: initial; border: initial; margin-bottom: initial; padding: initial; background-color: initial; border-radius: initial;`;
+    }
+    /**
+     * Defines component template and returns markup for the given Model instance.
+     * @param {model} model - The Model instance to be used with this template.
+     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
+     * @returns {string}
+     */
+    template(model, idx) {
+
+        return `
+            <header>
+                <h2 class="subtitle">${model.id}</h2>
+                <h1 class="title">${model.name}</h1>
+            </header>
+            <section>
+                ${model.id}: ${model.type} - ${model.name}
+            </section>
+            <footer>
+                <button id="button-delete" class="btn">Delete</button>
+            </footer>
+        `;
+    }
+
+    /**
+     * Defines and returns the event lookup table for this component.
+     * @returns {Object} - the event lookup table for this component.
+     */
+    events() {
+        return {
+            "#entity-item": ["click", "focusAction"],
+            "#button-delete": ["click", "deleteAction"]
+        };
+    }
+
+    /**
+     * A custom search action method for this component.
+     * @param {Event} evt - The event that triggered this method.
+     * @param {number} viewId - The UUID of the component target.
+     */
+    deleteAction(evt) {
+        console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
+        this.destroy();
+    }
+
+    /**
+     * A custom focus action - that opens details of this entity in another view.
+     * @param {Event} evt - The event that triggered this method.
+     * @param {number} viewId - The UUID of the component target.
+     */
+    focusAction(evt) {
+        console.log(`focusAction for ${this._id} called by ${JSON.stringify(evt)}.`);
+
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log(`%c Benchmark started...`, "background: #000; color: #fff; font-size: 14px");
+
+
+    // SANITY CHECK SETUP
+    // let $target = document.getElementById("test-target");
+    // let view = new EntityListItemView(entityModel);
+    //
+    // // SANITY CHECKS...
+    //
+    // // // DOM - inline style
+    // // view._render();
+    // // view._insertMarkupDOM();
+    // // jQuery($target).children().remove();
+    // // view._insertMarkupDOM();
+    // // console.log(view.markup);
+    //
+    // // // // DOM - element style
+    // // view._renderInlineElement();
+    // // view._insertMarkupDOM();
+    // // // jQuery($target).children().remove();
+    // // // view._insertMarkupDOM();
+    // // console.log(view.markup);
+    //
+    //
+    // // // SHADOW_DOM - inline style
+    // // view._render();
+    // // view._insertMarkupShadowDOM();
+    // // jQuery($target).children().remove();
+    // // // view._insertMarkupShadowDOM();
+    // // console.log(view.markup);
+    //
+    //
+    // // // DOM_FRAGMENT - inline style
+    // view._renderFragment();
+    // view._insertFragmentDOM();
+    // // jQuery($target).children().remove();
+    // // view._insertMarkupDOM();
+    // console.log(view.markup);
+    //
+    // // SHADOW_DOM_FRAGMENT - inline style
+    // view._renderFragment();
+    // view._insertFragmentShadowDOM();
+    // jQuery($target).children().remove();
+    // view._insertFragmentShadowDOM();
+    // console.log(view.markup);
+
+
+
+    // let el = document.getElementById("myroot");
+    // while (el.firstChild) {
+    //     el.removeChild(el.firstChild);
+    // }
+
+    ///////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
+    // UNIT BENCHMARK
+
+    let suite = new Benchmark.Suite("Benchmark: Unseen View insertion.");
+
+
+    // console.log("Sanity check:-");
+    let $target = document.getElementById("test-target");
+    let view = new EntityListItemView(entityModel);
+
+    function removeChildren(el) {
+        while(el.firstChild) {
+            el.removeChild(el.firstChild);
+        }
+    }
+
+    // Benchmark
+    console.log();
+    console.log("Benchmark:-");
+    suite
+        .add("DOM - inline style.", function() {
+            view._renderMarkup();
+            view._insertMarkupDOM();
+            // jQuery($target).children().remove();
+            removeChildren($target);
+            return $target.id;
+        })
+        .add("ShadowDOM - inline style.", function() {
+            view._renderMarkup();
+            view._insertMarkupShadowDOM();
+            // jQuery($target).children().remove();
+            removeChildren($target);
+            return $target.id;
+        })
+        .add("DOM - element attribute style.", function() {
+            view._renderInlineElement();
+            view._insertMarkupDOM();
+            // jQuery($target).children().remove();
+            removeChildren($target);
+            return $target.id;
+        })
+        .add("ShadowDOM - element attribute style.", function() {
+            view._renderInlineElement();
+            view._insertMarkupShadowDOM();
+            // jQuery($target).children().remove();
+            removeChildren($target);
+            return $target.id;
+        })
+        .add("DOM Insert Element - inline style.", function() {
+            view._renderElement();
+            view._insertElementDOM();
+            // jQuery($target).children().remove();
+            removeChildren($target);
+            return $target.id;
+        })
+        .add("ShadowDOM Insert Element - inline style.", function() {
+            view._renderElement();
+            view._insertElementShadowDOM();
+            // jQuery($target).children().remove();
+            removeChildren($target);
+            return $target.id;
+        })
+        .add("DOM Insert Fragment - inline style.", function() {
+            view._renderFragment();
+            view._insertFragmentDOM();
+            // jQuery($target).children().remove();
+            removeChildren($target);
+            return $target.id;
+        })
+        .add("ShadowDOM Insert Fragment - inline style.", function() {
+            view._renderFragment();
+            view._insertFragmentShadowDOM();
+            // jQuery($target).children().remove();
+            removeChildren($target);
+            return $target.id;
+        })
+        // add listeners
+        .on("cycle", function(event) {
+            console.log(String(event.target));
+        })
+        .on("complete", function() {
+            console.log("Fastest is " + this.filter("fastest").map("name"));
+        })
+        // run async
+        .run({"async": true});
+
+
+
+});
+
+
+
+
+},{"../../src/js/unseen/Unseen":112,"jquery":102}]},{},[117]);

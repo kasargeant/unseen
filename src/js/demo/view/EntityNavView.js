@@ -14,6 +14,9 @@ const jQuery = require("jquery");
 // VIEW
 class EntityNavView extends Unseen.View {
 
+    /**
+     * Initialize and target component
+     */
     initialize() {
         this.target = "header";
         this.tag = "nav";
@@ -21,6 +24,10 @@ class EntityNavView extends Unseen.View {
         this.classList = ["nav--row"];
     }
 
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
     style() {
         return `
         <style>
@@ -87,6 +94,12 @@ class EntityNavView extends Unseen.View {
         `;
     }
 
+    /**
+     * Defines component template and returns markup for the given Model instance.
+     * @param {model} model - The Model instance to be used with this template.
+     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
+     * @returns {string}
+     */
     template(model, idx) {
 
         let itemsMarkup = "";
@@ -107,12 +120,21 @@ class EntityNavView extends Unseen.View {
 
     }
 
+    /**
+     * Defines and returns the event lookup table for this component.
+     * @returns {Object} - the event lookup table for this component.
+     */
     events() {
         return {
             "#button-search": ["click", "searchAction"]
         };
     }
 
+    /**
+     * A custom search action method for this component.
+     * @param {Event} evt - The event that triggered this method.
+     * @param {number} viewId - The UUID of the component target.
+     */
     searchAction(evt, viewId) {
         let value = document.getElementById(`input-search-${viewId}`).value;
         console.log(`'searchAction' called with value: ${value}.`);

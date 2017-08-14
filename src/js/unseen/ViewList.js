@@ -73,7 +73,9 @@ class ViewList extends Component {
 
         // Set depending on previous internal/user properties.
         this.$el = null;
+        this.$target = null;
         this.markup = "";
+        this.fragment = null;
         this.deferred = [];
 
         this.viewStyle = null;
@@ -195,29 +197,56 @@ class ViewList extends Component {
     events() {return null;}
 
     /**
-     *
-     * @param evt
+     * Handles all events for this View and any sub-views.
+     * @param {Event} evt - Event that triggered this method.
      * @private
      */
     _handleEvents(evt) {
         console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
-        let mangledId = evt.target.id;
-        if(mangledId === "") {
-            throw new Error("Missing event target.");
+        // Sanity Guard
+        if(!this.viewEvents) {
+            console.warn("Warning: No events defined for this component.  Ignoring.");
+            return;
         }
+
+        let evtTarget = evt.target;
+        let mangledId = evtTarget.id;
+
+        // If no ID then walk up DOM until you find one.
+        while(mangledId === "") {
+            console.log("No element ID so moving up to parent.");
+            evtTarget = evtTarget.parentNode;
+            if(!evtTarget) {
+                // throw new Error("Missing any event target ID.");
+                console.warn("Warning: Missing any event target ID.");
+                return;
+            }
+            mangledId = evtTarget.id;
+        }
+
+        let tagName = evtTarget.tagName;
         let elementId = "#" + mangledId.slice(0, mangledId.lastIndexOf("-"));
-        let viewId = evt.target.dataset.unid;
-        // let viewId = evt.target.getAttribute("data-unid"); // Alternative for older browsers.
-        console.log(`ElementId: ${viewId}`);
+        let viewId = evtTarget.getAttribute("data-unid"); // Note: Faster than dataset property.
+        console.log(`Target: ${JSON.stringify(evtTarget)}`);
+        console.log(`TagName: ${tagName}`);
+        console.log(`TagId: ${elementId}`);
         console.log(`ViewId: ${viewId}`);
-        console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
+        // console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
         let events = this.viewEvents[viewId];
+        if(!events) {
+            console.warn(`Warning: No events defined for View ${viewId}.`);
+            return;
+        }
         let elementEvent = events[elementId];
+        if(!elementEvent) {
+            console.warn(`Warning: No events defined for ID ${elementId} in View ${viewId}.`);
+            return;
+        }
         console.log(`ViewList event found: ${JSON.stringify(elementEvent)}`);
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-            console.log(`ViewList matched '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            console.log(`ViewList matched '${evt.type}' event for component: '${viewId}' tag: ${tagName}, id: ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view) {
@@ -363,7 +392,7 @@ class ViewList extends Component {
     _render() {
 
         let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
-        classList.push(...this.classList); // We add any remaining classes.
+        if(this.classList) {classList.push(...this.classList);} // We add any remaining classes.
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
@@ -378,7 +407,7 @@ class ViewList extends Component {
         // Now we add any sub-views
         var elementChildren = "";
         for(var id in this.views) {
-            elementChildren += this.views[id]._render(false, elementChildren);
+            elementChildren += this.views[id]._renderMarkup(false, elementChildren);
         }
 
         this.markup = this.viewStyle + elementOpen + elementBody + elementChildren + elementClose;
@@ -397,30 +426,46 @@ class ViewList extends Component {
      * @private
      */
     _insertDOM() {
-        // jQuery(this.target).append(markup);
-        console.log(`Appending to ${this.target}`);
-        this.$el = jQuery(this.markup).appendTo(this.target).get(0);
-        if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+        //console.log(`ViewList: Appending to ${this.target}`);
+
+        // Retrieve reference to target element - if it hasn't already been obtained.
+        if(this.$target === null) {
+            this.$target = document.querySelector(this.target);
+            if(!this.$target) {throw new Error("Unable to find DOM target to append to.");}
+        }
+
+        // this.$el = document.getElementById(this.target.slice(1)); //jQuery(this.markup).appendTo(this.target).get(0);
+        this.$el = document.createElement(null);
+        this.$el.innerHTML = this.markup;
         // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
         if(!this._parent) {
             // Add top-level event listener
             this.$el.addEventListener("click", this._handleEvents.bind(this), false);
         }
+        this.$target.appendChild(this.$el);
     }
 
     //WORKING SHADOW DOM - first version
     _insertShadowDOM() {
-        console.log("Creating Shadow DOM");
+        //console.log(`ViewList: Appending to ${this.target}`);
+
+        // Retrieve reference to target element - if it hasn't already been obtained.
+        if(this.$target === null) {
+            this.$target = document.querySelector(this.target);
+            if(!this.$target) {throw new Error("Unable to find DOM target to append to.");}
+        }
+
+        //console.log("Creating Shadow DOM");
         this.$el = document.createElement("div");
         const shadowRoot = this.$el.attachShadow({mode: "open"});
         shadowRoot.innerHTML = this.markup;
+
+        // If parent - add event listener
         if(!this._parent) {
             // Add top-level event listener
             shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
         }
-        console.log(`Appending to ${this.target}`);
-        jQuery(this.target).append(this.$el);
-        // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+        this.$target.appendChild(this.$el);
     }
 
     _deferAppend(html) {

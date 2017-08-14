@@ -9,18 +9,23 @@
 // Imports
 const Unseen = require("../../unseen/Unseen");
 
-const jQuery = require("jquery");
-
 // VIEW
 class EntityMenuView extends Unseen.View {
 
+    /**
+     * Initialize and target component
+     */
     initialize() {
         this.target = "aside.left";
         this.tag = "nav";
         this.id = "sidebar";
-        this.classList = ["nav--column"];
+        this.classList = ["column"];
     }
 
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
     style() {
         return `
         <style>
@@ -31,12 +36,11 @@ class EntityMenuView extends Unseen.View {
                 border-radius: .5em;
             }
             
-            .nav--column {
+            .column {
                 flex-direction: column;
                 align-items: baseline;
             }        
         
-            /* BLOCK: menu */
             .menu {
                 display: flex;
                 flex-direction: column;
@@ -62,55 +66,60 @@ class EntityMenuView extends Unseen.View {
         `;
     }
 
+    /**
+     * Defines component template and returns markup for the given Model instance.
+     * @param {model} model - The Model instance to be used with this template.
+     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
+     * @returns {string}
+     */
     template(model, idx) {
 
+        // Build markup: item links
         let itemsMarkup = "";
+        // Iterate across items
         for(let item in model.items) {
-            itemsMarkup += `<a href="${model.items[item]}" class="btn">${item}</a>`;
+            let itemValue = model.items[item];
+            console.log(`ItemKey: ${item} = ${itemValue}`);
+            let itemType = typeof itemValue;
+            if(itemType === "string") {
+                itemsMarkup += `
+                    <li class="item">
+                        <a href="${itemValue}">${item}</a>
+                    </li>
+                `;
+            } else if(itemType === "object") {
+                // Open sublist
+                itemsMarkup += `
+                    <li class="item active">
+                        <a href="#">${item}</a>
+                        <ul class="sub-menu">
+                `;
+                // Iterate across sub-items
+                for(let subItem in itemValue) {
+                    let subItemValue = itemValue[subItem];
+                    console.log(`SubItemKey: ${subItem} = ${subItemValue}`);
+                    itemsMarkup += `
+                        <li class="sub-item">
+                            <a href="${subItemValue}" class="sub-item">${subItem}</a>
+                        </li>
+                    `;
+                }
+                // Close sublist
+                itemsMarkup += `
+                        </ul>
+                    </li>
+                `;
+            }
+
         }
 
+        // Collate returned markup
         return `
             <ul class="menu">
-                <li class="item">
-                    <a href="index.html#introduction">Getting started</a>
-                </li>
-                <li class="item">
-                    <a href="elements.html">Elements</a>
-                </li>
-                <li class="item active">
-                    <a href="layout.html">Layout</a>
-                    <ul class="sub-menu">
-                        <li class="item">
-                            <a href="layout.html#grid">Flexbox grid</a>
-                        </li>
-                        <li class="item">
-                            <a href="layout.html#responsive">Responsive</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="item">
-                    <a href="components.html">Components</a>
-                </li>
-                <li class="item">
-                    <a href="utilities.html">Utilities</a>
-                </li>
-                <li class="item">
-                    <a href="experimentals.html">Experimentals</a>
-                </li>
+                ${itemsMarkup}
             </ul>
         `;
 
-    }
-
-    events() {
-        return {
-            "#button-search": ["click", "searchAction"]
-        };
-    }
-
-    searchAction(evt, viewId) {
-        let value = document.getElementById(`input-search-${viewId}`).value;
-        console.log(`'searchAction' called with value: ${value}.`);
     }
 }
 

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Benchmark: Unseen View insertion..</title>
+    <script src="../../node_modules/lodash/lodash.js"></script>
+    <script src="../../node_modules/benchmark/benchmark.js"></script>
+</head>
+    <body>
+
+        <p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+        <p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+        <p>Here is some random text.<span id="special" data-uuid="123">Here</span> is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+        <div id="test-target"></div>
+        <p>Here is some random text.Here is some random text.Here is some <span data-id="special2">random</span> text.Here is some random text.Here is some random text.</p>
+        <p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+        <p>Here is some random text.Here is some random text.Here is some random text.Here is some random text.Here is some random text.</p>
+
+
+        <script src="./bench_unseen_view_insertion_bundle.js"></script>
+
+    </body>
+</html>

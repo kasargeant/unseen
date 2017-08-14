@@ -14,6 +14,9 @@ const jQuery = require("jquery");
 // VIEW
 class EntityDetailView extends Unseen.View {
 
+    /**
+     * Initialize and target component
+     */
     initialize() {
         this.target = "aside.right";
         this.tag = "section";
@@ -21,6 +24,10 @@ class EntityDetailView extends Unseen.View {
         this.classList = [];
     }
 
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
     style() {
         return `
         <style>
@@ -38,6 +45,12 @@ class EntityDetailView extends Unseen.View {
         `;
     }
 
+    /**
+     * Defines component template and returns markup for the given Model instance.
+     * @param {model} model - The Model instance to be used with this template.
+     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
+     * @returns {string}
+     */
     template(model, idx) {
 
         let itemsMarkup = "";
@@ -70,17 +83,6 @@ class EntityDetailView extends Unseen.View {
             </ul>
         `;
 
-    }
-
-    events() {
-        return {
-            "#button-search": ["click", "searchAction"]
-        };
-    }
-
-    searchAction(evt, viewId) {
-        let value = document.getElementById(`input-search-${viewId}`).value;
-        console.log(`'searchAction' called with value: ${value}.`);
     }
 }
 
