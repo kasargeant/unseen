@@ -30746,6 +30746,149 @@ module.exports=[{"id":100011508,"idn":"","class":"road","type":"residential","na
 
 },{}],110:[function(require,module,exports){
 /**
+ * @file index.js
+ * @description Module index.
+ * @license See LICENSE file included in this distribution.
+ */
+
+"use strict";
+
+// Imports
+const Unseen = require("../unseen/Unseen");
+
+const EntityModel = require("./model/EntityModel");
+const EntityModelList = require("./model/EntityModelList");
+const EntityNavModel = require("./model/EntityNavModel");
+
+const EntityListViewList = require("./view/EntityViewList");
+const EntityNavView = require("./view/EntityNavView");
+const EntityMenuView = require("./view/EntityMenuView");
+const EntityDetailView = require("./view/EntityDetailView");
+
+const jQuery = require("jquery"); // NOTE: jQuery used only during benchmarking.
+
+// TEST DATA
+let rawData = require("../../data/processed_sample.json");
+
+// MODEL COLLECTION
+let myModelList = new EntityModelList(rawData);
+
+// NAVBAR
+let myNavModel = new EntityNavModel({
+    title: "Unseen.js",
+    items: {
+        "About": "#",
+        "Docs": "https://kasargeant.github.io/unseen/api/",
+        "GitHub": "https://github.com/kasargeant/unseen"
+    }
+});
+let myNavView = new EntityNavView(myNavModel);
+myNavView.reset();
+
+// SIDEBAR MENU
+let myMenuModel = new EntityNavModel({
+    title: "Contents",
+    items: {
+        "About": "#",
+        "Docs": "https://kasargeant.github.io/unseen/api/",
+        "Components": {
+            "Model": "https://kasargeant.github.io/unseen/api/Model.html",
+            "View": "https://kasargeant.github.io/unseen/api/View.html"
+        },
+        "GitHub": "https://github.com/kasargeant/unseen"
+    }
+});
+let myMenuView = new EntityMenuView(myMenuModel);
+myMenuView.reset();
+
+// VIEW COLLECTION
+let myViewList = new EntityListViewList(myModelList);
+
+myViewList.collection.fetch();
+
+// DETAIL PANEL
+let myDetailView = new EntityDetailView(new EntityModel());
+myDetailView.reset();
+
+
+// DEMO: BROWSER
+console.log(`Testing with ${myModelList.length} records.`);
+console.time("insert");
+jQuery(document).ready(function() {
+    // Action after append is completely done
+    console.timeEnd("insert");
+});
+
+},{"../../data/processed_sample.json":109,"../unseen/Unseen":122,"./model/EntityModel":111,"./model/EntityModelList":112,"./model/EntityNavModel":113,"./view/EntityDetailView":114,"./view/EntityMenuView":115,"./view/EntityNavView":116,"./view/EntityViewList":117,"jquery":102}],111:[function(require,module,exports){
+/**
+ * @file EntityModel.js
+ * @description EntityModel component.
+ * @license See LICENSE file included in this distribution.
+ */
+
+"use strict";
+
+// Imports
+const Unseen = require("../../unseen/Unseen");
+
+// MODEL
+class EntityModel extends Unseen.Model {
+    initialize() {
+        this.baseSchema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
+    }
+}
+
+// Exports
+module.exports = EntityModel;
+
+},{"../../unseen/Unseen":122}],112:[function(require,module,exports){
+/**
+ * @file EntityModelList.js
+ * @description EntityModelList component.
+ * @license See LICENSE file included in this distribution.
+ */
+
+"use strict";
+
+// Imports
+const Unseen = require("../../unseen/Unseen");
+
+const EntityModel = require("./EntityModel");
+
+// MODEL COLLECTION
+class EntityModelList extends Unseen.ModelList {
+    initialize() {
+        this.baseClass = EntityModel;
+    }
+}
+
+// Exports
+module.exports = EntityModelList;
+
+},{"../../unseen/Unseen":122,"./EntityModel":111}],113:[function(require,module,exports){
+/**
+ * @file EntityNavModel.js
+ * @description EntityNavView component.
+ * @license See LICENSE file included in this distribution.
+ */
+
+"use strict";
+
+// Imports
+const Unseen = require("../../unseen/Unseen");
+
+class EntityNavModel extends Unseen.Model {
+    initialize() {
+        this.baseSchema = {"title": "No title", "items": {}};
+    }
+}
+
+
+// Exports
+module.exports = EntityNavModel;
+
+},{"../../unseen/Unseen":122}],114:[function(require,module,exports){
+/**
  * @file EntityDetailView.js
  * @description EntityDetailView component.
  * @license See LICENSE file included in this distribution.
@@ -30754,13 +30897,16 @@ module.exports=[{"id":100011508,"idn":"","class":"road","type":"residential","na
 "use strict";
 
 // Imports
-const Unseen = require("../shadow/Unseen");
+const Unseen = require("../../unseen/Unseen");
 
 const jQuery = require("jquery");
 
 // VIEW
 class EntityDetailView extends Unseen.View {
 
+    /**
+     * Initialize and target component
+     */
     initialize() {
         this.target = "aside.right";
         this.tag = "section";
@@ -30768,6 +30914,10 @@ class EntityDetailView extends Unseen.View {
         this.classList = [];
     }
 
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
     style() {
         return `
         <style>
@@ -30785,6 +30935,12 @@ class EntityDetailView extends Unseen.View {
         `;
     }
 
+    /**
+     * Defines component template and returns markup for the given Model instance.
+     * @param {model} model - The Model instance to be used with this template.
+     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
+     * @returns {string}
+     */
     template(model, idx) {
 
         let itemsMarkup = "";
@@ -30818,23 +30974,12 @@ class EntityDetailView extends Unseen.View {
         `;
 
     }
-
-    events() {
-        return {
-            "#button-search": ["click", "searchAction"]
-        };
-    }
-
-    searchAction(evt, viewId) {
-        let value = document.getElementById(`input-search-${viewId}`).value;
-        console.log(`'searchAction' called with value: ${value}.`);
-    }
 }
 
 // Exports
 module.exports = EntityDetailView;
 
-},{"../shadow/Unseen":122,"jquery":102}],111:[function(require,module,exports){
+},{"../../unseen/Unseen":122,"jquery":102}],115:[function(require,module,exports){
 /**
  * @file EntityMenuView.js
  * @description EntityMenuView component.
@@ -30844,20 +30989,25 @@ module.exports = EntityDetailView;
 "use strict";
 
 // Imports
-const Unseen = require("../shadow/Unseen");
-
-const jQuery = require("jquery");
+const Unseen = require("../../unseen/Unseen");
 
 // VIEW
 class EntityMenuView extends Unseen.View {
 
+    /**
+     * Initialize and target component
+     */
     initialize() {
         this.target = "aside.left";
         this.tag = "nav";
         this.id = "sidebar";
-        this.classList = ["nav--column"];
+        this.classList = ["column"];
     }
 
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
     style() {
         return `
         <style>
@@ -30868,12 +31018,11 @@ class EntityMenuView extends Unseen.View {
                 border-radius: .5em;
             }
             
-            .nav--column {
+            .column {
                 flex-direction: column;
                 align-items: baseline;
             }        
         
-            /* BLOCK: menu */
             .menu {
                 display: flex;
                 flex-direction: column;
@@ -30899,62 +31048,67 @@ class EntityMenuView extends Unseen.View {
         `;
     }
 
+    /**
+     * Defines component template and returns markup for the given Model instance.
+     * @param {model} model - The Model instance to be used with this template.
+     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
+     * @returns {string}
+     */
     template(model, idx) {
 
+        // Build markup: item links
         let itemsMarkup = "";
+        // Iterate across items
         for(let item in model.items) {
-            itemsMarkup += `<a href="${model.items[item]}" class="btn">${item}</a>`;
+            let itemValue = model.items[item];
+            console.log(`ItemKey: ${item} = ${itemValue}`);
+            let itemType = typeof itemValue;
+            if(itemType === "string") {
+                itemsMarkup += `
+                    <li class="item">
+                        <a href="${itemValue}">${item}</a>
+                    </li>
+                `;
+            } else if(itemType === "object") {
+                // Open sublist
+                itemsMarkup += `
+                    <li class="item active">
+                        <a href="#">${item}</a>
+                        <ul class="sub-menu">
+                `;
+                // Iterate across sub-items
+                for(let subItem in itemValue) {
+                    let subItemValue = itemValue[subItem];
+                    console.log(`SubItemKey: ${subItem} = ${subItemValue}`);
+                    itemsMarkup += `
+                        <li class="sub-item">
+                            <a href="${subItemValue}" class="sub-item">${subItem}</a>
+                        </li>
+                    `;
+                }
+                // Close sublist
+                itemsMarkup += `
+                        </ul>
+                    </li>
+                `;
+            }
+
         }
 
+        // Collate returned markup
         return `
             <ul class="menu">
-                <li class="item">
-                    <a href="index.html#introduction">Getting started</a>
-                </li>
-                <li class="item">
-                    <a href="elements.html">Elements</a>
-                </li>
-                <li class="item active">
-                    <a href="layout.html">Layout</a>
-                    <ul class="sub-menu">
-                        <li class="item">
-                            <a href="layout.html#grid">Flexbox grid</a>
-                        </li>
-                        <li class="item">
-                            <a href="layout.html#responsive">Responsive</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="item">
-                    <a href="components.html">Components</a>
-                </li>
-                <li class="item">
-                    <a href="utilities.html">Utilities</a>
-                </li>
-                <li class="item">
-                    <a href="experimentals.html">Experimentals</a>
-                </li>
+                ${itemsMarkup}
             </ul>
         `;
 
-    }
-
-    events() {
-        return {
-            "#button-search": ["click", "searchAction"]
-        };
-    }
-
-    searchAction(evt, viewId) {
-        let value = document.getElementById(`input-search-${viewId}`).value;
-        console.log(`'searchAction' called with value: ${value}.`);
     }
 }
 
 // Exports
 module.exports = EntityMenuView;
 
-},{"../shadow/Unseen":122,"jquery":102}],112:[function(require,module,exports){
+},{"../../unseen/Unseen":122}],116:[function(require,module,exports){
 /**
  * @file EntityNavView.js
  * @description EntityNavView component.
@@ -30964,13 +31118,16 @@ module.exports = EntityMenuView;
 "use strict";
 
 // Imports
-const Unseen = require("../shadow/Unseen");
+const Unseen = require("../../unseen/Unseen");
 
 const jQuery = require("jquery");
 
 // VIEW
 class EntityNavView extends Unseen.View {
 
+    /**
+     * Initialize and target component
+     */
     initialize() {
         this.target = "header";
         this.tag = "nav";
@@ -30978,6 +31135,10 @@ class EntityNavView extends Unseen.View {
         this.classList = ["nav--row"];
     }
 
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
     style() {
         return `
         <style>
@@ -31044,6 +31205,12 @@ class EntityNavView extends Unseen.View {
         `;
     }
 
+    /**
+     * Defines component template and returns markup for the given Model instance.
+     * @param {model} model - The Model instance to be used with this template.
+     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
+     * @returns {string}
+     */
     template(model, idx) {
 
         let itemsMarkup = "";
@@ -31064,12 +31231,21 @@ class EntityNavView extends Unseen.View {
 
     }
 
+    /**
+     * Defines and returns the event lookup table for this component.
+     * @returns {Object} - the event lookup table for this component.
+     */
     events() {
         return {
             "#button-search": ["click", "searchAction"]
         };
     }
 
+    /**
+     * A custom search action method for this component.
+     * @param {Event} evt - The event that triggered this method.
+     * @param {number} viewId - The UUID of the component target.
+     */
     searchAction(evt, viewId) {
         let value = document.getElementById(`input-search-${viewId}`).value;
         console.log(`'searchAction' called with value: ${value}.`);
@@ -31079,7 +31255,7 @@ class EntityNavView extends Unseen.View {
 // Exports
 module.exports = EntityNavView;
 
-},{"../shadow/Unseen":122,"jquery":102}],113:[function(require,module,exports){
+},{"../../unseen/Unseen":122,"jquery":102}],117:[function(require,module,exports){
 /**
  * @file EntityListViewList.js
  * @description EntityListViewList component.
@@ -31089,12 +31265,16 @@ module.exports = EntityNavView;
 "use strict";
 
 // Imports
-const Unseen = require("../shadow/Unseen");
+const Unseen = require("../../unseen/Unseen");
 
 const EntityViewListItem = require("./EntityViewListItem");
 
 // MODEL
 class EntityViewList extends Unseen.ViewList {
+
+    /**
+     * Initialize and target component
+     */
     initialize() {
         this.baseClass = EntityViewListItem;
         this.target = "main";
@@ -31103,15 +31283,19 @@ class EntityViewList extends Unseen.ViewList {
         this.classList = ["container"];
     }
 
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
     style() {
         return `
-        <style>
-            :host {
-                display: inline-block;
-                width: 100%;
-                contain: content;
-            }
-        </style>
+            <style>
+                :host {
+                    display: inline-block;
+                    width: 100%;
+                    contain: content;
+                }
+            </style>
         `;
     }
 }
@@ -31119,7 +31303,7 @@ class EntityViewList extends Unseen.ViewList {
 // Exports
 module.exports = EntityViewList;
 
-},{"../shadow/Unseen":122,"./EntityViewListItem":114}],114:[function(require,module,exports){
+},{"../../unseen/Unseen":122,"./EntityViewListItem":118}],118:[function(require,module,exports){
 /**
  * @file EntityListItemView.js
  * @description EntityListItemView component.
@@ -31129,61 +31313,68 @@ module.exports = EntityViewList;
 "use strict";
 
 // Imports
-const Unseen = require("../shadow/Unseen");
+const Unseen = require("../../unseen/Unseen");
 
 // VIEW
 class EntityListItemView extends Unseen.View {
 
+    /**
+     * Initialize and target component
+     */
     initialize() {
-        // this.baseModel = myModel;
-        this.id = "my-item";
+        this.id = "entity-item";
         this.tag = "article";
-        this.classList = ["card"];
+        this.classList = [];
     }
 
+    /**
+     * Defines 'scoped' stylesheet
+     * @returns {string}
+     */
     style() {
         return `
-        <style>
-            
-            h1 {
-                font-size: 1.5em;
-            }
-            h2 {
-                font-size: 1em;
-            }
-            h3 {
-                font-size: 0.75em;
-            }
-            h4 {
-                font-size: 0.5em;
-            }
-            
-            
-            a {
-                font-style: normal;
-            }
-            
-            article {
-                margin-bottom: 0.25em;
-                padding: 0.25em;
-                background-color: lightgray;
-                border-radius: .5em;
-            }
-            
-            footer {
-                display: flex;
-                flex-direction: row-reverse;
-                justify-content: space-between;
-            }
-        </style>
+            <style>
+                            
+                article {
+                    margin-bottom: 0.25em;
+                    padding: 0.25em;
+                    background-color: lightgray;
+                    border-radius: .5em;
+                }
+                
+                h1 {
+                    font-size: 1.5em;
+                }
+                h2 {
+                    font-size: 1em;
+                }
+                
+                a {
+                    font-style: normal;
+                }
+                
+                header {}
+                
+                footer {
+                    display: flex;
+                    flex-direction: row-reverse;
+                    justify-content: space-between;
+                }
+            </style>
         `;
     }
 
+    /**
+     * Defines component template and returns markup for the given Model instance.
+     * @param {model} model - The Model instance to be used with this template.
+     * @param {number} [idx] - Index number used by component parents of type list e.g. ViewList.
+     * @returns {string}
+     */
     template(model, idx) {
 
         return `
             <header>
-                <h3 class="subtitle">${model.id}</h3>
+                <h2 class="subtitle">${model.id}</h2>
                 <h1 class="title">${model.name}</h1>
             </header>
             <section>
@@ -31195,181 +31386,42 @@ class EntityListItemView extends Unseen.View {
         `;
     }
 
+    /**
+     * Defines and returns the event lookup table for this component.
+     * @returns {Object} - the event lookup table for this component.
+     */
     events() {
         return {
+            "#entity-item": ["click", "focusAction"],
             "#button-delete": ["click", "deleteAction"]
         };
     }
 
+    /**
+     * A custom search action method for this component.
+     * @param {Event} evt - The event that triggered this method.
+     * @param {number} viewId - The UUID of the component target.
+     */
     deleteAction(evt) {
         console.log(`deleteAction for ${this._id} called by ${JSON.stringify(evt)}.`);
         this.destroy();
+    }
+
+    /**
+     * A custom focus action - that opens details of this entity in another view.
+     * @param {Event} evt - The event that triggered this method.
+     * @param {number} viewId - The UUID of the component target.
+     */
+    focusAction(evt) {
+        console.log(`focusAction for ${this._id} called by ${JSON.stringify(evt)}.`);
+
     }
 }
 
 // Exports
 module.exports = EntityListItemView;
 
-},{"../shadow/Unseen":122}],115:[function(require,module,exports){
-/**
- * @file index.js
- * @description Module index.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../shadow/Unseen");
-const EntityModel = require("./model/EntityModel");
-const EntityModelList = require("./model/EntityModelList");
-const EntityListViewList = require("./EntityViewList");
-const EntityNavModel = require("./model/EntityNavModel");
-const EntityNavView = require("./EntityNavView");
-const EntityMenuView = require("./EntityMenuView");
-const EntityDetailView = require("./EntityDetailView");
-
-const jQuery = require("jquery");
-
-let rawData = require("../../data/processed_sample.json");
-
-// MODEL COLLECTION
-let myModelList = new EntityModelList(rawData);
-
-// NAVBAR
-let myNavModel = new EntityNavModel({
-    title: "Unseen.js",
-    items: {
-        "About": "#",
-        "Docs": "https://kasargeant.github.io/unseen/api/",
-        "GitHub": "https://github.com/kasargeant/unseen"
-    }
-});
-let myNavView = new EntityNavView(myNavModel);
-myNavView.reset();
-
-
-// SIDEBAR MENU
-let myMenuModel = new EntityNavModel({
-    title: "Unseen.js",
-    items: {
-        "About": "#",
-        "Docs": "https://kasargeant.github.io/unseen/api/",
-        "GitHub": "https://github.com/kasargeant/unseen"
-    }
-});
-let myMenuView = new EntityMenuView(myMenuModel);
-myMenuView.reset();
-
-// VIEW COLLECTION
-let myViewList = new EntityListViewList(myModelList);
-
-myViewList.collection.fetch();
-
-// DETAIL PANEL
-let myDetailView = new EntityDetailView(new EntityModel());
-myDetailView.reset();
-
-
-
-// DEMO: BROWSER
-console.log(`Testing with ${myModelList.length} records.`);
-console.time("insert");
-jQuery(document).ready(function() {
-    // Action after append is completely done
-    console.timeEnd("insert");
-});
-
-
-// DEMO: CONSOLE
-// let markupResult = {html: ""};
-// myViewList._renderMarkup(false, markupResult);
-// console.log(markupResult.html);
-//
-// // DEMO: BROWSER
-// console.log(`Testing with ${myModelList.length} records.`);
-// console.time("render");
-//
-// myViewCollection.render(true);
-//
-// console.timeEnd("render");
-//
-// console.time("insert");
-// jQuery(document).ready(function() {
-//     // Action after append is completely done
-//     console.timeEnd("insert");
-// });
-//
-
-},{"../../data/processed_sample.json":109,"../shadow/Unseen":122,"./EntityDetailView":110,"./EntityMenuView":111,"./EntityNavView":112,"./EntityViewList":113,"./model/EntityModel":116,"./model/EntityModelList":117,"./model/EntityNavModel":118,"jquery":102}],116:[function(require,module,exports){
-/**
- * @file EntityModel.js
- * @description EntityModel component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../shadow/Unseen");
-
-// MODEL
-class EntityModel extends Unseen.Model {
-    initialize() {
-        this.baseSchema = {"id": 0, "idn": "unnamed", "class": "unknown", "type": "unknown", "name": "Unnamed"};
-    }
-}
-
-// Exports
-module.exports = EntityModel;
-
-},{"../../shadow/Unseen":122}],117:[function(require,module,exports){
-/**
- * @file EntityModelList.js
- * @description EntityModelList component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../shadow/Unseen");
-
-const EntityModel = require("./EntityModel");
-
-// MODEL COLLECTION
-class EntityModelList extends Unseen.ModelList {
-    initialize() {
-        this.baseClass = EntityModel;
-    }
-}
-
-// Exports
-module.exports = EntityModelList;
-
-},{"../../shadow/Unseen":122,"./EntityModel":116}],118:[function(require,module,exports){
-/**
- * @file EntityNavModel.js
- * @description EntityNavView component.
- * @license See LICENSE file included in this distribution.
- */
-
-"use strict";
-
-// Imports
-const Unseen = require("../../shadow/Unseen");
-
-class EntityNavModel extends Unseen.Model {
-    initialize() {
-        this.baseSchema = {"title": "No title", "items": {}};
-    }
-}
-
-
-// Exports
-module.exports = EntityNavModel;
-
-},{"../../shadow/Unseen":122}],119:[function(require,module,exports){
+},{"../../unseen/Unseen":122}],119:[function(require,module,exports){
 /**
  * @file Component.js
  * @description The Component class.
@@ -31388,7 +31440,7 @@ const Util = require("./Util");
  * The Component class.
  *
  * Responsibilities:-
- * * To hold a list of data models - equivalent to a database table.
+ * * Base class for all Models and Views.
  * @class
  */
 class Component {
@@ -31438,38 +31490,34 @@ class Component {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     * Resets...
+     * Resets the data value or values.
      * @override
      */
     reset(data) {}
 
     /**
-     * Gets...
+     * Gets a data value or values.
      * @override
      */
     get(key) {}
 
     /**
-     * Sets...
+     * Sets a data value or values.
      * @override
      */
     set(key, value) {}
 
     /**
-     * Adds...
+     * Adds a data value or values.
      * @override
      */
     add(key, value) {}
 
     /**
-     * Removes...
+     * Removes a data value or values.
      * @override
      */
     remove(key) {}
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // UTILITY METHODS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * Removes...
@@ -31483,13 +31531,38 @@ class Component {
         }
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // UTILITY METHODS
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    /**
+     * Sends a message to another component.
+     * @override
+     */
     send(dst, msg) {
         dst.emit("msg", this, msg);
     }
 
+    /**
+     * Receives messages from other components.
+     * @override
+     */
     receive(src, msg) {
         console.log(`Component '${this._id}' received message: ${JSON.stringify(msg)} from: ${src._id}`);
     }
+
+    /**
+     * Fetches data/settings from a remote datasource.
+     * @override
+     */
+    fetch(key, value) {}
+
+    /**
+     * Stores data/settings in a remote datasource.
+     * @override
+     */
+    store(key, value) {}
+
 }
 
 Component.prototype.UUID = 0; // Define component counter on the class.
@@ -31591,6 +31664,7 @@ class Model extends Component {
             Object.defineProperty(this, key, {
                 /**
                  * Getter for an individual model data property. e.g. console.log(myModel.myProp);
+                 * @private
                  */
                 get: function() {
                     return this._data[key];
@@ -31598,6 +31672,7 @@ class Model extends Component {
                 /**
                  * Setter for an individual model data property. e.g. myModel.myProp = 10;
                  * @param {Object} value - The value to set this data property
+                 * @private
                  */
                 set: function(value) {
                     // Assign new value - or default value if none given.
@@ -32019,7 +32094,7 @@ const ModelList = require("./ModelList");
 // const ModelCollection = require("./ModelCollection");
 const View = require("./View");
 const ViewList = require("./ViewList");
-const ViewCollection = require("./ViewCollection");
+// const ViewCollection = require("./ViewCollection");
 
 // Exports
 module.exports = {
@@ -32029,10 +32104,10 @@ module.exports = {
     // ModelCollection: ModelCollection,
     View: View,
     ViewList: ViewList,
-    ViewCollection: ViewCollection
+    // ViewCollection: ViewCollection
 };
 
-},{"./Model":120,"./ModelList":121,"./View":124,"./ViewCollection":125,"./ViewList":126}],123:[function(require,module,exports){
+},{"./Model":120,"./ModelList":121,"./View":124,"./ViewList":125}],123:[function(require,module,exports){
 /**
  * @file Model.js
  * @description The Model class.
@@ -32199,6 +32274,7 @@ class View extends Component {
             baseClass: null,
             baseModel: null,
             useDOM: true,
+            useShadowDOM: true,
             isStyled: true,
             target: "main",
             tag: "div",
@@ -32209,6 +32285,7 @@ class View extends Component {
         // Order of precedence is: Custom properties -then-> Instance options -then-> class defaults.
         this.baseModel = baseModel || this.config.baseModel || this.baseModel || this.defaults.baseModel;
         this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
+        this.useShadowDOM = options.useShadowDOM || this.useShadowDOM || this.defaults.useShadowDOM;
         // this.isStyled = options.isStyled || this.isStyled || this.defaults.isStyled;
         this.isStyled = (options.isStyled !== undefined) ? options.isStyled : this.isStyled || this.defaults.isStyled;
         this.target = options.target || this.target || this.defaults.target;
@@ -32227,7 +32304,9 @@ class View extends Component {
 
         // Set depending on previous internal/user properties.
         this.$el = null;
+        this.$target = null;
         this.markup = "";
+        this.fragment = null;
 
         // Adds internal events listener used by the ModelList to signal this ViewList on update.
         this.baseModel.on("change", function(args) {
@@ -32247,7 +32326,11 @@ class View extends Component {
     reset() {
         this._render(true);
         if(this.useDOM === true) {
-            this._insert();
+            if(this.useShadowDOM === true) {
+                this._insertMarkupShadowDOM();
+            } else {
+                this._insertMarkupDOM();
+            }
         }
     }
 
@@ -32277,25 +32360,52 @@ class View extends Component {
     events() {return {};}
 
     /**
-     *
-     * @param evt
+     * Handles all events for this View and any sub-views.
+     * @param {Event} evt - Event that triggered this method.
      * @private
      */
     _handleEvents(evt) {
-        console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
+        console.log(`View Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
-        let mangledId = evt.target.id;
-        if(mangledId === "") {
-            throw new Error("Missing event target.");
+        // Sanity Guard
+        if(!this.viewEvents) {
+            console.warn("Warning: No events defined for this component.  Ignoring.");
+            return;
         }
+
+        let evtTarget = evt.target;
+        let mangledId = evtTarget.id;
+
+        // If no ID then walk up DOM until you find one.
+        while(mangledId === "") {
+            console.log("No element ID so moving up to parent.");
+            evtTarget = evtTarget.parentNode;
+            if(!evtTarget) {
+                // throw new Error("Missing any event target ID.");
+                console.warn("Warning: Missing any event target ID.");
+                return;
+            }
+            mangledId = evtTarget.id;
+        }
+
+        let tagName = evtTarget.tagName;
         let elementId = "#" + mangledId.slice(0, mangledId.lastIndexOf("-"));
-        let viewId = evt.target.dataset.unid;
-        // let viewId = evt.target.getAttribute("data-unid"); // Alternative for older browsers.
-        console.log(`ElementId: ${viewId}`);
+        let viewId = evtTarget.getAttribute("data-unid"); // Note: Faster than dataset property.
         console.log(`ViewId: ${viewId}`);
+        console.log(`TagName: ${tagName}`);
+        console.log(`TagId: ${elementId}`);
         console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
-        let elementEvent = this.viewEvents[viewId][elementId];
+        let events = this.viewEvents[viewId];
+        if(!events) {
+            console.warn(`Warning: No events defined for View ${viewId}.`);
+            return;
+        }
+        let elementEvent = events[elementId];
+        if(!elementEvent) {
+            console.warn(`Warning: No events defined for ID ${elementId} in View ${viewId}.`);
+            return;
+        }
         console.log(`View event found: ${JSON.stringify(elementEvent)}`);
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
             console.log(`View matched '${evt.type}' event for component '${viewId}' element ${elementId}`);
@@ -32314,7 +32424,14 @@ class View extends Component {
      * @returns {string}
      * @override
      */
-    template(model, idx=0, params={}) {return "";}
+    template(model, idx=0, params={}) {
+        let markup = `<ul>`;
+        for(let key of model._keys) {
+            let value = model[key];
+            markup += `<li><strong>${key}</strong>: ${value}</li>`;
+        }
+        return markup + `</ul>`;
+    }
 
     /**
      * Returns this View's scoped stylesheet.
@@ -32323,27 +32440,156 @@ class View extends Component {
      */
     style() {return "";}
 
+
+    /**
+     * Returns this View's scoped stylesheet.
+     * @returns {string}
+     * @override
+     */
+    styleElement() {return "";}
+    styleElementInitial() {return "";}
+
     /**
      *
      * @param doInsert
      * @returns {{}|*}
      * @private
      */
-    _render() {
+    _render() {this._renderMarkup();}
+
+    /**
+     *
+     * @param doInsert
+     * @returns {{}|*}
+     * @private
+     */
+    _renderElement() {
+
+        let element = document.createElement(this.tag);
+        element.id = this.id;
+        element.classList.add(this.id, ...this.classList); // We add the id as a class because here - it will not be mutated/mangled - as well as any remaining classes.
+        // element.setAttribute("data-unid", this._id);
+
+        // We create the View's markup from it's template.
+        let elementBody = this.template(this.baseModel, this._id);
+
+        // And then make every element ID in this View - unique.
+        elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+
+        element.innerHTML = (this.style() + elementBody);
+
+        this.el = element;
+
+        return this.el;
+    }
+
+    /**
+     *
+     * @param doInsert
+     * @returns {{}|*}
+     * @private
+     */
+    _renderFragment() {
+
+        let element = document.createElement(this.tag);
+        element.id = this.id;
+        element.classList.add(this.id); // We add the id as a class because here - it will not be mutated/mangled.
+        element.classList.add(...this.classList); // We add any remaining classes.
+        // element.setAttribute("data-unid", this._id);
+        element.innerHTML = this.style() + this.template(this.baseModel, this._id);
+
+        // First we make any element ids in this View - unique.
+        walk(element, function(node) {
+            // console.log("node", node); // DEBUG ONLY
+
+            // If we have an element node AND it has an ID..
+            if(node.nodeType === 1 && node.id) {
+                node.id = node.id + "-" + this._id;
+                node.setAttribute("data-unid", this._id);
+            }
+        }.bind(this));
+
+        // Construct fragment and append rendered component
+        this.fragment = document.createDocumentFragment();
+        this.fragment.appendChild(element);
+
+        return this.fragment;
+    }
+
+    /**
+     *
+     * @param doInsert
+     * @returns {{}|*}
+     * @private
+     */
+    _renderMarkup() {
+
+        // Do we create a markup container with id and/or classes?
+        if(!this.id && !this.classList) {
+            // NO: Just return template result.
+            // We create the View's markup from it's template.
+            let elementBody = this.template(this.baseModel, this._id);
+
+            // And then make every element ID in this View - unique.
+            // elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+            elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+            // console.log("CONTENT: " + JSON.stringify(element));
+
+            // Collate final markup.
+            this.markup = elementBody;
+
+        } else {
+            // YES: Then template result with wrapping tag.
+            let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
+            if(this.classList) {classList.push(...this.classList);} // We add any remaining classes.
+
+            let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}" data-unid="${this._id}">`;
+            let elementClose = "</" + this.tag + ">";
+
+            // We create the View's markup from it's template.
+            let elementBody = this.template(this.baseModel, this._id);
+
+            // And then make every element ID in this View - unique.
+            // elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+            elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
+            // console.log("CONTENT: " + JSON.stringify(element));
+
+            // Collate final markup.
+            this.markup = elementOpen + elementBody + elementClose;
+        }
+
+        // Add 'scoped' stylesheet if required
+        if(this.isStyled) {this.markup = this.style() + this.markup;}
+
+        // this.hasChanged = (markup !== this.markup);
+        // if(this.hasChanged) {
+        //     this.markup = markup;
+        // }
+        return this.markup;
+    }
+
+    _renderInlineElement() {
 
         let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
-        classList.push(...this.classList); // We add any remaining classes.
+        if(this.classList) {classList.push(...this.classList);} // We add any remaining classes.
 
-        let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
+        // Add element style attribute if required
+        let elementOpen;
+        if(this.isStyled) {
+            let style = this.styleElement();
+            // console.log("STYLE: " + style);
+            elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}" data-unid="${this._id}" style="${style}">`;
+        } else {
+            elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}" data-unid="${this._id}">`;
+        }
         let elementClose = "</" + this.tag + ">";
         let elementBody = this.template(this.baseModel, this._id);
 
         // First we make any element ids in this View - unique.
-        // let matches = content.match(/(?:id|class)="([^"]*)"/gi);    // Matches class="sfasdf" or id="dfssf"
-        // console.log("MATCHES: " + JSON.stringify(matches));
-        // elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
         elementBody = elementBody.replace(/(?:id)="([^"]*)"/gi, `id="$1-${this._id}" data-unid="${this._id}"`);    // Matches class="sfasdf" or id="dfssf"
-        // console.log("CONTENT: " + JSON.stringify(element));
+
+        // Stop style cascade
+        elementBody = `<div style="${this.styleElementInitial()}">${elementBody}</div>`;
 
         // Are we a top-level view?
         // Collect events
@@ -32358,33 +32604,79 @@ class View extends Component {
             this.markup = elementOpen + elementBody + elementClose;
         }
 
-        // Add scoped stylesheet if required
-        if(this.isStyled) {this.markup = this.style() + this.markup;}
-
         // console.log("MARKUP: " + JSON.stringify(markup.html));
-
-        // if(doInsert === true) {
-        //     // jQuery(this.target).append(markup);
-        //     console.log(`Appending to ${this.target}`);
-        //     this.$el = jQuery(markup.html).appendTo(this.target).get(0);
-        //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-        //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-        //     if(!this._parent) {
-        //
-        //         // We set the viewEvents lookup
-        //         this.viewEvents = viewEvents;
-        //
-        //         // Add top-level event listener
-        //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
-        //     }
-        // }
 
         return this.markup;
     }
 
-    // _insert() {
-    //     // jQuery(this.target).append(markup);
-    //     console.log(`Appending to ${this.target}`);
+    _insertElementDOM() {
+        //console.log(`Appending to ${this.target}`);
+        this.$el = jQuery(this.el).appendTo(this.target).get(0);
+        if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+        if(!this._parent) {
+
+            // We set the viewEvents lookup
+            this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+
+            // Add top-level event listener
+            this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+        }
+    }
+
+    _insertElementShadowDOM() {
+        //console.log("Creating Shadow DOM");
+        this.$el = document.createElement("div");
+        const shadowRoot = this.$el.attachShadow({mode: "open"});
+        shadowRoot.appendChild(this.el);
+
+        if(!this._parent) {
+
+            // We set the viewEvents lookup
+            this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+
+            // Add top-level event listener
+            shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
+        }
+        //console.log(`Appending to ${this.target}`);
+        jQuery(this.target).append(this.$el);
+    }
+
+    _insertFragmentDOM() {
+        //console.log(`Appending to ${this.target}`);
+        this.$el = jQuery(this.fragment).appendTo(this.target).get(0);
+        if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+        if(!this._parent) {
+
+            // We set the viewEvents lookup
+            this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+
+            // Add top-level event listener
+            this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+        }
+    }
+
+    _insertFragmentShadowDOM() {
+        //console.log("Creating Shadow DOM");
+        this.$el = document.createElement("div");
+        const shadowRoot = this.$el.attachShadow({mode: "open"});
+        shadowRoot.appendChild(this.fragment);
+
+        if(!this._parent) {
+
+            // We set the viewEvents lookup
+            this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+
+            // Add top-level event listener
+            shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
+        }
+        //console.log(`Appending to ${this.target}`);
+        jQuery(this.target).append(this.$el);
+    }
+
+    // _insertMarkupDOM() {
+    //     //console.log(`Appending to ${this.target}`);
     //     this.$el = jQuery(this.markup).appendTo(this.target).get(0);
     //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
     //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
@@ -32397,11 +32689,77 @@ class View extends Component {
     //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
     //     }
     // }
-    _insert() {
-        console.log("Creating Shadow DOM");
+    // _insertMarkupDOM() {
+    //     //console.log(`Appending to ${this.target}`);
+    //     this.$el = document.getElementById(this.target.slice(1)); //jQuery(this.markup).appendTo(this.target).get(0);
+    //     if(!this.$el) {throw new Error("Unable to find DOM target to append to.");}
+    //     this.$el.innerHTML = this.markup;
+    //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+    //     if(!this._parent) {
+    //
+    //         // We set the viewEvents lookup
+    //         this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+    //
+    //         // Add top-level event listener
+    //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+    //     }
+    // }
+    _insertMarkupDOM() {
+        //console.log(`View: Appending to ${this.target}`);
+
+        // Retrieve reference to target element - if it hasn't already been obtained.
+        if(this.$target === null) {
+            this.$target = document.querySelector(this.target);
+            if(!this.$target) {throw new Error("Unable to find DOM target to append to.");}
+        }
+
+        // this.$el = document.getElementById(this.target.slice(1)); //jQuery(this.markup).appendTo(this.target).get(0);
+        this.$el = document.createElement(null);
+        this.$el.innerHTML = this.markup;
+        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+        if(!this._parent) {
+
+            // We set the viewEvents lookup
+            this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+
+            // Add top-level event listener
+            this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+        }
+        this.$target.appendChild(this.$el);
+    }
+
+    // _insertMarkupShadowDOM() {
+    //     //console.log("Creating Shadow DOM");
+    //     this.$el = document.createElement("div");
+    //     const shadowRoot = this.$el.attachShadow({mode: "open"});
+    //     shadowRoot.innerHTML = this.markup;
+    //     if(!this._parent) {
+    //
+    //         // We set the viewEvents lookup
+    //         this.viewEvents = {"0": this.events()}; // Note: Single object NOT array!
+    //
+    //         // Add top-level event listener
+    //         shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
+    //     }
+    //     //console.log(`Appending to ${this.target}`);
+    //     jQuery(this.target).append(this.$el);
+    //     // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+    // }
+    _insertMarkupShadowDOM() {
+        //console.log(`View: Appending to ${this.target}`);
+
+        // Retrieve reference to target element - if it hasn't already been obtained.
+        if(this.$target === null) {
+            this.$target = document.querySelector(this.target);
+            if(!this.$target) {throw new Error("Unable to find DOM target to append to.");}
+        }
+
+        //console.log("Creating Shadow DOM");
         this.$el = document.createElement("div");
         const shadowRoot = this.$el.attachShadow({mode: "open"});
         shadowRoot.innerHTML = this.markup;
+
+        // If parent - add event listener
         if(!this._parent) {
 
             // We set the viewEvents lookup
@@ -32410,9 +32768,7 @@ class View extends Component {
             // Add top-level event listener
             shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
         }
-        console.log(`Appending to ${this.target}`);
-        jQuery(this.target).append(this.$el);
-        // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+        this.$target.appendChild(this.$el);
     }
 }
 
@@ -32480,27 +32836,7 @@ module.exports = View;
 //
 // myModel.fetch();
 
-},{"./Component":119,"./walk":127,"jquery":102}],125:[function(require,module,exports){
-class ViewCollection {
-    constructor(views) {
-        this.views = views;
-    }
-
-    render() {
-        let markup = "";
-        for(let view of this.views) {
-            markup += view._render();
-        }
-        // if(this.useDOM === true) {
-        //     this._insert();
-        // }
-        console.log(markup);
-    }
-}
-
-// Exports
-module.exports = ViewCollection;
-},{}],126:[function(require,module,exports){
+},{"./Component":119,"./walk":126,"jquery":102}],125:[function(require,module,exports){
 /**
  * @file ViewList.js
  * @description The ViewList class.
@@ -32548,6 +32884,7 @@ class ViewList extends Component {
             collection: null,
             views: null,
             useDOM: true,
+            useShadowDOM: true,
             isStyled: true,
             target: "main",
             tag: "div",
@@ -32561,6 +32898,7 @@ class ViewList extends Component {
         if(this.collection !== null) {this.collection._parent = this;}
         this.views = options.views || this.views || this.defaults.views;
         this.useDOM = options.useDOM || this.useDOM || this.defaults.useDOM;
+        this.useShadowDOM = options.useShadowDOM || this.useShadowDOM || this.defaults.useShadowDOM;
         this.isStyled = options.isStyled || this.isStyled || this.defaults.isStyled;
         this.target = options.target || this.target || this.defaults.target;
         this.tag = options.tag || this.tag || this.defaults.tag;
@@ -32574,7 +32912,9 @@ class ViewList extends Component {
 
         // Set depending on previous internal/user properties.
         this.$el = null;
+        this.$target = null;
         this.markup = "";
+        this.fragment = null;
         this.deferred = [];
 
         this.viewStyle = null;
@@ -32595,7 +32935,11 @@ class ViewList extends Component {
             this.reset(this.collection.models);
             this._render(true);
             if(this.useDOM === true) {
-                this._insert();
+                if(this.useShadowDOM === true) {
+                    this._insertShadowDOM();
+                } else {
+                    this._insertDOM();
+                }
             }
         }.bind(this));
 
@@ -32692,29 +33036,56 @@ class ViewList extends Component {
     events() {return null;}
 
     /**
-     *
-     * @param evt
+     * Handles all events for this View and any sub-views.
+     * @param {Event} evt - Event that triggered this method.
      * @private
      */
     _handleEvents(evt) {
         console.log(`ViewList Event '${evt.type}': ${evt.target.name}, #${evt.target.id} .${evt.target.className}`);
 
-        let mangledId = evt.target.id;
-        if(mangledId === "") {
-            throw new Error("Missing event target.");
+        // Sanity Guard
+        if(!this.viewEvents) {
+            console.warn("Warning: No events defined for this component.  Ignoring.");
+            return;
         }
+
+        let evtTarget = evt.target;
+        let mangledId = evtTarget.id;
+
+        // If no ID then walk up DOM until you find one.
+        while(mangledId === "") {
+            console.log("No element ID so moving up to parent.");
+            evtTarget = evtTarget.parentNode;
+            if(!evtTarget) {
+                // throw new Error("Missing any event target ID.");
+                console.warn("Warning: Missing any event target ID.");
+                return;
+            }
+            mangledId = evtTarget.id;
+        }
+
+        let tagName = evtTarget.tagName;
         let elementId = "#" + mangledId.slice(0, mangledId.lastIndexOf("-"));
-        let viewId = evt.target.dataset.unid;
-        // let viewId = evt.target.getAttribute("data-unid"); // Alternative for older browsers.
-        console.log(`ElementId: ${viewId}`);
+        let viewId = evtTarget.getAttribute("data-unid"); // Note: Faster than dataset property.
+        console.log(`Target: ${JSON.stringify(evtTarget)}`);
+        console.log(`TagName: ${tagName}`);
+        console.log(`TagId: ${elementId}`);
         console.log(`ViewId: ${viewId}`);
-        console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
+        // console.log(`View events are: ${JSON.stringify(this.viewEvents)}`);
 
         let events = this.viewEvents[viewId];
+        if(!events) {
+            console.warn(`Warning: No events defined for View ${viewId}.`);
+            return;
+        }
         let elementEvent = events[elementId];
+        if(!elementEvent) {
+            console.warn(`Warning: No events defined for ID ${elementId} in View ${viewId}.`);
+            return;
+        }
         console.log(`ViewList event found: ${JSON.stringify(elementEvent)}`);
         if(elementEvent !== undefined && elementEvent[0] === evt.type) {
-            console.log(`ViewList matched '${evt.type}' event for component '${viewId}' element ${elementId}`);
+            console.log(`ViewList matched '${evt.type}' event for component: '${viewId}' tag: ${tagName}, id: ${elementId}`);
             // Note viewId ALWAYS the same as modelId - i.e. one-to-one correspondence.
             let view = this.views[viewId];
             if(view) {
@@ -32860,7 +33231,7 @@ class ViewList extends Component {
     _render() {
 
         let classList = [this.id]; // We add the id as a class because here - it will not be mutated/mangled.
-        classList.push(...this.classList); // We add any remaining classes.
+        if(this.classList) {classList.push(...this.classList);} // We add any remaining classes.
 
         let elementOpen = `<${this.tag} id="${this.id + "-" + this._id}" class="${classList.join(" ")}">`;
         let elementClose = "</" + this.tag + ">";
@@ -32875,7 +33246,7 @@ class ViewList extends Component {
         // Now we add any sub-views
         var elementChildren = "";
         for(var id in this.views) {
-            elementChildren += this.views[id]._render(false, elementChildren);
+            elementChildren += this.views[id]._renderMarkup(false, elementChildren);
         }
 
         this.markup = this.viewStyle + elementOpen + elementBody + elementChildren + elementClose;
@@ -32893,60 +33264,48 @@ class ViewList extends Component {
      *
      * @private
      */
-    // _insert() {
-    //     // jQuery(this.target).append(markup);
-    //     console.log(`Appending to ${this.target}`);
-    //     this.$el = jQuery(this.markup).appendTo(this.target).get(0);
-    //     if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-    //     // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
-    //     if(!this._parent) {
-    //         // Add top-level event listener
-    //         this.$el.addEventListener("click", this._handleEvents.bind(this), false);
-    //     }
-    // }
+    _insertDOM() {
+        //console.log(`ViewList: Appending to ${this.target}`);
 
-//WORKING SHADOW DOM - first version
-    _insert() {
-        console.log("Creating Shadow DOM");
+        // Retrieve reference to target element - if it hasn't already been obtained.
+        if(this.$target === null) {
+            this.$target = document.querySelector(this.target);
+            if(!this.$target) {throw new Error("Unable to find DOM target to append to.");}
+        }
+
+        // this.$el = document.getElementById(this.target.slice(1)); //jQuery(this.markup).appendTo(this.target).get(0);
+        this.$el = document.createElement(null);
+        this.$el.innerHTML = this.markup;
+        // We don't even think about whether to add a listener if this fragment isn't being inserted into the DOM.
+        if(!this._parent) {
+            // Add top-level event listener
+            this.$el.addEventListener("click", this._handleEvents.bind(this), false);
+        }
+        this.$target.appendChild(this.$el);
+    }
+
+    //WORKING SHADOW DOM - first version
+    _insertShadowDOM() {
+        //console.log(`ViewList: Appending to ${this.target}`);
+
+        // Retrieve reference to target element - if it hasn't already been obtained.
+        if(this.$target === null) {
+            this.$target = document.querySelector(this.target);
+            if(!this.$target) {throw new Error("Unable to find DOM target to append to.");}
+        }
+
+        //console.log("Creating Shadow DOM");
         this.$el = document.createElement("div");
         const shadowRoot = this.$el.attachShadow({mode: "open"});
         shadowRoot.innerHTML = this.markup;
+
+        // If parent - add event listener
         if(!this._parent) {
             // Add top-level event listener
             shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
         }
-        console.log(`Appending to ${this.target}`);
-        jQuery(this.target).append(this.$el);
-        // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
+        this.$target.appendChild(this.$el);
     }
-
-
-    /// SECOND ATTEMPT
-    // _insert() {
-    //     console.log("Creating Shadow DOM");
-    //     this.$el = document.createElement("div");
-    //     const shadowRoot = this.$el.attachShadow({mode: "open"});
-    //
-    //     console.log("Creating DIV");
-    //     var div = document.createElement("div");
-    //     div.innerHTML = this.markup;
-    //     div.id = "inside";
-    //     console.log("Created DIV");
-    //
-    //     shadowRoot.appendChild(div);
-    //
-    //     console.log("Appended DIV to shadow");
-    //
-    //     // shadowRoot.innerHTML = this.markup;
-    //     if(!this._parent) {
-    //         // Add top-level event listener
-    //         shadowRoot.addEventListener("click", this._handleEvents.bind(this), false);
-    //     }
-    //     console.log(`Appending to ${this.target}`);
-    //     jQuery(this.target).append(this.$el);
-    //     // if(this.$el === undefined) {throw new Error("Unable to find DOM target to append to.");}
-    // }
-
 
     _deferAppend(html) {
         this.deferred.push(html);
@@ -33125,7 +33484,7 @@ module.exports = ViewList;
 // });
 // myModelList.fetch();
 
-},{"./Component":119,"jquery":102}],127:[function(require,module,exports){
+},{"./Component":119,"jquery":102}],126:[function(require,module,exports){
 "use strict";
 
 // Source: https://github.com/npm-dom/dom-walk
@@ -33157,4 +33516,4 @@ module.exports = function(nodes, cb) {
     }
 };
 
-},{}]},{},[115]);
+},{}]},{},[110]);
