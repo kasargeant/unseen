@@ -21,6 +21,7 @@ const Model = require("./Model");
  * Responsibilities:-
  * * To hold a list of data models - equivalent to a database table.
  * @class
+ * @private - TODO implement
  */
 class ModelCollection extends Component {
 
